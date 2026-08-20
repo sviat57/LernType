@@ -1,0 +1,16 @@
+<UserControl x:Class="WortBruecke.App.Views.PlaceholderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="48">
+        <Border MaxWidth="720" Padding="48" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Panel}">
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Left" Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding StageLabel}" />
+                <TextBlock Margin="0,14,0,0" Style="{StaticResource PageTitle}" Text="{Binding Title}" />
+                <TextBlock Margin="0,14,0,0" Style="{StaticResource BodySecondary}" Text="{Binding Description}" />
+                <Border Margin="0,28,0,0" Padding="16" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Input}">
+                    <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" Text="Экран подключается следующим изолированным этапом сборки." />
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

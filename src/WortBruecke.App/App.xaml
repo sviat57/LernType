@@ -1,0 +1,54 @@
+<Application x:Class="WortBruecke.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:WortBruecke.App.Infrastructure"
+             xmlns:vm="clr-namespace:WortBruecke.App.ViewModels"
+             xmlns:views="clr-namespace:WortBruecke.App.Views">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Tokens.xaml" />
+                <ResourceDictionary Source="Resources/LightTheme.xaml" />
+                <ResourceDictionary Source="Resources/Icons.xaml" />
+                <ResourceDictionary Source="Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+            <infra:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
+            <infra:BooleanToStatusBrushConverter x:Key="StatusBrushConverter" />
+            <infra:LocalizedTextConverter x:Key="LocalizedTextConverter" />
+            <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+                <views:HomeView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LearningPathViewModel}">
+                <views:LearningPathView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ExamCenterViewModel}">
+                <views:ExamCenterView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TrainerViewModel}">
+                <views:TrainerView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TextPracticeViewModel}">
+                <views:TextPracticeView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:BookViewModel}">
+                <views:BookView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:VocabularyTestViewModel}">
+                <views:VocabularyTestView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GrammarViewModel}">
+                <views:GrammarView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TelcViewModel}">
+                <views:TelcView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                <views:SettingsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
+                <views:PlaceholderView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

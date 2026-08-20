@@ -1,0 +1,2936 @@
+{
+  "revision": 4,
+  "themes": [
+    {
+      "id": 1,
+      "key": "essen",
+      "iconKey": "food",
+      "names": {
+        "ru-RU": "Еда",
+        "de-DE": "Essen"
+      }
+    },
+    {
+      "id": 2,
+      "key": "familie",
+      "iconKey": "people",
+      "names": {
+        "ru-RU": "Семья",
+        "de-DE": "Familie"
+      }
+    },
+    {
+      "id": 3,
+      "key": "reisen",
+      "iconKey": "travel",
+      "names": {
+        "ru-RU": "Путешествия",
+        "de-DE": "Reisen"
+      }
+    },
+    {
+      "id": 4,
+      "key": "arbeit",
+      "iconKey": "work",
+      "names": {
+        "ru-RU": "Работа",
+        "de-DE": "Arbeit"
+      }
+    },
+    {
+      "id": 5,
+      "key": "alltag",
+      "iconKey": "daily",
+      "names": {
+        "ru-RU": "Быт",
+        "de-DE": "Alltag"
+      }
+    },
+    {
+      "id": 6,
+      "key": "natur",
+      "iconKey": "nature",
+      "names": {
+        "ru-RU": "Природа",
+        "de-DE": "Natur"
+      }
+    },
+    {
+      "id": 7,
+      "key": "zahlen-zeit",
+      "iconKey": "time",
+      "names": {
+        "ru-RU": "Числа и время",
+        "de-DE": "Zahlen und Zeit"
+      }
+    },
+    {
+      "id": 8,
+      "key": "koerper-gesundheit",
+      "iconKey": "health",
+      "names": {
+        "ru-RU": "Тело и здоровье",
+        "de-DE": "Körper und Gesundheit"
+      }
+    },
+    {
+      "id": 9,
+      "key": "wohnen",
+      "iconKey": "home",
+      "names": {
+        "ru-RU": "Жильё",
+        "de-DE": "Wohnen"
+      }
+    },
+    {
+      "id": 10,
+      "key": "freizeit",
+      "iconKey": "leisure",
+      "names": {
+        "ru-RU": "Досуг",
+        "de-DE": "Freizeit"
+      }
+    }
+  ],
+  "words": [
+    {
+      "id": 101,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/101.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "яблоко",
+        "de-DE": "der Apfel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 102,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/102.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "хлеб",
+        "de-DE": "das Brot"
+      },
+      "examples": {}
+    },
+    {
+      "id": 103,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/103.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "вода",
+        "de-DE": "das Wasser"
+      },
+      "examples": {}
+    },
+    {
+      "id": 104,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/104.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сыр",
+        "de-DE": "der Käse"
+      },
+      "examples": {}
+    },
+    {
+      "id": 105,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/105.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "молоко",
+        "de-DE": "die Milch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 106,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/106.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "кофе",
+        "de-DE": "der Kaffee"
+      },
+      "examples": {}
+    },
+    {
+      "id": 107,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/107.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "чай",
+        "de-DE": "der Tee"
+      },
+      "examples": {}
+    },
+    {
+      "id": 108,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/108.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "овощ",
+        "de-DE": "das Gemüse"
+      },
+      "examples": {}
+    },
+    {
+      "id": 109,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/109.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "фрукт",
+        "de-DE": "das Obst"
+      },
+      "examples": {}
+    },
+    {
+      "id": 110,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/110.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "суп",
+        "de-DE": "die Suppe"
+      },
+      "examples": {}
+    },
+    {
+      "id": 111,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/111.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "рыба",
+        "de-DE": "der Fisch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 112,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/112.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "мясо",
+        "de-DE": "das Fleisch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 113,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/113.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "завтрак",
+        "de-DE": "das Frühstück"
+      },
+      "examples": {}
+    },
+    {
+      "id": 114,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/114.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "есть",
+        "de-DE": "essen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 115,
+      "themeId": 1,
+      "imagePath": "Assets/Images/essen/115.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "готовить",
+        "de-DE": "kochen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 201,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/201.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "мать",
+        "de-DE": "die Mutter"
+      },
+      "examples": {}
+    },
+    {
+      "id": 202,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/202.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "отец",
+        "de-DE": "der Vater"
+      },
+      "examples": {}
+    },
+    {
+      "id": 203,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/203.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "родители",
+        "de-DE": "die Eltern"
+      },
+      "examples": {}
+    },
+    {
+      "id": 204,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/204.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сестра",
+        "de-DE": "die Schwester"
+      },
+      "examples": {}
+    },
+    {
+      "id": 205,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/205.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "брат",
+        "de-DE": "der Bruder"
+      },
+      "examples": {}
+    },
+    {
+      "id": 206,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/206.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "ребёнок",
+        "de-DE": "das Kind"
+      },
+      "examples": {}
+    },
+    {
+      "id": 207,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/207.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дочь",
+        "de-DE": "die Tochter"
+      },
+      "examples": {}
+    },
+    {
+      "id": 208,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/208.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сын",
+        "de-DE": "der Sohn"
+      },
+      "examples": {}
+    },
+    {
+      "id": 209,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/209.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "бабушка",
+        "de-DE": "die Großmutter"
+      },
+      "examples": {}
+    },
+    {
+      "id": 210,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/210.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дедушка",
+        "de-DE": "der Großvater"
+      },
+      "examples": {}
+    },
+    {
+      "id": 211,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/211.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "тётя",
+        "de-DE": "die Tante"
+      },
+      "examples": {}
+    },
+    {
+      "id": 212,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/212.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дядя",
+        "de-DE": "der Onkel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 213,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/213.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "двоюродный брат",
+        "de-DE": "der Cousin"
+      },
+      "examples": {}
+    },
+    {
+      "id": 214,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/214.png",
+      "level": "A2",
+      "partOfSpeech": "adjective",
+      "translations": {
+        "ru-RU": "женатый",
+        "de-DE": "verheiratet"
+      },
+      "examples": {}
+    },
+    {
+      "id": 215,
+      "themeId": 2,
+      "imagePath": "Assets/Images/familie/215.png",
+      "level": "A1",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "вместе",
+        "de-DE": "zusammen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 301,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/301.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "путешествие",
+        "de-DE": "die Reise"
+      },
+      "examples": {}
+    },
+    {
+      "id": 302,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/302.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "поезд",
+        "de-DE": "der Zug"
+      },
+      "examples": {}
+    },
+    {
+      "id": 303,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/303.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "самолёт",
+        "de-DE": "das Flugzeug"
+      },
+      "examples": {}
+    },
+    {
+      "id": 304,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/304.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "вокзал",
+        "de-DE": "der Bahnhof"
+      },
+      "examples": {}
+    },
+    {
+      "id": 305,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/305.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "билет",
+        "de-DE": "die Fahrkarte"
+      },
+      "examples": {}
+    },
+    {
+      "id": 306,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/306.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "отель",
+        "de-DE": "das Hotel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 307,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/307.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "чемодан",
+        "de-DE": "der Koffer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 308,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/308.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "паспорт",
+        "de-DE": "der Reisepass"
+      },
+      "examples": {}
+    },
+    {
+      "id": 309,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/309.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "карта",
+        "de-DE": "die Landkarte"
+      },
+      "examples": {}
+    },
+    {
+      "id": 310,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/310.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "улица",
+        "de-DE": "die Straße"
+      },
+      "examples": {}
+    },
+    {
+      "id": 311,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/311.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "машина",
+        "de-DE": "das Auto"
+      },
+      "examples": {}
+    },
+    {
+      "id": 312,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/312.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "корабль",
+        "de-DE": "das Schiff"
+      },
+      "examples": {}
+    },
+    {
+      "id": 313,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/313.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "гора",
+        "de-DE": "der Berg"
+      },
+      "examples": {}
+    },
+    {
+      "id": 314,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/314.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "море",
+        "de-DE": "das Meer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 315,
+      "themeId": 3,
+      "imagePath": "Assets/Images/reisen/315.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "путешествовать",
+        "de-DE": "reisen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 401,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/401.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "работа",
+        "de-DE": "die Arbeit"
+      },
+      "examples": {}
+    },
+    {
+      "id": 402,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/402.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "профессия",
+        "de-DE": "der Beruf"
+      },
+      "examples": {}
+    },
+    {
+      "id": 403,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/403.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "офис",
+        "de-DE": "das Büro"
+      },
+      "examples": {}
+    },
+    {
+      "id": 404,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/404.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "коллега",
+        "de-DE": "der Kollege"
+      },
+      "examples": {}
+    },
+    {
+      "id": 405,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/405.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "начальник",
+        "de-DE": "der Chef"
+      },
+      "examples": {}
+    },
+    {
+      "id": 406,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/406.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "компьютер",
+        "de-DE": "der Computer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 407,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/407.png",
+      "level": "B1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "совещание",
+        "de-DE": "die Besprechung"
+      },
+      "examples": {}
+    },
+    {
+      "id": 408,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/408.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "электронная почта",
+        "de-DE": "die E-Mail"
+      },
+      "examples": {}
+    },
+    {
+      "id": 409,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/409.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "задача",
+        "de-DE": "die Aufgabe"
+      },
+      "examples": {}
+    },
+    {
+      "id": 410,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/410.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "перерыв",
+        "de-DE": "die Pause"
+      },
+      "examples": {}
+    },
+    {
+      "id": 411,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/411.png",
+      "level": "B1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "зарплата",
+        "de-DE": "das Gehalt"
+      },
+      "examples": {}
+    },
+    {
+      "id": 412,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/412.png",
+      "level": "B1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "договор",
+        "de-DE": "der Vertrag"
+      },
+      "examples": {}
+    },
+    {
+      "id": 413,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/413.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "фирма",
+        "de-DE": "die Firma"
+      },
+      "examples": {}
+    },
+    {
+      "id": 414,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/414.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "работать",
+        "de-DE": "arbeiten"
+      },
+      "examples": {}
+    },
+    {
+      "id": 415,
+      "themeId": 4,
+      "imagePath": "Assets/Images/arbeit/415.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "учиться",
+        "de-DE": "lernen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 501,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/501.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "утро",
+        "de-DE": "der Morgen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 502,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/502.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "вечер",
+        "de-DE": "der Abend"
+      },
+      "examples": {}
+    },
+    {
+      "id": 503,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/503.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "день",
+        "de-DE": "der Tag"
+      },
+      "examples": {}
+    },
+    {
+      "id": 504,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/504.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "неделя",
+        "de-DE": "die Woche"
+      },
+      "examples": {}
+    },
+    {
+      "id": 505,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/505.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "покупка",
+        "de-DE": "der Einkauf"
+      },
+      "examples": {}
+    },
+    {
+      "id": 506,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/506.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "убирать",
+        "de-DE": "putzen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 507,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/507.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "мыть",
+        "de-DE": "waschen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 508,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/508.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "просыпаться",
+        "de-DE": "aufwachen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 509,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/509.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "спать",
+        "de-DE": "schlafen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 510,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/510.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "идти",
+        "de-DE": "gehen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 511,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/511.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "ехать",
+        "de-DE": "fahren"
+      },
+      "examples": {}
+    },
+    {
+      "id": 512,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/512.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "открывать",
+        "de-DE": "öffnen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 513,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/513.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "закрывать",
+        "de-DE": "schließen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 514,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/514.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "ждать",
+        "de-DE": "warten"
+      },
+      "examples": {}
+    },
+    {
+      "id": 515,
+      "themeId": 5,
+      "imagePath": "Assets/Images/alltag/515.png",
+      "level": "B1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "торопиться",
+        "de-DE": "sich beeilen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 601,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/601.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дерево",
+        "de-DE": "der Baum"
+      },
+      "examples": {}
+    },
+    {
+      "id": 602,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/602.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "цветок",
+        "de-DE": "die Blume"
+      },
+      "examples": {}
+    },
+    {
+      "id": 603,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/603.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "лес",
+        "de-DE": "der Wald"
+      },
+      "examples": {}
+    },
+    {
+      "id": 604,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/604.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "река",
+        "de-DE": "der Fluss"
+      },
+      "examples": {}
+    },
+    {
+      "id": 605,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/605.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "озеро",
+        "de-DE": "der See"
+      },
+      "examples": {}
+    },
+    {
+      "id": 606,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/606.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дождь",
+        "de-DE": "der Regen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 607,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/607.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "снег",
+        "de-DE": "der Schnee"
+      },
+      "examples": {}
+    },
+    {
+      "id": 608,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/608.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "солнце",
+        "de-DE": "die Sonne"
+      },
+      "examples": {}
+    },
+    {
+      "id": 609,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/609.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "луна",
+        "de-DE": "der Mond"
+      },
+      "examples": {}
+    },
+    {
+      "id": 610,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/610.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "небо",
+        "de-DE": "der Himmel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 611,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/611.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "животное",
+        "de-DE": "das Tier"
+      },
+      "examples": {}
+    },
+    {
+      "id": 612,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/612.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "птица",
+        "de-DE": "der Vogel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 613,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/613.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "ветер",
+        "de-DE": "der Wind"
+      },
+      "examples": {}
+    },
+    {
+      "id": 614,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/614.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "земля",
+        "de-DE": "die Erde"
+      },
+      "examples": {}
+    },
+    {
+      "id": 615,
+      "themeId": 6,
+      "imagePath": "Assets/Images/natur/615.png",
+      "level": "A1",
+      "partOfSpeech": "adjective",
+      "translations": {
+        "ru-RU": "зелёный",
+        "de-DE": "grün"
+      },
+      "examples": {}
+    },
+    {
+      "id": 701,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/701.png",
+      "level": "A0",
+      "partOfSpeech": "number",
+      "translations": {
+        "ru-RU": "один",
+        "de-DE": "eins"
+      },
+      "examples": {}
+    },
+    {
+      "id": 702,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/702.png",
+      "level": "A0",
+      "partOfSpeech": "number",
+      "translations": {
+        "ru-RU": "два",
+        "de-DE": "zwei"
+      },
+      "examples": {}
+    },
+    {
+      "id": 703,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/703.png",
+      "level": "A1",
+      "partOfSpeech": "number",
+      "translations": {
+        "ru-RU": "три",
+        "de-DE": "drei"
+      },
+      "examples": {}
+    },
+    {
+      "id": 704,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/704.png",
+      "level": "A1",
+      "partOfSpeech": "number",
+      "translations": {
+        "ru-RU": "десять",
+        "de-DE": "zehn"
+      },
+      "examples": {}
+    },
+    {
+      "id": 705,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/705.png",
+      "level": "A1",
+      "partOfSpeech": "number",
+      "translations": {
+        "ru-RU": "сто",
+        "de-DE": "hundert"
+      },
+      "examples": {}
+    },
+    {
+      "id": 706,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/706.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "час",
+        "de-DE": "die Stunde"
+      },
+      "examples": {}
+    },
+    {
+      "id": 707,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/707.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "минута",
+        "de-DE": "die Minute"
+      },
+      "examples": {}
+    },
+    {
+      "id": 708,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/708.png",
+      "level": "A1",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "сегодня",
+        "de-DE": "heute"
+      },
+      "examples": {}
+    },
+    {
+      "id": 709,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/709.png",
+      "level": "A1",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "завтра",
+        "de-DE": "morgen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 710,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/710.png",
+      "level": "A1",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "вчера",
+        "de-DE": "gestern"
+      },
+      "examples": {}
+    },
+    {
+      "id": 711,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/711.png",
+      "level": "A2",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "рано",
+        "de-DE": "früh"
+      },
+      "examples": {}
+    },
+    {
+      "id": 712,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/712.png",
+      "level": "A2",
+      "partOfSpeech": "adverb",
+      "translations": {
+        "ru-RU": "поздно",
+        "de-DE": "spät"
+      },
+      "examples": {}
+    },
+    {
+      "id": 713,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/713.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "понедельник",
+        "de-DE": "der Montag"
+      },
+      "examples": {}
+    },
+    {
+      "id": 714,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/714.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "выходные",
+        "de-DE": "das Wochenende"
+      },
+      "examples": {}
+    },
+    {
+      "id": 715,
+      "themeId": 7,
+      "imagePath": "Assets/Images/zahlen-zeit/715.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "время",
+        "de-DE": "die Zeit"
+      },
+      "examples": {}
+    },
+    {
+      "id": 801,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/801.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "голова",
+        "de-DE": "der Kopf"
+      },
+      "examples": {}
+    },
+    {
+      "id": 802,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/802.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "рука",
+        "de-DE": "die Hand"
+      },
+      "examples": {}
+    },
+    {
+      "id": 803,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/803.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "глаз",
+        "de-DE": "das Auge"
+      },
+      "examples": {}
+    },
+    {
+      "id": 804,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/804.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сердце",
+        "de-DE": "das Herz"
+      },
+      "examples": {}
+    },
+    {
+      "id": 805,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/805.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "спина",
+        "de-DE": "der Rücken"
+      },
+      "examples": {}
+    },
+    {
+      "id": 806,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/806.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "живот",
+        "de-DE": "der Bauch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 807,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/807.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "врач",
+        "de-DE": "der Arzt"
+      },
+      "examples": {}
+    },
+    {
+      "id": 808,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/808.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "больница",
+        "de-DE": "das Krankenhaus"
+      },
+      "examples": {}
+    },
+    {
+      "id": 809,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/809.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "лекарство",
+        "de-DE": "das Medikament"
+      },
+      "examples": {}
+    },
+    {
+      "id": 810,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/810.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "боль",
+        "de-DE": "der Schmerz"
+      },
+      "examples": {}
+    },
+    {
+      "id": 811,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/811.png",
+      "level": "A1",
+      "partOfSpeech": "adjective",
+      "translations": {
+        "ru-RU": "здоровый",
+        "de-DE": "gesund"
+      },
+      "examples": {}
+    },
+    {
+      "id": 812,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/812.png",
+      "level": "A1",
+      "partOfSpeech": "adjective",
+      "translations": {
+        "ru-RU": "больной",
+        "de-DE": "krank"
+      },
+      "examples": {}
+    },
+    {
+      "id": 813,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/813.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сон",
+        "de-DE": "der Schlaf"
+      },
+      "examples": {}
+    },
+    {
+      "id": 814,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/814.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "дышать",
+        "de-DE": "atmen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 815,
+      "themeId": 8,
+      "imagePath": "Assets/Images/koerper-gesundheit/815.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "помощь",
+        "de-DE": "die Hilfe"
+      },
+      "examples": {}
+    },
+    {
+      "id": 901,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/901.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дом",
+        "de-DE": "das Haus"
+      },
+      "examples": {}
+    },
+    {
+      "id": 902,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/902.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "квартира",
+        "de-DE": "die Wohnung"
+      },
+      "examples": {}
+    },
+    {
+      "id": 903,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/903.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "комната",
+        "de-DE": "das Zimmer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 904,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/904.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "кухня",
+        "de-DE": "die Küche"
+      },
+      "examples": {}
+    },
+    {
+      "id": 905,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/905.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "ванная",
+        "de-DE": "das Badezimmer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 906,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/906.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "спальня",
+        "de-DE": "das Schlafzimmer"
+      },
+      "examples": {}
+    },
+    {
+      "id": 907,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/907.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "стол",
+        "de-DE": "der Tisch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 908,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/908.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "стул",
+        "de-DE": "der Stuhl"
+      },
+      "examples": {}
+    },
+    {
+      "id": 909,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/909.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "окно",
+        "de-DE": "das Fenster"
+      },
+      "examples": {}
+    },
+    {
+      "id": 910,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/910.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "дверь",
+        "de-DE": "die Tür"
+      },
+      "examples": {}
+    },
+    {
+      "id": 911,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/911.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "ключ",
+        "de-DE": "der Schlüssel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 912,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/912.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "сад",
+        "de-DE": "der Garten"
+      },
+      "examples": {}
+    },
+    {
+      "id": 913,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/913.png",
+      "level": "B1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "аренда",
+        "de-DE": "die Miete"
+      },
+      "examples": {}
+    },
+    {
+      "id": 914,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/914.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "переезжать",
+        "de-DE": "umziehen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 915,
+      "themeId": 9,
+      "imagePath": "Assets/Images/wohnen/915.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "жить",
+        "de-DE": "wohnen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1001,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1001.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "книга",
+        "de-DE": "das Buch"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1002,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1002.png",
+      "level": "A0",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "музыка",
+        "de-DE": "die Musik"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1003,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1003.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "фильм",
+        "de-DE": "der Film"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1004,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1004.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "спорт",
+        "de-DE": "der Sport"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1005,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1005.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "игра",
+        "de-DE": "das Spiel"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1006,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1006.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "друг",
+        "de-DE": "der Freund"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1007,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1007.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "танцевать",
+        "de-DE": "tanzen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1008,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1008.png",
+      "level": "A1",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "читать",
+        "de-DE": "lesen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1009,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1009.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "плавать",
+        "de-DE": "schwimmen"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1010,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1010.png",
+      "level": "A2",
+      "partOfSpeech": "verb",
+      "translations": {
+        "ru-RU": "ходить в поход",
+        "de-DE": "wandern"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1011,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1011.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "фотография",
+        "de-DE": "das Foto"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1012,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1012.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "театр",
+        "de-DE": "das Theater"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1013,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1013.png",
+      "level": "A2",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "концерт",
+        "de-DE": "das Konzert"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1014,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1014.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "велосипед",
+        "de-DE": "das Fahrrad"
+      },
+      "examples": {}
+    },
+    {
+      "id": 1015,
+      "themeId": 10,
+      "imagePath": "Assets/Images/freizeit/1015.png",
+      "level": "A1",
+      "partOfSpeech": "noun",
+      "translations": {
+        "ru-RU": "выходные",
+        "de-DE": "das Wochenende"
+      },
+      "examples": {}
+    }
+  ],
+  "sentences": [
+    {
+      "id": 1101,
+      "themeId": 1,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Я ем яблоко.",
+        "de-DE": "Ich esse einen Apfel."
+      }
+    },
+    {
+      "id": 1102,
+      "themeId": 1,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "За завтраком мы пьём кофе и едим хлеб с сыром.",
+        "de-DE": "Zum Frühstück trinken wir Kaffee und essen Brot mit Käse."
+      }
+    },
+    {
+      "id": 1103,
+      "themeId": 1,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Когда у меня мало времени, я готовлю простой овощной суп.",
+        "de-DE": "Wenn ich wenig Zeit habe, koche ich eine einfache Gemüsesuppe."
+      }
+    },
+    {
+      "id": 1201,
+      "themeId": 2,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Моя сестра живёт вместе с родителями.",
+        "de-DE": "Meine Schwester wohnt bei unseren Eltern."
+      }
+    },
+    {
+      "id": 1202,
+      "themeId": 2,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "По выходным бабушка навещает своих внуков.",
+        "de-DE": "Am Wochenende besucht die Großmutter ihre Enkelkinder."
+      }
+    },
+    {
+      "id": 1203,
+      "themeId": 2,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Хотя мой брат живёт далеко, мы часто разговариваем друг с другом.",
+        "de-DE": "Obwohl mein Bruder weit weg wohnt, sprechen wir oft miteinander."
+      }
+    },
+    {
+      "id": 1301,
+      "themeId": 3,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Поезд прибывает на вокзал в девять часов.",
+        "de-DE": "Der Zug kommt um neun Uhr am Bahnhof an."
+      }
+    },
+    {
+      "id": 1302,
+      "themeId": 3,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "Перед поездкой я кладу паспорт и билет в чемодан.",
+        "de-DE": "Vor der Reise lege ich den Reisepass und die Fahrkarte in den Koffer."
+      }
+    },
+    {
+      "id": 1303,
+      "themeId": 3,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Если погода останется хорошей, завтра мы поплывём на корабле.",
+        "de-DE": "Wenn das Wetter gut bleibt, fahren wir morgen mit dem Schiff."
+      }
+    },
+    {
+      "id": 1401,
+      "themeId": 4,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Я работаю в небольшом офисе.",
+        "de-DE": "Ich arbeite in einem kleinen Büro."
+      }
+    },
+    {
+      "id": 1402,
+      "themeId": 4,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "После совещания коллега отправляет мне электронное письмо.",
+        "de-DE": "Nach der Besprechung schickt mir der Kollege eine E-Mail."
+      }
+    },
+    {
+      "id": 1403,
+      "themeId": 4,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Прежде чем подписать договор, она внимательно проверила все условия.",
+        "de-DE": "Bevor sie den Vertrag unterschrieb, prüfte sie alle Bedingungen sorgfältig."
+      }
+    },
+    {
+      "id": 1501,
+      "themeId": 5,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Каждое утро я открываю окно.",
+        "de-DE": "Jeden Morgen öffne ich das Fenster."
+      }
+    },
+    {
+      "id": 1502,
+      "themeId": 5,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "После работы он делает покупки и убирает квартиру.",
+        "de-DE": "Nach der Arbeit kauft er ein und putzt die Wohnung."
+      }
+    },
+    {
+      "id": 1503,
+      "themeId": 5,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Мне пришлось поторопиться, потому что автобус уже ждал на остановке.",
+        "de-DE": "Ich musste mich beeilen, weil der Bus schon an der Haltestelle wartete."
+      }
+    },
+    {
+      "id": 1601,
+      "themeId": 6,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Солнце светит над зелёным лесом.",
+        "de-DE": "Die Sonne scheint über dem grünen Wald."
+      }
+    },
+    {
+      "id": 1602,
+      "themeId": 6,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "После дождя мы гуляли вдоль реки.",
+        "de-DE": "Nach dem Regen gingen wir am Fluss entlang spazieren."
+      }
+    },
+    {
+      "id": 1603,
+      "themeId": 6,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Когда поднялся сильный ветер, птицы спрятались среди деревьев.",
+        "de-DE": "Als ein starker Wind aufkam, versteckten sich die Vögel zwischen den Bäumen."
+      }
+    },
+    {
+      "id": 1701,
+      "themeId": 7,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Сегодня понедельник, и у меня есть час.",
+        "de-DE": "Heute ist Montag, und ich habe eine Stunde Zeit."
+      }
+    },
+    {
+      "id": 1702,
+      "themeId": 7,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "Вчера мы пришли поздно, а завтра встанем рано.",
+        "de-DE": "Gestern kamen wir spät, aber morgen stehen wir früh auf."
+      }
+    },
+    {
+      "id": 1703,
+      "themeId": 7,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "К тому времени, когда встреча закончилась, прошло почти сто минут.",
+        "de-DE": "Bis die Besprechung endete, waren fast hundert Minuten vergangen."
+      }
+    },
+    {
+      "id": 1801,
+      "themeId": 8,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "У меня болит голова.",
+        "de-DE": "Ich habe Kopfschmerzen."
+      }
+    },
+    {
+      "id": 1802,
+      "themeId": 8,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "Врач сказал, что мне нужно больше спать.",
+        "de-DE": "Der Arzt sagte, dass ich mehr schlafen müsse."
+      }
+    },
+    {
+      "id": 1803,
+      "themeId": 8,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Несмотря на лекарство, боль в спине не стала слабее.",
+        "de-DE": "Trotz des Medikaments wurden die Rückenschmerzen nicht schwächer."
+      }
+    },
+    {
+      "id": 1901,
+      "themeId": 9,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "В моей комнате есть стол и стул.",
+        "de-DE": "In meinem Zimmer stehen ein Tisch und ein Stuhl."
+      }
+    },
+    {
+      "id": 1902,
+      "themeId": 9,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "Мы ищем квартиру с большой кухней и садом.",
+        "de-DE": "Wir suchen eine Wohnung mit einer großen Küche und einem Garten."
+      }
+    },
+    {
+      "id": 1903,
+      "themeId": 9,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "После того как хозяин повысил аренду, семья решила переехать.",
+        "de-DE": "Nachdem der Vermieter die Miete erhöht hatte, beschloss die Familie umzuziehen."
+      }
+    },
+    {
+      "id": 2001,
+      "themeId": 10,
+      "level": "A1",
+      "translations": {
+        "ru-RU": "Вечером я читаю книгу.",
+        "de-DE": "Am Abend lese ich ein Buch."
+      }
+    },
+    {
+      "id": 2002,
+      "themeId": 10,
+      "level": "A2",
+      "translations": {
+        "ru-RU": "В выходные друзья ходят в театр или на концерт.",
+        "de-DE": "Am Wochenende gehen die Freunde ins Theater oder zu einem Konzert."
+      }
+    },
+    {
+      "id": 2003,
+      "themeId": 10,
+      "level": "B1",
+      "translations": {
+        "ru-RU": "Если бы погода была теплее, мы бы отправились в поход на велосипедах.",
+        "de-DE": "Wenn das Wetter wärmer wäre, würden wir eine Fahrradtour machen."
+      }
+    },
+    {
+      "id": 1100,
+      "themeId": 1,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Я пью воду.",
+        "de-DE": "Ich trinke Wasser."
+      }
+    },
+    {
+      "id": 1104,
+      "themeId": 1,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Хотя рецепт казался простым, вкус блюда зависел от качества каждого продукта.",
+        "de-DE": "Obwohl das Rezept einfach wirkte, hing der Geschmack des Gerichts von der Qualität jeder Zutat ab."
+      }
+    },
+    {
+      "id": 1105,
+      "themeId": 1,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "То, как общество говорит о еде, отражает не только привычки, но и представления о принадлежности.",
+        "de-DE": "Die Art, wie eine Gesellschaft über Essen spricht, spiegelt nicht nur Gewohnheiten, sondern auch Vorstellungen von Zugehörigkeit wider."
+      }
+    },
+    {
+      "id": 1106,
+      "themeId": 1,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Изысканность блюда проявилась не в редкости ингредиентов, а в едва уловимом равновесии их ароматов.",
+        "de-DE": "Die Raffinesse des Gerichts zeigte sich nicht in der Seltenheit seiner Zutaten, sondern im kaum wahrnehmbaren Gleichgewicht ihrer Aromen."
+      }
+    },
+    {
+      "id": 1200,
+      "themeId": 2,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Мою маму зовут Анна.",
+        "de-DE": "Meine Mutter heißt Anna."
+      }
+    },
+    {
+      "id": 1204,
+      "themeId": 2,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Даже когда поколения оценивают события по-разному, общие воспоминания помогают им понимать друг друга.",
+        "de-DE": "Selbst wenn die Generationen Ereignisse unterschiedlich bewerten, helfen gemeinsame Erinnerungen ihnen, einander zu verstehen."
+      }
+    },
+    {
+      "id": 1205,
+      "themeId": 2,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Семейные роли меняются по мере того, как жизненные планы отдельных людей вступают в противоречие с традиционными ожиданиями.",
+        "de-DE": "Familiäre Rollen verändern sich, sobald die Lebensentwürfe Einzelner mit traditionellen Erwartungen in Konflikt geraten."
+      }
+    },
+    {
+      "id": 1206,
+      "themeId": 2,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Близость, которую семья считает само собой разумеющейся, нередко требует особенно точного разграничения заботы и вмешательства.",
+        "de-DE": "Die Nähe, die eine Familie für selbstverständlich hält, verlangt nicht selten eine besonders präzise Abgrenzung zwischen Fürsorge und Einmischung."
+      }
+    },
+    {
+      "id": 1300,
+      "themeId": 3,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Это мой билет.",
+        "de-DE": "Das ist meine Fahrkarte."
+      }
+    },
+    {
+      "id": 1304,
+      "themeId": 3,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Поскольку рейс отменили без предупреждения, пассажиры потребовали понятного объяснения и подходящей замены.",
+        "de-DE": "Da der Flug ohne Vorwarnung gestrichen worden war, verlangten die Reisenden eine nachvollziehbare Erklärung und eine angemessene Alternative."
+      }
+    },
+    {
+      "id": 1305,
+      "themeId": 3,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Путешествие меняет взгляд на привычное, если человек не просто потребляет впечатления, а сравнивает разные способы жизни.",
+        "de-DE": "Reisen verändert den Blick auf das Vertraute, sofern man Eindrücke nicht bloß konsumiert, sondern unterschiedliche Lebensweisen miteinander vergleicht."
+      }
+    },
+    {
+      "id": 1306,
+      "themeId": 3,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Чужое место перестаёт быть декорацией лишь тогда, когда путешественник допускает, что его собственная перспектива ограниченна.",
+        "de-DE": "Ein fremder Ort hört erst dann auf, bloße Kulisse zu sein, wenn der Reisende zulässt, dass die eigene Perspektive begrenzt ist."
+      }
+    },
+    {
+      "id": 1400,
+      "themeId": 4,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Я работаю здесь.",
+        "de-DE": "Ich arbeite hier."
+      }
+    },
+    {
+      "id": 1404,
+      "themeId": 4,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Удалённая работа даёт больше свободы, однако требует ясных договорённостей о доступности и ответственности.",
+        "de-DE": "Fernarbeit schafft mehr Freiheit, erfordert jedoch klare Absprachen über Erreichbarkeit und Verantwortung."
+      }
+    },
+    {
+      "id": 1405,
+      "themeId": 4,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Организация остаётся способной к развитию лишь тогда, когда критические замечания воспринимаются как источник знаний, а не как угроза.",
+        "de-DE": "Eine Organisation bleibt nur dann entwicklungsfähig, wenn kritische Rückmeldungen als Wissensquelle und nicht als Bedrohung verstanden werden."
+      }
+    },
+    {
+      "id": 1406,
+      "themeId": 4,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Профессиональная компетентность проявляется не только в уверенных решениях, но и в способности точно обозначить границы собственного знания.",
+        "de-DE": "Berufliche Kompetenz zeigt sich nicht nur in sicheren Entscheidungen, sondern auch in der Fähigkeit, die Grenzen des eigenen Wissens präzise zu benennen."
+      }
+    },
+    {
+      "id": 1500,
+      "themeId": 5,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Сегодня хороший день.",
+        "de-DE": "Heute ist ein guter Tag."
+      }
+    },
+    {
+      "id": 1504,
+      "themeId": 5,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Чтобы повседневные обязанности не отнимали всё внимание, я заранее определяю, какие дела действительно важны.",
+        "de-DE": "Damit alltägliche Pflichten nicht meine ganze Aufmerksamkeit beanspruchen, lege ich vorher fest, welche Aufgaben tatsächlich wichtig sind."
+      }
+    },
+    {
+      "id": 1505,
+      "themeId": 5,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Привычки облегчают жизнь, но могут мешать изменениям, если их полезность больше никогда не подвергается сомнению.",
+        "de-DE": "Gewohnheiten erleichtern das Leben, können Veränderungen jedoch behindern, wenn ihr Nutzen nicht mehr hinterfragt wird."
+      }
+    },
+    {
+      "id": 1506,
+      "themeId": 5,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Повседневность кажется незаметной именно потому, что её повторяющиеся структуры формируют наше восприятие раньше, чем мы успеваем их осмыслить.",
+        "de-DE": "Der Alltag erscheint gerade deshalb unscheinbar, weil seine wiederkehrenden Strukturen unsere Wahrnehmung prägen, bevor wir sie reflektieren können."
+      }
+    },
+    {
+      "id": 1600,
+      "themeId": 6,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Дерево зелёное.",
+        "de-DE": "Der Baum ist grün."
+      }
+    },
+    {
+      "id": 1604,
+      "themeId": 6,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Даже небольшие природные территории в городе улучшают климат и дают животным необходимое убежище.",
+        "de-DE": "Selbst kleine Naturräume in der Stadt verbessern das Klima und bieten Tieren einen notwendigen Rückzugsort."
+      }
+    },
+    {
+      "id": 1605,
+      "themeId": 6,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Экологические меры принимаются охотнее, когда их долгосрочная польза объясняется так же конкретно, как и непосредственные расходы.",
+        "de-DE": "Ökologische Maßnahmen werden eher akzeptiert, wenn ihr langfristiger Nutzen ebenso konkret erläutert wird wie die unmittelbaren Kosten."
+      }
+    },
+    {
+      "id": 1606,
+      "themeId": 6,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Представление о нетронутой природе скрывает тот факт, что даже кажущиеся дикими ландшафты часто отмечены человеческими решениями.",
+        "de-DE": "Die Vorstellung einer unberührten Natur verdeckt, dass selbst vermeintlich wilde Landschaften häufig von menschlichen Entscheidungen geprägt sind."
+      }
+    },
+    {
+      "id": 1700,
+      "themeId": 7,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Сейчас два часа.",
+        "de-DE": "Es ist zwei Uhr."
+      }
+    },
+    {
+      "id": 1704,
+      "themeId": 7,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Хотя срок был известен давно, команда недооценила время, необходимое для последней проверки.",
+        "de-DE": "Obwohl der Termin lange bekannt war, unterschätzte das Team die Zeit, die für die abschließende Prüfung nötig war."
+      }
+    },
+    {
+      "id": 1705,
+      "themeId": 7,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Ощущение нехватки времени возникает не только из-за количества задач, но и из-за постоянного переключения внимания.",
+        "de-DE": "Das Gefühl des Zeitmangels entsteht nicht nur durch die Menge der Aufgaben, sondern auch durch den ständigen Wechsel der Aufmerksamkeit."
+      }
+    },
+    {
+      "id": 1706,
+      "themeId": 7,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Время воспринимается как дефицитный ресурс, хотя его ценность всякий раз определяется тем, чему мы сознательно позволяем длиться.",
+        "de-DE": "Zeit wird als knappe Ressource wahrgenommen, obwohl ihr Wert jedes Mal dadurch bestimmt wird, was wir bewusst dauern lassen."
+      }
+    },
+    {
+      "id": 1800,
+      "themeId": 8,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "У меня болит рука.",
+        "de-DE": "Meine Hand tut weh."
+      }
+    },
+    {
+      "id": 1804,
+      "themeId": 8,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Если симптомы сохраняются несколько дней, их следует обследовать, даже если они поначалу кажутся безобидными.",
+        "de-DE": "Wenn die Beschwerden mehrere Tage anhalten, sollten sie untersucht werden, auch wenn sie zunächst harmlos erscheinen."
+      }
+    },
+    {
+      "id": 1805,
+      "themeId": 8,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Профилактика эффективна прежде всего тогда, когда медицинская информация понятна и учитывает реальные условия жизни людей.",
+        "de-DE": "Prävention ist vor allem dann wirksam, wenn medizinische Informationen verständlich sind und die tatsächlichen Lebensbedingungen der Menschen berücksichtigen."
+      }
+    },
+    {
+      "id": 1806,
+      "themeId": 8,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Здоровье нельзя свести к отсутствию измеримых нарушений, поскольку субъективное благополучие также зависит от социальных и психологических условий.",
+        "de-DE": "Gesundheit lässt sich nicht auf das Fehlen messbarer Störungen reduzieren, da subjektives Wohlbefinden ebenso von sozialen und psychischen Bedingungen abhängt."
+      }
+    },
+    {
+      "id": 1900,
+      "themeId": 9,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Это мой дом.",
+        "de-DE": "Das ist mein Haus."
+      }
+    },
+    {
+      "id": 1904,
+      "themeId": 9,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Многие выбирают меньшую квартиру, если она хорошо связана с транспортом и снижает ежедневные расходы.",
+        "de-DE": "Viele entscheiden sich für eine kleinere Wohnung, wenn sie gut an den Verkehr angebunden ist und die täglichen Kosten senkt."
+      }
+    },
+    {
+      "id": 1905,
+      "themeId": 9,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Жилищная политика определяет не только цены, но и то, какие социальные группы могут оставаться частью городского сообщества.",
+        "de-DE": "Wohnungspolitik bestimmt nicht nur die Preise, sondern auch, welche sozialen Gruppen Teil der städtischen Gemeinschaft bleiben können."
+      }
+    },
+    {
+      "id": 1906,
+      "themeId": 9,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Дом становится местом принадлежности не благодаря неизменности, а благодаря следам перемен, которые его обитатели в нём оставляют.",
+        "de-DE": "Ein Zuhause wird nicht durch Unveränderlichkeit zum Ort der Zugehörigkeit, sondern durch die Spuren des Wandels, die seine Bewohner darin hinterlassen."
+      }
+    },
+    {
+      "id": 2000,
+      "themeId": 10,
+      "level": "A0",
+      "translations": {
+        "ru-RU": "Я читаю книгу.",
+        "de-DE": "Ich lese ein Buch."
+      }
+    },
+    {
+      "id": 2004,
+      "themeId": 10,
+      "level": "B2",
+      "translations": {
+        "ru-RU": "Свободное время восстанавливает силы только тогда, когда оно не превращается в ещё один список обязательных достижений.",
+        "de-DE": "Freizeit wirkt nur dann erholsam, wenn sie nicht zu einer weiteren Liste verpflichtender Leistungen wird."
+      }
+    },
+    {
+      "id": 2005,
+      "themeId": 10,
+      "level": "C1",
+      "translations": {
+        "ru-RU": "Культурные увлечения открывают новые перспективы, поскольку требуют временно принять правила и образы чужого опыта.",
+        "de-DE": "Kulturelle Interessen eröffnen neue Perspektiven, weil sie verlangen, sich vorübergehend auf die Regeln und Bilder fremder Erfahrungen einzulassen."
+      }
+    },
+    {
+      "id": 2006,
+      "themeId": 10,
+      "level": "C2",
+      "translations": {
+        "ru-RU": "Подлинная игра сохраняет ценность именно потому, что её смысл не исчерпывается измеримым результатом.",
+        "de-DE": "Echtes Spiel bewahrt seinen Wert gerade deshalb, weil sein Sinn sich nicht in einem messbaren Ergebnis erschöpft."
+      }
+    }
+  ],
+  "passages": [
+    {
+      "id": 5,
+      "key": "first_morning",
+      "titles": {
+        "ru-RU": "Первое утро",
+        "de-DE": "Der erste Morgen"
+      },
+      "kind": "Everyday",
+      "level": "A0",
+      "topic": "foundation",
+      "segments": [
+        {
+          "id": 5001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Меня зовут Лена.",
+            "de-DE": "Ich heiße Lena."
+          }
+        },
+        {
+          "id": 5002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Я живу в Берлине.",
+            "de-DE": "Ich wohne in Berlin."
+          }
+        },
+        {
+          "id": 5003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Утром я пью чай.",
+            "de-DE": "Am Morgen trinke ich Tee."
+          }
+        },
+        {
+          "id": 5004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Потом я учу немецкий.",
+            "de-DE": "Dann lerne ich Deutsch."
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "key": "market_visit",
+      "titles": {
+        "ru-RU": "На рынке",
+        "de-DE": "Auf dem Markt"
+      },
+      "kind": "Everyday",
+      "level": "A1",
+      "topic": "shopping",
+      "segments": [
+        {
+          "id": 6001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "В субботу Павел идёт на рынок.",
+            "de-DE": "Am Samstag geht Pawel auf den Markt."
+          }
+        },
+        {
+          "id": 6002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Он покупает яблоки, хлеб и сыр.",
+            "de-DE": "Er kauft Äpfel, Brot und Käse."
+          }
+        },
+        {
+          "id": 6003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Продавщица говорит ему цену.",
+            "de-DE": "Die Verkäuferin nennt ihm den Preis."
+          }
+        },
+        {
+          "id": 6004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Павел платит и благодарит её.",
+            "de-DE": "Pawel bezahlt und bedankt sich bei ihr."
+          }
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "key": "star_taler",
+      "titles": {
+        "ru-RU": "Звёздные талеры",
+        "de-DE": "Die Sterntaler"
+      },
+      "kind": "FairyTale",
+      "level": "A2",
+      "topic": "fairy-tale",
+      "segments": [
+        {
+          "id": 1001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Жила-была бедная девочка, у которой не осталось ни отца, ни матери.",
+            "de-DE": "Es war einmal ein armes Mädchen, das weder Vater noch Mutter hatte."
+          }
+        },
+        {
+          "id": 1002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Но она была добра и делилась последним хлебом с теми, кто был голоден.",
+            "de-DE": "Aber sie war gut und teilte ihr letztes Brot mit allen, die Hunger hatten."
+          }
+        },
+        {
+          "id": 1003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Ночью звёзды упали с неба и превратились в серебряные монеты.",
+            "de-DE": "In der Nacht fielen die Sterne vom Himmel und wurden zu silbernen Talern."
+          }
+        },
+        {
+          "id": 1004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "С тех пор девочке больше не приходилось голодать.",
+            "de-DE": "Von da an musste das Mädchen nie wieder Hunger leiden."
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "key": "berlin_morning",
+      "titles": {
+        "ru-RU": "Утро в Берлине",
+        "de-DE": "Ein Morgen in Berlin"
+      },
+      "kind": "Everyday",
+      "level": "B1",
+      "topic": "city",
+      "segments": [
+        {
+          "id": 2001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Каждое утро Марина едет на работу на трамвае и читает новости.",
+            "de-DE": "Jeden Morgen fährt Marina mit der Straßenbahn zur Arbeit und liest die Nachrichten."
+          }
+        },
+        {
+          "id": 2002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Сегодня транспорт задерживается, потому что в центре ремонтируют дорогу.",
+            "de-DE": "Heute verspätet sich der Verkehr, weil im Zentrum eine Straße repariert wird."
+          }
+        },
+        {
+          "id": 2003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Она выходит на остановку раньше и идёт оставшийся путь пешком.",
+            "de-DE": "Sie steigt eine Haltestelle früher aus und geht den restlichen Weg zu Fuß."
+          }
+        },
+        {
+          "id": 2004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Так у неё остаётся время выпить кофе перед первой встречей.",
+            "de-DE": "So bleibt ihr noch Zeit, vor der ersten Besprechung einen Kaffee zu trinken."
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "key": "sea_journey",
+      "titles": {
+        "ru-RU": "Путь через море",
+        "de-DE": "Der Weg über das Meer"
+      },
+      "kind": "Classic",
+      "level": "B2",
+      "topic": "journey",
+      "segments": [
+        {
+          "id": 3001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "На рассвете корабль покинул тихую гавань, и город медленно исчез в тумане.",
+            "de-DE": "Bei Tagesanbruch verließ das Schiff den stillen Hafen, und die Stadt verschwand langsam im Nebel."
+          }
+        },
+        {
+          "id": 3002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Путники молчали, словно каждый пытался сохранить в памяти последний образ берега.",
+            "de-DE": "Die Reisenden schwiegen, als versuche jeder, das letzte Bild der Küste im Gedächtnis zu bewahren."
+          }
+        },
+        {
+          "id": 3003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "К полудню ветер усилился и поднял волны, которые с грохотом разбивались о борт.",
+            "de-DE": "Gegen Mittag wurde der Wind stärker und türmte Wellen auf, die donnernd gegen den Rumpf schlugen."
+          }
+        },
+        {
+          "id": 3004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "И всё же горизонт впереди казался обещанием, а не угрозой.",
+            "de-DE": "Und doch erschien der Horizont vor ihnen wie ein Versprechen und nicht wie eine Drohung."
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "key": "odyssey_echo",
+      "titles": {
+        "ru-RU": "Эхо возвращения",
+        "de-DE": "Das Echo der Heimkehr"
+      },
+      "kind": "Classic",
+      "level": "C1",
+      "topic": "literature",
+      "segments": [
+        {
+          "id": 4001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Много лет он носил в себе образ родного острова, который становился яснее с каждой пройденной чужой землёй.",
+            "de-DE": "Viele Jahre trug er das Bild seiner Heimatinsel in sich, das mit jedem durchquerten fremden Land deutlicher wurde."
+          }
+        },
+        {
+          "id": 4002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Бури отнимали у него спутников, но не могли лишить его памяти о доме.",
+            "de-DE": "Die Stürme raubten ihm seine Gefährten, vermochten ihm jedoch nicht die Erinnerung an sein Zuhause zu nehmen."
+          }
+        },
+        {
+          "id": 4003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Когда берег наконец возник из сумерек, радость смешалась с осторожностью человека, слишком часто обманутого надеждой.",
+            "de-DE": "Als die Küste endlich aus der Dämmerung auftauchte, mischte sich die Freude mit der Vorsicht eines Mannes, den die Hoffnung zu oft getäuscht hatte."
+          }
+        },
+        {
+          "id": 4004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Он понял, что возвращение — это не конец пути, а встреча с тем, кем он стал в дороге.",
+            "de-DE": "Er begriff, dass die Heimkehr nicht das Ende des Weges war, sondern die Begegnung mit dem Menschen, zu dem er unterwegs geworden war."
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "key": "language_and_memory",
+      "titles": {
+        "ru-RU": "Язык и память",
+        "de-DE": "Sprache und Erinnerung"
+      },
+      "kind": "Classic",
+      "level": "C2",
+      "topic": "reflection",
+      "segments": [
+        {
+          "id": 7001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Воспоминание редко возвращается в неизменном виде; каждый рассказ незаметно перестраивает то, что претендует лишь сохранить.",
+            "de-DE": "Eine Erinnerung kehrt selten unverändert zurück; jede Erzählung ordnet unmerklich neu, was sie lediglich zu bewahren beansprucht."
+          }
+        },
+        {
+          "id": 7002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Язык не только описывает пережитое, но и определяет, какие его оттенки вообще становятся доступными сознанию.",
+            "de-DE": "Sprache beschreibt das Erlebte nicht nur, sondern bestimmt auch, welche seiner Nuancen dem Bewusstsein überhaupt zugänglich werden."
+          }
+        },
+        {
+          "id": 7003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Поэтому смена языка способна изменить дистанцию между человеком и его прошлым, не изменяя самих событий.",
+            "de-DE": "Deshalb kann ein Sprachwechsel die Distanz zwischen einem Menschen und seiner Vergangenheit verändern, ohne die Ereignisse selbst zu verändern."
+          }
+        },
+        {
+          "id": 7004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "В этой едва заметной перестройке раскрывается парадокс памяти: верность ей требует постоянного нового толкования.",
+            "de-DE": "In dieser kaum merklichen Neuordnung zeigt sich das Paradox der Erinnerung: Treue zu ihr verlangt fortwährende neue Deutung."
+          }
+        }
+      ]
+    }
+  ],
+  "grammarTasks": [
+    {
+      "id": 5,
+      "key": "basic_sentence",
+      "level": "A0",
+      "sourceText": "ich / Lena / heiße",
+      "instructions": {
+        "ru-RU": "Соберите простое немецкое предложение из слов.",
+        "de-DE": "Bilde aus den Wörtern einen einfachen Satz."
+      },
+      "markerRule": "basic-sentence"
+    },
+    {
+      "id": 6,
+      "key": "simple_negation",
+      "level": "A1",
+      "sourceText": "Ich habe einen Hund. Der Hund ist groß.",
+      "instructions": {
+        "ru-RU": "Отрицайте обе фразы с kein или nicht.",
+        "de-DE": "Verneine beide Sätze mit kein oder nicht."
+      },
+      "markerRule": "negation"
+    },
+    {
+      "id": 1,
+      "key": "perfekt_weekend",
+      "level": "A2",
+      "sourceText": "Am Samstag besuche ich meine Freundin. Wir kochen zusammen und sehen einen Film.",
+      "instructions": {
+        "ru-RU": "Перескажите текст в Perfekt.",
+        "de-DE": "Erzähle den Text im Perfekt nach."
+      },
+      "markerRule": "perfekt"
+    },
+    {
+      "id": 2,
+      "key": "passiv_letter",
+      "level": "B1",
+      "sourceText": "Die Mitarbeiter schreiben den Bericht und schicken ihn an die Kundin.",
+      "instructions": {
+        "ru-RU": "Перепишите текст в Passiv.",
+        "de-DE": "Schreibe den Text im Passiv."
+      },
+      "markerRule": "passiv"
+    },
+    {
+      "id": 3,
+      "key": "konjunktiv_trip",
+      "level": "B2",
+      "sourceText": "Ich habe mehr Zeit. Ich reise durch Deutschland und besuche meine Freunde.",
+      "instructions": {
+        "ru-RU": "Перескажите как нереальное желание с Konjunktiv II.",
+        "de-DE": "Formuliere einen irrealen Wunsch mit Konjunktiv II."
+      },
+      "markerRule": "konjunktiv2"
+    },
+    {
+      "id": 4,
+      "key": "indirect_speech",
+      "level": "B2",
+      "sourceText": "Anna sagt: „Ich bin müde und kann heute nicht kommen.“",
+      "instructions": {
+        "ru-RU": "Передайте высказывание в косвенной речи.",
+        "de-DE": "Gib die Aussage in indirekter Rede wieder."
+      },
+      "markerRule": "indirekte-rede"
+    },
+    {
+      "id": 7,
+      "key": "nominalisation_policy",
+      "level": "C1",
+      "sourceText": "Die Stadt erweitert den Nahverkehr, damit weniger Menschen mit dem Auto fahren.",
+      "instructions": {
+        "ru-RU": "Переформулируйте высказывание в номинальном стиле.",
+        "de-DE": "Formulieren Sie die Aussage im Nominalstil um."
+      },
+      "markerRule": "nominalisierung"
+    },
+    {
+      "id": 8,
+      "key": "participial_style",
+      "level": "C2",
+      "sourceText": "Die Ergebnisse wurden sorgfältig geprüft. Danach wurden sie in einem Bericht veröffentlicht.",
+      "instructions": {
+        "ru-RU": "Объедините высказывания, используя причастный оборот или расширенное определение.",
+        "de-DE": "Verbinden Sie die Aussagen mit einer Partizipialkonstruktion oder einem erweiterten Attribut."
+      },
+      "markerRule": "partizipialattribut"
+    }
+  ]
+}

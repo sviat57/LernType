@@ -1,0 +1,120 @@
+<UserControl x:Class="WortBruecke.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="OnLoaded"
+             AutomationProperties.Name="Настройки LernType">
+    <Grid Margin="48,36,48,48">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="24" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ПАРАМЕТРЫ" />
+            <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Настройки практики" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Border MaxWidth="880" Padding="38" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Языки и упражнения" />
+                            <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Пара v1 фиксирована, остальные параметры применяются ко всем новым сессиям." />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Активная языковая пара" />
+                            <Border Height="44" Margin="0,6,0,0" Padding="12,0" Background="{DynamicResource Brush.Sunken}"
+                                    BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}"
+                                    AutomationProperties.Name="Активная языковая пара">
+                                <TextBlock VerticalAlignment="Center" Text="Русский → Deutsch (ru-RU → de-DE)" />
+                            </Border>
+
+                            <Grid Margin="0,20,0,0">
+                                <TextBlock FontWeight="SemiBold" Text="Текст после каждых N слов" />
+                                <TextBlock HorizontalAlignment="Right" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding PassageFrequency}" />
+                            </Grid>
+                            <Slider Margin="0,8,0,0" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding PassageFrequency}" AutomationProperties.Name="Частота текстовых упражнений" />
+
+                            <TextBlock Margin="0,20,0,8" FontWeight="SemiBold" Text="Режим текста по умолчанию" />
+                            <ListBox Style="{StaticResource DifficultyList}" ItemsSource="{Binding PassageModes}" SelectedItem="{Binding SelectedPassageMode}" AutomationProperties.Name="Режим текста по умолчанию">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
+                                            <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding Description}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Раскладки Windows" />
+                            <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Обе должны быть установлены для автоматических переходов." />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <ItemsControl ItemsSource="{Binding LayoutStatuses}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                                <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding CultureCode}" />
+                                            </StackPanel>
+                                            <Border Grid.Column="1" Padding="10,5" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Pill}">
+                                                <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{Binding IsInstalled, Converter={StaticResource StatusBrushConverter}}" Text="{Binding Status}" />
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Grid Margin="0,6,0,0">
+                                <Button Width="170" HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshLayoutsCommand}" Content="Проверить снова" />
+                                <Button Width="220" HorizontalAlignment="Right" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWindowsSettingsCommand}" Content="Настройки языка Windows" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Внешний вид" />
+                            <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Тёмная тема снижает яркость, но сохраняет тёплый нейтральный тон." />
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Padding="0,8" VerticalAlignment="Top" FontSize="15" IsChecked="{Binding UseDarkTheme}" Content="Использовать тёмную тему" AutomationProperties.Name="Использовать тёмную тему" />
+                    </Grid>
+
+                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="TELC и LLM" />
+                            <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Ключ хранится локально и шифруется Windows DPAPI для текущего пользователя." />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Модель OpenAI" Target="{Binding ElementName=ModelBox}" />
+                            <TextBox x:Name="ModelBox" Margin="0,6,0,0" Text="{Binding ApiModel, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Модель OpenAI" />
+                            <Label Margin="0,18,0,0" Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="API-ключ" Target="{Binding ElementName=ApiKeyBox}" />
+                            <PasswordBox x:Name="ApiKeyBox" Margin="0,6,0,0" PasswordChanged="OnPasswordChanged" AutomationProperties.Name="API-ключ OpenAI" />
+                            <TextBlock Margin="0,7,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextTertiary}" Text="Ключ не записывается в appsettings.json и не попадает в Git." />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,32,0,0">
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource Brush.Success}" Text="{Binding SaveStatus}" AutomationProperties.LiveSetting="Polite" />
+                        <Button Width="220" HorizontalAlignment="Right" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" AutomationProperties.Name="Сохранить настройки">
+                            <TextBlock Style="{StaticResource ButtonContentText}" Text="Сохранить настройки" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

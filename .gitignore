@@ -1,0 +1,28 @@
+bin/
+obj/
+.vs/
+.idea/
+.vscode/
+.tools/
+*.user
+*.suo
+*.db
+*.db-shm
+*.db-wal
+artifacts/
+TestResults/
+src/WortBruecke.App/appsettings.local.json
+
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini

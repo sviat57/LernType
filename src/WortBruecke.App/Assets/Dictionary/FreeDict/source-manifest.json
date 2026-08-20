@@ -1,0 +1,27 @@
+{
+  "name": "FreeDict+WikDict Russian–German / German–Russian",
+  "edition": "2025.11.23",
+  "license": "CC BY-SA 3.0 Unported",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+  "conversionDate": "2026-08-12",
+  "sqliteSha256": "d58f22014ebff208f521d2166c871d07f83ff7f64ecbfa6aed677b76035c7d67",
+  "sources": [
+    {
+      "pair": "rus-deu",
+      "headwords": 23850,
+      "url": "https://download.freedict.org/dictionaries/rus-deu/2025.11.23/freedict-rus-deu-2025.11.23.src.tar.xz",
+      "sha512": "e6b4749893bd52dd76b0e4c933a3cf765ebc7bcd881dff36096016ddf5dfe35d93b8e0a379c87db28711d61332c6545068113dc853601ebb96475a84bef8a394"
+    },
+    {
+      "pair": "deu-rus",
+      "headwords": 26809,
+      "url": "https://download.freedict.org/dictionaries/deu-rus/2025.11.23/freedict-deu-rus-2025.11.23.src.tar.xz",
+      "sha512": "7d4e69d1373f71bb97cd2ea2e240affccf17b419ce9b19b3c946dda5356c07988f803fe32281a7f9cd745fff946c8ed2f42f52227391676b9ba4a53e0d56fe83"
+    }
+  ],
+  "rows": {
+    "rus-deu": 39084,
+    "deu-rus": 38694
+  },
+  "transformation": "TEI P5 converted to indexed SQLite; markup removed; Unicode lookup keys normalized; duplicate rows merged."
+}

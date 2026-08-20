@@ -1,0 +1,42 @@
+<Window x:Class="WortBruecke.App.LayoutSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Нужны раскладки клавиатуры"
+        Width="620" Height="500" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        AutomationProperties.Name="Настройка раскладок LernType">
+    <Grid Margin="48">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <StackPanel>
+            <Border Width="56" Height="56" HorizontalAlignment="Left" Background="{DynamicResource Brush.WarningSoft}" CornerRadius="16">
+                <Path Width="28" Height="28" Data="{StaticResource Icon.Keyboard}" Stroke="{DynamicResource Brush.Warning}" StrokeThickness="1.8" Stretch="Uniform" />
+            </Border>
+            <TextBlock Margin="0,24,0,0" Style="{StaticResource PageTitle}" Text="Добавьте две раскладки" />
+            <TextBlock Margin="0,12,0,0" Style="{StaticResource BodySecondary}"
+                       Text="Для автоматического перехода между полями LernType нужны русская и немецкая раскладки Windows. Приложение не устанавливает их без вашего участия." />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,28,0,0">
+            <Border Padding="16" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Card}">
+                <ItemsControl x:Name="LayoutList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,6">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
+                                <TextBlock Grid.Column="1" Foreground="{DynamicResource Brush.Error}" Text="Не установлена" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+            <TextBlock x:Name="RetryMessage" Margin="0,12,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Button Style="{StaticResource SecondaryButton}" Click="OpenSettings" Content="Открыть настройки Windows" />
+            <Button Grid.Column="2" Style="{StaticResource PrimaryButton}" Click="Retry" Content="Проверить снова" />
+        </Grid>
+    </Grid>
+</Window>

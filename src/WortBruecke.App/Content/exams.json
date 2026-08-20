@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 1,
+  "lastVerified": "2026-08-20",
+  "language": "de",
+  "coverage": {
+    "learningRange": ["A0", "A1", "A2", "B1", "B2", "C1", "C2"],
+    "officialExamRange": ["A1", "A2", "B1", "B2", "C1", "C2"],
+    "noteRu": "A0 — внутренний подготовительный этап LernType (Pre-A1), а не уровень официального сертификата. Официальные экзамены в этом каталоге начинаются с A1.",
+    "durationConvention": "durationMinutes описывает рабочее время сегмента. Перерывы, подготовка к устной части и административное время хранятся отдельно. Значения с approximate=true являются приблизительными.",
+    "readinessDisclaimerRu": "Результат тренировки показывает готовность по формату, но не гарантирует сертификат или поступление. Перед регистрацией необходимо сверить актуальные правила у владельца экзамена."
+  },
+  "legal": {
+    "affiliation": "independent",
+    "noticeRu": "Goethe-Institut, Goethe-Zertifikat, telc, TestDaF и Deutsch-Test für Zuwanderer используются только как справочные названия соответствующих экзаменов. LernType не аффилирован с их владельцами и не выдает официальные сертификаты.",
+    "contentPolicyRu": "Каталог хранит только факты о формате и педагогические цели. Оригинальные задания, аудио, логотипы и оценочные материалы правообладателей в приложение не включаются; тренировочные задания должны быть авторскими.",
+    "maintenanceRu": "Проверять источники перед каждым релизом приложения и не реже одного раза в 6 месяцев; изменения формата оформлять новой ревизией каталога."
+  },
+  "learningStages": [
+    {
+      "level": "A0",
+      "officialCertificate": false,
+      "trainingTargets": ["latin-alphabet", "german-letter-sound-mapping", "umlauts-and-eszett", "basic-typing", "greetings", "numbers-0-100", "classroom-instructions"]
+    },
+    {
+      "level": "A1",
+      "officialCertificate": true,
+      "trainingTargets": ["personal-data", "forms", "signs-and-notices", "slow-everyday-audio", "short-personal-message", "self-introduction", "simple-requests"]
+    },
+    {
+      "level": "A2",
+      "officialCertificate": true,
+      "trainingTargets": ["routine-exchanges", "short-news-and-emails", "announcements", "everyday-messages", "describe-life", "make-arrangements"]
+    },
+    {
+      "level": "B1",
+      "officialCertificate": true,
+      "trainingTargets": ["connected-everyday-text", "main-points-and-details", "formal-and-personal-email", "forum-opinion", "short-presentation", "collaborative-planning"]
+    },
+    {
+      "level": "B2",
+      "officialCertificate": true,
+      "trainingTargets": ["complex-concrete-and-abstract-text", "natural-speed-audio", "argumentation", "register-aware-formal-message", "presentation", "debate-and-counterargument"]
+    },
+    {
+      "level": "C1",
+      "officialCertificate": true,
+      "trainingTargets": ["implicit-meaning", "long-complex-text", "lecture-and-podcast-notes", "source-synthesis", "academic-and-professional-register", "structured-controversial-discussion"]
+    },
+    {
+      "level": "C2",
+      "officialCertificate": true,
+      "trainingTargets": ["dense-and-stylistically-complex-text", "natural-speed-expert-audio", "precise-reformulation", "genre-and-register-control", "complex-presentation", "nuanced-spontaneous-debate"]
+    }
+  ],
+  "skillTaxonomy": [
+    "reading",
+    "listening",
+    "writing",
+    "speaking",
+    "language-elements",
+    "mediation",
+    "pronunciation",
+    "interaction",
+    "digital-exam-literacy"
+  ],
+  "rubrics": {
+    "goethe-productive": {
+      "writing": ["task-fulfilment", "register-and-sociocultural-appropriacy", "coherence", "vocabulary-range-and-control", "grammatical-range-and-control"],
+      "speaking": ["task-fulfilment", "coherence", "fluency", "interaction", "register", "vocabulary-range-and-control", "grammatical-range-and-control", "pronunciation-and-intonation"]
+    },
+    "telc-productive": {
+      "writing": ["task-achievement", "communicative-design-and-coherence", "formal-accuracy"],
+      "speaking": ["task-achievement", "interaction", "fluency", "repertoire", "grammatical-accuracy", "pronunciation-and-intonation"]
+    },
+    "testdaf-productive": {
+      "writing": ["topic-and-prompt-coverage", "required-language-actions", "source-accuracy-and-paraphrase", "structure", "precision-and-register", "grammar-and-vocabulary-range", "intelligibility"],
+      "speaking": ["topic-and-prompt-coverage", "situation-appropriate-language-actions", "source-accuracy-and-summary", "fluency-and-clarity", "pronunciation-and-intonation", "precision-and-register", "grammar-and-vocabulary-range", "intelligibility"]
+    },
+    "dtz-productive": {
+      "writing": ["content-appropriacy", "communicative-design", "vocabulary-range-and-control", "grammatical-accuracy", "orthography"],
+      "speaking": ["task-and-language-action-achievement", "pronunciation-and-intonation", "fluency", "grammatical-accuracy", "vocabulary-range-and-control"]
+    }
+  },
+  "appCapabilitiesRequired": [
+    "timed-section-and-full-mock-modes",
+    "four-skill-training-at-every-certified-level",
+    "multiple-choice-matching-gap-ordering-and-short-answer-items",
+    "natural-speed-audio-and-video-with-configurable-replay-policy",
+    "writing-editor-with-word-count-register-and-source-synthesis-prompts",
+    "recorded-speaking-with-preparation-and-response-timers",
+    "pair-interaction-simulation-for-planning-discussion-and-negotiation",
+    "rubric-feedback-separated-from-official-score-claims",
+    "per-skill-readiness-history-and-error-analysis",
+    "exam-mode-with-feedback-hidden-until-the-end",
+    "keyboard-only-digital-exam-practice-and-no-backtracking-where-required",
+    "original-prompts-and-media-only"
+  ],
+  "providers": [
+    {"id": "goethe", "name": "Goethe-Institut", "officialHost": "goethe.de"},
+    {"id": "telc", "name": "telc gGmbH", "officialHost": "telc.net"},
+    {"id": "gast", "name": "g.a.s.t.", "officialHost": "testdaf.de"},
+    {"id": "bamf", "name": "Bundesamt für Migration und Flüchtlinge", "officialHost": "bamf.de"}
+  ],
+  "sources": [
+    {"id": "goethe-a1-format", "title": "Goethe-Zertifikat A1: Start Deutsch 1 – exam sections", "url": "https://www.goethe.de/ins/de/de/prf/prf/gzsd1/inf.html"},
+    {"id": "goethe-a2-format", "title": "Goethe-Zertifikat A2 – exam sections", "url": "https://www.goethe.de/ins/de/en/m/prf/prf/gzsd2/wi2.html"},
+    {"id": "goethe-b1-format", "title": "Goethe-Zertifikat B1 – modules", "url": "https://www.goethe.de/ins/de/en/prf/prf/gzb1/inf.html"},
+    {"id": "goethe-b2-format", "title": "Goethe-Zertifikat B2 – modules", "url": "https://www.goethe.de/ins/de/en/m/prf/prf/gzb2/wi9.html"},
+    {"id": "goethe-c1-format", "title": "Goethe-Zertifikat C1 – modules", "url": "https://www.goethe.de/ins/de/de/prf/prf/gzc1/w24.html"},
+    {"id": "goethe-c2-format", "title": "Goethe-Zertifikat C2 – modules", "url": "https://www.goethe.de/ins/be/en/spr/prf/gzc2/inf.html"},
+    {"id": "goethe-results", "title": "Goethe-Institut – passing thresholds overview", "url": "https://www.goethe.de/en/spr/prf/pes.html"},
+    {"id": "goethe-b2-writing-rubric", "title": "Goethe-Zertifikat B2 model test – writing criteria", "url": "https://bfu.goethe.de/b2_mod_2MX6/schreiben.php"},
+    {"id": "goethe-b2-speaking-rubric", "title": "Goethe-Zertifikat B2 model test – speaking criteria", "url": "https://bfu.goethe.de/b2_mod_2MX6/sprechen.php"},
+    {"id": "telc-a1-format", "title": "Start Deutsch 1 / telc Deutsch A1 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/start-german1-telc-german-a1/"},
+    {"id": "telc-a1-mock", "title": "telc Deutsch A1 official mock examination", "url": "https://shop.telc.net/media/catalog/product/file/2/0/20210103_5070-b00-010106_web_1.pdf"},
+    {"id": "telc-a2-format", "title": "Start Deutsch 2 / telc Deutsch A2 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/start-german-2-telc-german-a2/"},
+    {"id": "telc-a2-mock", "title": "telc Deutsch A2 official mock examination", "url": "https://shop.telc.net/media/catalog/product/file/t/e/telc_deutsch_a2_uebungstest_1-1_20241212_5090-b00-010107.pdf"},
+    {"id": "telc-b1-format", "title": "Zertifikat Deutsch / telc Deutsch B1 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/certificate-german-telc-german-b1/"},
+    {"id": "telc-b1-scoring", "title": "Zertifikat Deutsch / telc Deutsch B1 official mock – format and scoring", "url": "https://shop.telc.net/media/catalog/product/file/telc_deutsch_b1_zd_uebungstest_1.pdf"},
+    {"id": "telc-b2-format", "title": "telc Deutsch B2 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/telc-german-b2/"},
+    {"id": "telc-b2-mock", "title": "telc Deutsch B2 official mock – scoring", "url": "https://shop.telc.net/media/catalog/product/file/2/0/20201223_5023-b00-010201_web.pdf"},
+    {"id": "telc-b2-rubric", "title": "telc Deutsch B2 official preparation tips – criteria", "url": "https://www.telc.net/fileadmin/user_upload/pdfs/Handbuch_und_Tipps_fuer_Pruefungsvorbereitung/Deutsch_B2_tipps_zur_Pruefungsvorbereitung.pdf"},
+    {"id": "telc-c1-format", "title": "telc Deutsch C1 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/telc-german-c1/"},
+    {"id": "telc-c1-mock", "title": "telc Deutsch C1 official mock – scoring", "url": "https://shop.telc.net/media/catalog/product/file/2/0/20201224_5029-b00-010101_web_2.pdf"},
+    {"id": "telc-c2-format", "title": "telc Deutsch C2 – structure", "url": "https://www.telc.net/en/language-examinations/certificate-exams/german/telc-german-c2/"},
+    {"id": "telc-c2-mock", "title": "telc Deutsch C2 official mock – scoring", "url": "https://shop.telc.net/media/catalog/product/file/2/0/20210102_5002-b00-010101_jc_web.pdf"},
+    {"id": "testdaf-format", "title": "Digital TestDaF – test structure", "url": "https://www.testdaf.de/de/teilnehmende/der-digitale-testdaf/aufbau-des-digitalen-testdaf/"},
+    {"id": "testdaf-scoring", "title": "Digital TestDaF – assessment and TDN scale", "url": "https://www.testdaf.de/de/teilnehmende/der-digitale-testdaf/auswertung-des-digitalen-testdaf/"},
+    {"id": "testdaf-profile", "title": "TestDaF – required abilities and CEFR relationship", "url": "https://www.testdaf.de/de/teilnehmende/warum-testdaf/das-muessen-sie-koennen/"},
+    {"id": "dtz-handbook", "title": "BAMF – Deutsch-Test für Zuwanderer handbook", "url": "https://www.bamf.de/SharedDocs/Anlagen/DE/Integration/Integrationskurse/Kurstraeger/Modellsaetze/dtz-handbuch_pdf.pdf?__blob=publicationFile&v=8"}
+  ],
+  "exams": [
+    {
+      "id": "goethe-a1-adults",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat A1: Start Deutsch 1",
+      "cefrLevels": ["A1"],
+      "purpose": ["general", "adult"],
+      "delivery": ["paper", "online-at-authorized-setting"],
+      "partialExamAvailable": false,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 25, "taskFamilies": ["short-notes", "classified-ads", "signs", "notices"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 20, "taskFamilies": ["everyday-dialogue", "telephone-message", "public-announcement"]},
+        {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 20, "taskFamilies": ["form-completion", "short-personal-text"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "groupFormat": true, "taskFamilies": ["self-introduction", "ask-and-answer", "make-a-request"]}
+      ],
+      "scoring": {"type": "whole-exam-threshold", "maxPoints": 100, "passPoints": 60, "passPercent": 60, "conditions": ["all-sections-taken"]},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["read-functional-microtexts", "listen-for-key-detail-in-slow-audio", "complete-personal-form", "write-short-everyday-message", "record-introduction-and-request", "group-turn-taking-simulation"],
+      "sourceRefs": ["goethe-a1-format", "goethe-results"]
+    },
+    {
+      "id": "goethe-a2-adults",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat A2",
+      "cefrLevels": ["A2"],
+      "purpose": ["general", "adult"],
+      "delivery": ["paper"],
+      "partialExamAvailable": false,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["short-news", "email", "advertisement", "public-information-board"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["everyday-dialogue", "radio-interview", "telephone-message", "public-announcement"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["everyday-message"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "pairFormat": true, "taskFamilies": ["personal-questions", "describe-own-life", "make-arrangements"]}
+      ],
+      "scoring": {"type": "whole-exam-with-component-thresholds", "maxPoints": 100, "passPoints": 60, "writtenMaxPoints": 75, "writtenPassPoints": 45, "oralMaxPoints": 25, "oralPassPoints": 15, "conditions": ["all-sections-taken"]},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["scan-short-mixed-texts", "listen-for-main-point-and-detail", "write-situational-message", "personal-question-drills", "paired-planning-simulation"],
+      "sourceRefs": ["goethe-a2-format", "goethe-results"]
+    },
+    {
+      "id": "goethe-b1",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat B1",
+      "cefrLevels": ["B1"],
+      "purpose": ["general", "adult", "youth"],
+      "delivery": ["paper", "digital-at-test-center"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["blog", "email", "newspaper-article", "advertisement", "instruction"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["announcement", "short-presentation", "informal-conversation", "radio-discussion"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 60, "taskFamilies": ["personal-email", "formal-email", "forum-opinion"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 1, "durationMinutes": 15, "approximate": true, "pairFormat": true, "taskFamilies": ["plan-together", "everyday-presentation", "answer-questions"]}
+      ],
+      "scoring": {"type": "independent-modules", "moduleMaxPoints": 100, "modulePassPoints": 60, "modulePassPercent": 60},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["timed-independent-module-mode", "opinion-and-detail-reading", "natural-standard-audio", "personal-and-formal-email", "forum-argument", "presentation-with-follow-up", "collaborative-planning"],
+      "sourceRefs": ["goethe-b1-format", "goethe-results"]
+    },
+    {
+      "id": "goethe-b2",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat B2",
+      "cefrLevels": ["B2"],
+      "purpose": ["general", "study", "work"],
+      "delivery": ["paper", "digital-at-test-center"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["forum-post", "press-article", "commentary", "instruction"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["interview", "presentation", "conversation", "radio-broadcast"]},
+        {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 75, "taskFamilies": ["social-topic-forum-post", "formal-professional-message"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 15, "pairFormat": true, "taskFamilies": ["short-presentation", "discussion", "exchange-arguments"]}
+      ],
+      "scoring": {"type": "independent-modules", "moduleMaxPoints": 100, "modulePassPoints": 60, "modulePassPercent": 60},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["timed-independent-module-mode", "viewpoint-comparison", "listen-for-argument-structure", "justified-forum-opinion", "register-aware-work-message", "presentation-and-counterargument"],
+      "sourceRefs": ["goethe-b2-format", "goethe-results", "goethe-b2-writing-rubric", "goethe-b2-speaking-rubric"]
+    },
+    {
+      "id": "goethe-c1",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat C1",
+      "cefrLevels": ["C1"],
+      "purpose": ["general", "study", "work"],
+      "delivery": ["paper", "digital-at-test-center"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["online-article", "newspaper-article", "magazine-contribution", "viewpoint-analysis"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["podcast", "interview", "discussion", "lecture"]},
+        {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 75, "taskFamilies": ["current-social-topic-forum-post", "register-controlled-formal-message"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 20, "pairFormat": true, "taskFamilies": ["complex-topic-presentation", "controversial-discussion"]}
+      ],
+      "scoring": {"type": "independent-modules", "moduleMaxPoints": 100, "modulePassPoints": 60, "modulePassPercent": 60},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["timed-independent-module-mode", "implicit-viewpoint-reading", "lecture-and-podcast-notes", "complex-forum-argument", "style-and-register-variation", "complex-presentation", "controversial-pair-discussion"],
+      "sourceRefs": ["goethe-c1-format", "goethe-results"]
+    },
+    {
+      "id": "goethe-c2",
+      "providerId": "goethe",
+      "name": "Goethe-Zertifikat C2: Großes Deutsches Sprachdiplom",
+      "cefrLevels": ["C2"],
+      "purpose": ["general", "study", "work"],
+      "delivery": ["paper", "digital-at-test-center"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 80, "taskFamilies": ["complex-nonfiction", "literary-and-stylistic-analysis", "precise-detail-and-implication"]},
+        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 35, "approximate": true, "taskFamilies": ["media-report", "informal-discussion", "expert-interview"]},
+        {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 80, "taskFamilies": ["reformulation", "letter-to-editor", "book-review-or-general-essay"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 15, "approximate": true, "taskFamilies": ["complex-presentation", "defend-position-in-discussion"]}
+      ],
+      "scoring": {"type": "independent-modules", "moduleMaxPoints": 100, "modulePassPoints": 60, "modulePassPercent": 60},
+      "rubricRefs": ["goethe-productive"],
+      "appTrainingRequirements": ["timed-independent-module-mode", "dense-text-and-implicit-meaning", "natural-speed-expert-audio", "precise-reformulation", "genre-controlled-long-writing", "complex-presentation-with-probing-questions", "nuanced-persuasion-and-rebuttal"],
+      "sourceRefs": ["goethe-c2-format", "goethe-results"]
+    },
+    {
+      "id": "telc-a1-general",
+      "providerId": "telc",
+      "name": "Start Deutsch 1 / telc Deutsch A1",
+      "cefrLevels": ["A1"],
+      "purpose": ["general"],
+      "delivery": ["paper"],
+      "partialExamAvailable": false,
+      "segments": [
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 20, "approximate": true, "taskFamilies": ["multiple-choice", "matching"]},
+        {"id": "reading-writing", "skills": ["reading", "writing"], "parts": 5, "durationMinutes": 45, "taskFamilies": ["functional-reading", "matching", "form-completion", "prompted-short-writing"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "approximate": true, "groupFormat": true, "preparationMinutes": 0, "taskFamilies": ["self-introduction", "request-and-give-information", "make-and-answer-request"]}
+      ],
+      "scoring": {"type": "whole-exam-threshold", "maxPoints": 60, "passPoints": 36, "passPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["prompt-and-picture-response", "functional-reading", "short-form-writing", "listen-and-select", "four-person-turn-taking-simulation", "no-preparation-speaking"],
+      "sourceRefs": ["telc-a1-format", "telc-a1-mock"]
+    },
+    {
+      "id": "telc-a2-general",
+      "providerId": "telc",
+      "name": "Start Deutsch 2 / telc Deutsch A2",
+      "cefrLevels": ["A2"],
+      "purpose": ["general"],
+      "delivery": ["paper"],
+      "partialExamAvailable": false,
+      "segments": [
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 20, "approximate": true, "taskFamilies": ["multiple-choice", "matching"]},
+        {"id": "reading-writing", "skills": ["reading", "writing"], "parts": 5, "durationMinutes": 50, "taskFamilies": ["short-text-comprehension", "matching", "prompted-writing"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "approximate": true, "pairFormat": true, "preparationMinutes": 0, "taskFamilies": ["personal-information", "describe-and-respond", "plan-or-negotiate"]}
+      ],
+      "scoring": {"type": "whole-exam-threshold", "maxPoints": 60, "passPoints": 36, "passPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["receptive-multiple-choice-and-matching", "prompted-everyday-writing", "paired-spontaneous-interaction", "no-preparation-speaking"],
+      "sourceRefs": ["telc-a2-format", "telc-a2-mock"]
+    },
+    {
+      "id": "telc-b1-general",
+      "providerId": "telc",
+      "name": "Zertifikat Deutsch / telc Deutsch B1",
+      "cefrLevels": ["B1"],
+      "purpose": ["general"],
+      "delivery": ["paper", "computer-at-test-center"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading-language-elements", "skills": ["reading", "language-elements"], "parts": 5, "durationMinutes": 90, "taskFamilies": ["multiple-choice", "matching", "gap-fill"]},
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 30, "approximate": true, "taskFamilies": ["multiple-choice", "matching"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["input-based-letter-or-email"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "approximate": true, "pairFormat": true, "preparationMinutes": 20, "taskFamilies": ["social-contact", "topic-discussion", "plan-together"]}
+      ],
+      "scoring": {"type": "written-and-oral-thresholds", "maxPoints": 300, "passPoints": 180, "writtenMaxPoints": 225, "writtenPassPoints": 135, "oralMaxPoints": 75, "oralPassPoints": 45, "componentPassPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["language-elements-gap-fill", "timed-receptive-block", "input-based-letter", "pair-discussion", "plan-together", "speaking-preparation-timer"],
+      "sourceRefs": ["telc-b1-format", "telc-b1-scoring"]
+    },
+    {
+      "id": "telc-b2-general",
+      "providerId": "telc",
+      "name": "telc Deutsch B2",
+      "cefrLevels": ["B2"],
+      "purpose": ["general"],
+      "delivery": ["paper", "digital-at-test-center", "hybrid"],
+      "partialExamAvailable": true,
+      "segments": [
+        {"id": "reading-language-elements", "skills": ["reading", "language-elements"], "parts": 5, "durationMinutes": 90, "taskFamilies": ["multiple-choice", "matching", "gap-fill"]},
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 20, "approximate": true, "taskFamilies": ["main-idea", "detail", "speaker-position"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["input-based-formal-or-semiformal-writing"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "approximate": true, "pairFormat": true, "preparationMinutes": 20, "taskFamilies": ["presentation", "discussion", "plan-or-negotiate"]}
+      ],
+      "scoring": {"type": "written-and-oral-thresholds", "maxPoints": 300, "passPoints": 180, "writtenMaxPoints": 225, "writtenPassPoints": 135, "oralMaxPoints": 75, "oralPassPoints": 45, "componentPassPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["language-elements-in-context", "mixed-receptive-timed-block", "register-controlled-input-response", "paired-presentation-and-discussion", "criterion-based-writing-feedback", "speaking-preparation-timer"],
+      "sourceRefs": ["telc-b2-format", "telc-b2-mock", "telc-b2-rubric"]
+    },
+    {
+      "id": "telc-c1-general",
+      "providerId": "telc",
+      "name": "telc Deutsch C1",
+      "cefrLevels": ["C1"],
+      "purpose": ["general"],
+      "delivery": ["paper", "digital-at-test-center", "hybrid"],
+      "partialExamAvailable": true,
+      "breakMinutes": 20,
+      "segments": [
+        {"id": "reading-language-elements", "skills": ["reading", "language-elements"], "parts": 4, "durationMinutes": 90, "taskFamilies": ["complex-text-matching", "multiple-choice", "language-elements"]},
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 40, "approximate": true, "taskFamilies": ["complex-audio-main-point", "detail", "speaker-position"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 70, "taskFamilies": ["complex-input-based-argumentative-text"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 16, "approximate": true, "pairFormat": true, "preparationMinutes": 20, "taskFamilies": ["presentation", "follow-up", "discussion"]}
+      ],
+      "scoring": {"type": "written-and-oral-thresholds", "maxPoints": 214, "passPoints": 128, "writtenMaxPoints": 165, "writtenPassPoints": 99, "oralMaxPoints": 49, "oralPassPoints": 29, "componentPassPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["complex-language-elements", "long-receptive-block", "sustained-argumentative-writing", "pair-presentation-and-discussion", "register-and-cohesion-feedback", "full-break-aware-mock"],
+      "sourceRefs": ["telc-c1-format", "telc-c1-mock"]
+    },
+    {
+      "id": "telc-c2-general",
+      "providerId": "telc",
+      "name": "telc Deutsch C2",
+      "cefrLevels": ["C2"],
+      "purpose": ["general"],
+      "delivery": ["paper", "digital-at-test-center", "hybrid"],
+      "partialExamAvailable": true,
+      "breakMinutes": 20,
+      "segments": [
+        {"id": "reading", "skills": ["reading"], "parts": 3, "durationMinutes": 80, "taskFamilies": ["dense-complex-reading", "multiple-choice", "matching"]},
+        {"id": "listening-integrated-writing", "skills": ["listening", "writing", "mediation"], "parts": 1, "durationMinutes": 60, "taskFamilies": ["listen-and-produce-written-response"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 90, "taskFamilies": ["extended-precise-genre-controlled-text"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 15, "approximate": true, "individualFormat": true, "preparationMinutes": 20, "taskFamilies": ["complex-presentation", "expert-level-discussion"]}
+      ],
+      "scoring": {"type": "written-and-oral-thresholds", "maxPoints": 160, "passPoints": 96, "writtenMaxPoints": 120, "writtenPassPoints": 72, "oralMaxPoints": 40, "oralPassPoints": 24, "componentPassPercent": 60},
+      "rubricRefs": ["telc-productive"],
+      "appTrainingRequirements": ["dense-reading-under-time", "integrated-listen-and-write", "extended-genre-controlled-writing", "solo-presentation", "expert-level-discussion", "precision-and-style-feedback", "full-break-aware-mock"],
+      "sourceRefs": ["telc-c2-format", "telc-c2-mock"]
+    },
+    {
+      "id": "testdaf-digital",
+      "providerId": "gast",
+      "name": "Digitaler TestDaF",
+      "cefrLevels": ["B2", "C1"],
+      "reportedScale": ["under-TDN3", "TDN3", "TDN4", "TDN5"],
+      "purpose": ["university-admission", "academic"],
+      "delivery": ["computer-at-test-center"],
+      "partialExamAvailable": false,
+      "navigationPolicy": "fixed-order-no-return-to-previous-task",
+      "segments": [
+        {"id": "reading", "skills": ["reading", "digital-exam-literacy"], "parts": 7, "items": 34, "durationMinutes": 55, "approximate": true, "taskFamilies": ["gap-fill", "order-paragraphs", "multiple-choice", "match-language-actions", "categorize-statements", "detect-summary-errors", "compare-text-and-graphic"]},
+        {"id": "listening", "skills": ["listening", "writing", "digital-exam-literacy"], "parts": 7, "items": 30, "durationMinutes": 40, "approximate": true, "taskFamilies": ["typed-short-answer", "detect-summary-errors", "match-speakers", "lecture-outline-notes", "multiple-choice", "compare-audio-and-transcript"]},
+        {"id": "writing", "skills": ["writing", "mediation", "digital-exam-literacy"], "parts": 2, "durationMinutes": 60, "taskFamilies": ["argumentative-text-min-200-words", "synthesize-reading-and-graphic-100-to-150-words"]},
+        {"id": "speaking", "skills": ["speaking", "mediation", "pronunciation", "digital-exam-literacy"], "parts": 7, "durationMinutes": 35, "approximate": true, "recordedComputerFormat": true, "taskFamilies": ["give-advice", "weigh-options", "summarize-text", "compare-information-and-take-position", "present-topic", "restate-arguments-and-take-position", "criticize-measures"]}
+      ],
+      "scoring": {
+        "type": "band-per-skill",
+        "skillPointRange": [0, 20],
+        "totalPointRange": [0, 80],
+        "bands": [
+          {"name": "under-TDN3", "min": 0, "max": 4},
+          {"name": "TDN3", "min": 5, "max": 9},
+          {"name": "TDN4", "min": 10, "max": 15},
+          {"name": "TDN5", "min": 16, "max": 20}
+        ],
+        "universalPass": false,
+        "admissionRule": "Each university and programme sets its own required TDN profile; LernType must display the four skill bands and must not infer admission."
+      },
+      "rubricRefs": ["testdaf-productive"],
+      "appTrainingRequirements": ["academic-text-and-graphic-integration", "typed-listening-short-answers", "lecture-note-taking", "two-source-synthesis", "argumentative-writing", "seven-recorded-speaking-scenarios", "headset-and-microphone-check", "fixed-order-no-backtracking-simulation", "per-skill-tdn-readiness-without-admission-claim"],
+      "sourceRefs": ["testdaf-format", "testdaf-scoring", "testdaf-profile"]
+    },
+    {
+      "id": "dtz-a2-b1",
+      "providerId": "bamf",
+      "name": "Deutsch-Test für Zuwanderer (DTZ)",
+      "cefrLevels": ["A2", "B1"],
+      "purpose": ["integration-course", "everyday-life-in-germany"],
+      "delivery": ["paper-at-authorized-center"],
+      "partialExamAvailable": false,
+      "segments": [
+        {"id": "listening", "skills": ["listening"], "parts": 4, "items": 20, "durationMinutes": 25, "taskFamilies": ["telephone-and-public-announcement", "radio-information", "conversation", "speaker-opinion"]},
+        {"id": "reading", "skills": ["reading"], "parts": 5, "items": 25, "durationMinutes": 45, "taskFamilies": ["directory", "advertisement", "press-and-formal-notice", "information-brochure", "formal-letter"]},
+        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["formal-letter-or-short-message-with-four-content-points"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 10, "approximate": true, "durationPerParticipant": true, "pairFormat": true, "taskFamilies": ["introduce-and-answer-follow-up", "describe-picture-and-report-experience", "negotiate-plan"]}
+      ],
+      "scoring": {
+        "type": "dual-level-profile",
+        "receptiveCombined": {"maxItems": 45, "a2MinCorrect": 20, "b1MinCorrect": 33},
+        "productiveLevelRule": "Writing and speaking are rated against A2/B1 descriptors; B1 is awarded in a skill when the majority of criteria are rated B1 by both raters.",
+        "overallB1Rule": "Speaking must be B1 and at least one written area must be B1: either combined listening/reading or writing."
+      },
+      "rubricRefs": ["dtz-productive"],
+      "appTrainingRequirements": ["germany-everyday-domain-scenarios", "combined-listening-reading-score", "formal-four-point-message", "picture-description-and-experience", "pair-negotiation", "a2-b1-descriptor-feedback", "profile-based-overall-result"],
+      "sourceRefs": ["dtz-handbook"]
+    }
+  ]
+}

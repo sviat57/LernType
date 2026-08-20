@@ -1,0 +1,103 @@
+<UserControl x:Class="WortBruecke.App.Views.TelcView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="OnLoaded"
+             AutomationProperties.Name="TELC-чекер">
+    <Grid Margin="48,36,48,48">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="24" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="TELC / CEFR" />
+            <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Как звучит ваш немецкий текст?" />
+            <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="14" Text="Оценка лексики, грамматики и связности с конкретными исправлениями." />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Border MaxWidth="900" Padding="36" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <Grid>
+                        <Label Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Немецкий текст" Target="{Binding ElementName=TelcInputBox}" />
+                        <Border HorizontalAlignment="Right" Padding="10,5" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Pill}">
+                            <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding CharacterHint}" />
+                        </Border>
+                    </Grid>
+                    <TextBox x:Name="TelcInputBox" Margin="0,8,0,0" MinHeight="190" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                             Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Текст для TELC-анализа" />
+
+                    <Grid Margin="0,10,0,0">
+                        <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12"
+                                   Text="Текст отправляется в OpenAI только после нажатия кнопки." />
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12" Text="Немецкие знаки" />
+                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ä" Content="ä" />
+                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ö" Content="ö" />
+                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ü" Content="ü" />
+                            <Button Width="44" Height="44" Padding="0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ß" Content="ß" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Margin="0,14,0,0" Padding="16" Background="{DynamicResource Brush.ErrorSoft}" BorderBrush="{DynamicResource Brush.Error}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}"
+                            Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}" AutomationProperties.LiveSetting="Assertive">
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource Brush.Error}" Text="Анализ не запущен" />
+                            <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource Brush.TextPrimary}" TextWrapping="Wrap" Text="{Binding ErrorMessage}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Button Margin="0,18,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding AnalyzeCommand}" AutomationProperties.Name="Определить уровень текста">
+                        <TextBlock Style="{StaticResource ButtonContentText}" Text="{Binding AnalyzeButtonText}" />
+                    </Button>
+
+                    <StackPanel Margin="0,28,0,0" Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
+                        <Border Padding="28" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Card}">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource MetaText}" Text="ОЦЕНКА УРОВНЯ" />
+                                    <TextBlock Margin="0,6,0,0" FontFamily="{DynamicResource Font.Display}" FontSize="56" FontWeight="SemiBold" Foreground="{DynamicResource Brush.Accent}" Text="{Binding Level}" />
+                                    <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding ConfidenceText}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource SectionTitle}" Text="Краткий вывод" />
+                                    <TextBlock Margin="0,10,0,0" Style="{StaticResource BodySecondary}" Text="{Binding Summary}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Grid Margin="0,22,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="0.8*" /><ColumnDefinition Width="22" /><ColumnDefinition Width="1.2*" /></Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Сильные стороны" />
+                                <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding Strengths}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,8" Padding="12" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="{DynamicResource Radius.Input}">
+                                                <TextBlock Foreground="{DynamicResource Brush.Success}" Text="{Binding}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Что исправить" />
+                                <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding Errors}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,10" Padding="14" Background="{DynamicResource Brush.Raised}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Card}">
+                                                <StackPanel>
+                                                    <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource Brush.Error}" Text="{Binding Excerpt}" />
+                                                    <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource Brush.TextSecondary}" TextWrapping="Wrap" Text="{Binding Issue}" />
+                                                    <TextBlock Margin="0,7,0,0" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding Suggestion, StringFormat=Лучше: {0}}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

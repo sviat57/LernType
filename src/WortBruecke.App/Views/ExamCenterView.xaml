@@ -1,0 +1,134 @@
+<UserControl x:Class="WortBruecke.App.Views.ExamCenterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Центр подготовки к официальным экзаменам">
+    <Grid Margin="44,32,44,48">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ЭКЗАМЕНАЦИОННЫЙ ЦЕНТР" />
+                <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Формат, секции и готовность" />
+                <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="14"
+                           Text="Сравните Goethe, telc, TestDaF и DTZ. Для каждого формата показаны только проверенные факты и ваши подтверждённые результаты по навыкам." />
+            </StackPanel>
+            <Border Grid.Column="1" Padding="12,7" VerticalAlignment="Top" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Pill}">
+                <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" Text="{Binding VerificationText}" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="270" />
+                <ColumnDefinition Width="18" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Padding="20" Style="{StaticResource Panel}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="0,0,4,0">
+                    <Label Padding="0" Margin="0,0,0,6" Content="Уровень" Target="{Binding ElementName=ExamLevelBox}" />
+                    <ComboBox x:Name="ExamLevelBox" ItemsSource="{Binding Levels}" SelectedItem="{Binding SelectedLevel}" DisplayMemberPath="Label"
+                              AutomationProperties.Name="Фильтр экзаменов по уровню" />
+                    <Label Padding="0" Margin="0,18,0,6" Content="Экзамен" Target="{Binding ElementName=ExamBox}" />
+                    <ComboBox x:Name="ExamBox" ItemsSource="{Binding Exams}" SelectedItem="{Binding SelectedExam}" DisplayMemberPath="Name"
+                              AutomationProperties.Name="Выбор официального экзамена" />
+
+                    <Separator Margin="0,22,0,18" />
+                    <TextBlock Style="{StaticResource MetaText}" Text="ВАЖНО" />
+                    <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding DisclaimerText}" />
+                    <Button Margin="0,20,0,0" MinHeight="44" Style="{StaticResource PrimaryButton}" Command="{Binding OpenLearningPathCommand}" Content="Вернуться к пути" />
+                    <Button Margin="0,8,0,0" MinHeight="44" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWritingPracticeCommand}" Content="Проверить письмо" />
+                </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <Border Padding="26" Style="{StaticResource Panel}">
+                        <StackPanel>
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding ProviderText}" />
+                                    <TextBlock Margin="0,7,160,0" FontFamily="{DynamicResource Font.Display}" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding SelectedExam.Name}" />
+                                </StackPanel>
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Padding="12,7" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="{DynamicResource Radius.Pill}">
+                                    <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding LevelText}" />
+                                </Border>
+                            </Grid>
+                            <TextBlock Margin="0,14,0,0" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding WorkingTimeText}" />
+                            <Border Margin="0,14,0,0" Padding="14" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Input}">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding ScoringSummary}" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Margin="0,22,0,10" Style="{StaticResource SectionTitle}" FontSize="19" Text="Секции экзамена" />
+                    <ItemsControl ItemsSource="{Binding Segments}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="235" MinHeight="150" Margin="0,0,10,10" Padding="16" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock FontWeight="SemiBold" FontSize="15" Text="{Binding Title}" />
+                                            <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource Brush.AccentText}" FontWeight="SemiBold" Text="{Binding Duration}" />
+                                        </Grid>
+                                        <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding Skills}" />
+                                        <TextBlock Margin="0,10,0,0" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12" TextWrapping="Wrap" Text="{Binding Tasks}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Grid Margin="0,14,0,10">
+                        <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Доказательная готовность" />
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding ReadinessSummary}" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding Readiness}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="14" Background="{DynamicResource Brush.Raised}" BorderBrush="{DynamicResource Brush.BorderSubtle}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="120" /><ColumnDefinition Width="*" /><ColumnDefinition Width="150" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
+                                        <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
+                                        <TextBlock Grid.Column="1" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" Text="{Binding Evidence}" />
+                                        <TextBlock Grid.Column="2" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" Text="{Binding Score}" />
+                                        <TextBlock Grid.Column="3" HorizontalAlignment="Right" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding State}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Margin="0,22,0,10" Style="{StaticResource SectionTitle}" FontSize="19" Text="Официальные источники" />
+                    <ItemsControl ItemsSource="{Binding Sources}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Margin="0,0,0,7" Padding="13" HorizontalContentAlignment="Stretch" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding DataContext.OpenSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding Title}" />
+                                            <TextBlock Margin="0,3,0,0" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="11" TextTrimming="CharacterEllipsis" Text="{Binding Url}" />
+                                        </StackPanel>
+                                        <Path Grid.Column="1" Width="16" Height="16" Margin="12,0,0,0" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" />
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

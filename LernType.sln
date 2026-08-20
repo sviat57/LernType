@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B5205705-97F9-4921-955F-F94A1DFA8911}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WortBruecke.Core", "src\WortBruecke.Core\WortBruecke.Core.csproj", "{1729A137-88B7-4E85-88C2-53AC11FEEB25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WortBruecke.Infrastructure", "src\WortBruecke.Infrastructure\WortBruecke.Infrastructure.csproj", "{9CA0BE93-BB31-4588-89C2-9145571BBA5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WortBruecke.App", "src\WortBruecke.App\WortBruecke.App.csproj", "{AF872F4A-4C29-4FFE-9DE7-DFD821183991}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6E2D830A-4856-4318-9260-DDBA599AF29D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WortBruecke.Tests", "tests\WortBruecke.Tests\WortBruecke.Tests.csproj", "{5EC4DA0B-0C8E-4087-81AA-851B32920E3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{5BD487D7-7377-41EA-A6FD-0D035AC9AA24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WortBruecke.DictionaryBuilder", "tools\WortBruecke.DictionaryBuilder\WortBruecke.DictionaryBuilder.csproj", "{89EEAC06-DC60-44B9-978A-89B8BC698E4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1729A137-88B7-4E85-88C2-53AC11FEEB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1729A137-88B7-4E85-88C2-53AC11FEEB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1729A137-88B7-4E85-88C2-53AC11FEEB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1729A137-88B7-4E85-88C2-53AC11FEEB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA0BE93-BB31-4588-89C2-9145571BBA5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA0BE93-BB31-4588-89C2-9145571BBA5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA0BE93-BB31-4588-89C2-9145571BBA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA0BE93-BB31-4588-89C2-9145571BBA5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF872F4A-4C29-4FFE-9DE7-DFD821183991}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF872F4A-4C29-4FFE-9DE7-DFD821183991}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF872F4A-4C29-4FFE-9DE7-DFD821183991}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF872F4A-4C29-4FFE-9DE7-DFD821183991}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC4DA0B-0C8E-4087-81AA-851B32920E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC4DA0B-0C8E-4087-81AA-851B32920E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC4DA0B-0C8E-4087-81AA-851B32920E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC4DA0B-0C8E-4087-81AA-851B32920E3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89EEAC06-DC60-44B9-978A-89B8BC698E4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89EEAC06-DC60-44B9-978A-89B8BC698E4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89EEAC06-DC60-44B9-978A-89B8BC698E4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89EEAC06-DC60-44B9-978A-89B8BC698E4A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1729A137-88B7-4E85-88C2-53AC11FEEB25} = {B5205705-97F9-4921-955F-F94A1DFA8911}
+		{9CA0BE93-BB31-4588-89C2-9145571BBA5A} = {B5205705-97F9-4921-955F-F94A1DFA8911}
+		{AF872F4A-4C29-4FFE-9DE7-DFD821183991} = {B5205705-97F9-4921-955F-F94A1DFA8911}
+		{5EC4DA0B-0C8E-4087-81AA-851B32920E3E} = {6E2D830A-4856-4318-9260-DDBA599AF29D}
+		{89EEAC06-DC60-44B9-978A-89B8BC698E4A} = {5BD487D7-7377-41EA-A6FD-0D035AC9AA24}
+	EndGlobalSection
+EndGlobal
