@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 using WortBruecke.Core.Training;
 
@@ -11,7 +12,7 @@ public sealed record PassageModeOption(PassagePracticeMode Mode, string Title, s
 public sealed class TextPracticeViewModel : ObservableObject
 {
     private readonly IContentRepository _contentRepository;
-    private readonly IProgressRepository _progressRepository;
+    private readonly LearningAttemptSink _attemptSink;
     private readonly IKeyboardLayoutService _keyboardLayoutService;
     private readonly LanguagePair _pair = LanguagePair.RussianToGerman;
     private readonly List<Passage> _allPassages = [];
@@ -27,6 +28,8 @@ public sealed class TextPracticeViewModel : ObservableObject
     private int _correctCount;
     private bool _isSuggestedPractice;
     private string? _activeLevel;
+    private Guid _sessionId;
+    private DateTimeOffset _attemptStartedAtUtc;
 
     public TextPracticeViewModel(
         IContentRepository contentRepository,
@@ -34,7 +37,29 @@ public sealed class TextPracticeViewModel : ObservableObject
         IKeyboardLayoutService keyboardLayoutService)
     {
         _contentRepository = contentRepository;
-        _progressRepository = progressRepository;
+        _attemptSink = new LearningAttemptSink(progressRepository);
+        _keyboardLayoutService = keyboardLayoutService;
+        Modes =
+        [
+            new PassageModeOption(PassagePracticeMode.Translation, "Перевод по предложениям", "Показываем русский оригинал, вы пишете по-немецки"),
+            new PassageModeOption(PassagePracticeMode.GermanTyping, "Чистый набор немецкого", "Перепечатайте немецкий текст точно и без спешки")
+        ];
+        SelectedMode = Modes[0];
+        StartCommand = new RelayCommand(Start, () => SelectedPassage is not null && SelectedMode is not null);
+        CheckCommand = new AsyncRelayCommand(CheckAsync, () => IsPractising && !ShowFeedback && !string.IsNullOrWhiteSpace(Answer));
+        NextCommand = new RelayCommand(Next, () => ShowFeedback);
+        PreviousCommand = new RelayCommand(Previous, () => IsPractising && _segmentIndex > 0 && !ShowFeedback);
+        RestartCommand = new RelayCommand(Reset);
+        InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
+    }
+
+    public TextPracticeViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IKeyboardLayoutService keyboardLayoutService)
+    {
+        _contentRepository = contentRepository;
+        _attemptSink = new LearningAttemptSink(attemptRepository);
         _keyboardLayoutService = keyboardLayoutService;
         Modes =
         [
@@ -225,6 +250,7 @@ public sealed class TextPracticeViewModel : ObservableObject
         _isSuggestedPractice = isSuggestedPractice;
         _segmentIndex = 0;
         _correctCount = 0;
+        _sessionId = Guid.NewGuid();
         _segmentResults.Clear();
         IsComplete = false;
         IsPractising = true;
@@ -243,7 +269,18 @@ public sealed class TextPracticeViewModel : ObservableObject
         _segmentResults[_segmentIndex] = IsCorrect;
         _correctCount = _segmentResults.Values.Count(result => result);
         ShowFeedback = true;
-        await _progressRepository.RecordAttemptAsync(ContentType.Passage, SelectedPassage.Id, IsCorrect);
+        var attempt = LearningEvidenceFactory.Create(
+            LearningContentKey.ForPassageSegment(SelectedPassage, CurrentSegment),
+            SelectedPassage.Level,
+            SelectedMode?.Mode == PassagePracticeMode.Translation ? LanguageSkill.Mediation : LanguageSkill.Writing,
+            ExerciseType.BidirectionalTranslation,
+            SelectedMode?.Mode == PassagePracticeMode.Translation
+                ? AttemptDirection.RussianToGerman
+                : AttemptDirection.GermanProduction,
+            IsCorrect,
+            _sessionId,
+            _attemptStartedAtUtc);
+        await _attemptSink.RecordAsync(attempt, ContentType.Passage, SelectedPassage.Id);
         OnPropertyChanged(nameof(FeedbackTitle));
         OnPropertyChanged(nameof(FeedbackDetail));
     }
@@ -283,6 +320,7 @@ public sealed class TextPracticeViewModel : ObservableObject
 
     private void LoadSegment()
     {
+        _attemptStartedAtUtc = DateTimeOffset.UtcNow;
         _keyboardLayoutService.SwitchTo(_pair.Target.CultureCode);
         Answer = string.Empty;
         ShowFeedback = false;

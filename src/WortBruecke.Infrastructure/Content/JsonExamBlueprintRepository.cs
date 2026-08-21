@@ -46,7 +46,15 @@ public sealed class JsonExamBlueprintRepository(string contentRoot) : IExamBluep
                 segment.GetProperty("parts").GetInt32(),
                 segment.GetProperty("durationMinutes").GetInt32(),
                 segment.TryGetProperty("approximate", out var approximate) && approximate.GetBoolean(),
-                ReadStrings(segment, "taskFamilies"))).ToArray();
+                ReadStrings(segment, "taskFamilies"),
+                OptionalInt(segment, "items"),
+                OptionalInt(segment, "preparationMinutes") ?? 0,
+                OptionalInt(segment, "breakMinutes") ?? 0,
+                OptionalBool(segment, "pairFormat"),
+                OptionalBool(segment, "groupFormat"),
+                OptionalBool(segment, "individualFormat"),
+                OptionalBool(segment, "recordedComputerFormat"),
+                OptionalBool(segment, "durationPerParticipant"))).ToArray();
             var scoring = item.GetProperty("scoring");
             var sourceLinks = ReadStrings(item, "sourceRefs").Select(sourceId =>
                 sources.TryGetValue(sourceId, out var source)
@@ -61,9 +69,14 @@ public sealed class JsonExamBlueprintRepository(string contentRoot) : IExamBluep
                 ReadStrings(item, "cefrLevels"),
                 segments,
                 RequiredString(scoring, "type"),
+                ParseScoring(scoring),
                 DescribeScoring(scoring),
                 ReadStrings(item, "appTrainingRequirements"),
-                sourceLinks));
+                sourceLinks,
+                OptionalBool(item, "partialExamAvailable"),
+                OptionalInt(item, "breakMinutes") ?? 0,
+                OptionalString(item, "navigationPolicy"),
+                ReadStrings(item, "delivery")));
         }
 
         return new ExamBlueprintCatalog(
@@ -72,6 +85,54 @@ public sealed class JsonExamBlueprintRepository(string contentRoot) : IExamBluep
             RequiredString(root.GetProperty("coverage"), "readinessDisclaimerRu"),
             exams.AsReadOnly());
     }
+
+    private static ExamScoringDefinition ParseScoring(JsonElement scoring)
+    {
+        var type = RequiredString(scoring, "type");
+        return type switch
+        {
+            "whole-exam-threshold" => new ExamScoringDefinition(
+                ExamScoringKind.WholeExamThreshold,
+                OverallPassRatio: scoring.GetProperty("passPercent").GetDouble() / 100),
+            "whole-exam-with-component-thresholds" => new ExamScoringDefinition(
+                ExamScoringKind.WholeExamWithComponentThresholds,
+                OverallPassRatio: Ratio(scoring, "passPoints", "maxPoints"),
+                WrittenPassRatio: Ratio(scoring, "writtenPassPoints", "writtenMaxPoints"),
+                OralPassRatio: Ratio(scoring, "oralPassPoints", "oralMaxPoints")),
+            "independent-modules" => new ExamScoringDefinition(
+                ExamScoringKind.IndependentModules,
+                ModulePassRatio: scoring.GetProperty("modulePassPercent").GetDouble() / 100),
+            "written-and-oral-thresholds" => new ExamScoringDefinition(
+                ExamScoringKind.WrittenAndOralThresholds,
+                OverallPassRatio: Ratio(scoring, "passPoints", "maxPoints"),
+                WrittenPassRatio: Ratio(scoring, "writtenPassPoints", "writtenMaxPoints"),
+                OralPassRatio: Ratio(scoring, "oralPassPoints", "oralMaxPoints")),
+            "band-per-skill" => new ExamScoringDefinition(
+                ExamScoringKind.BandPerSkill,
+                SkillMaximumPoints: scoring.GetProperty("skillPointRange")[1].GetInt32(),
+                Bands: scoring.GetProperty("bands").EnumerateArray().Select(item => new ExamScoreBand(
+                    RequiredString(item, "name"),
+                    item.GetProperty("min").GetInt32(),
+                    item.GetProperty("max").GetInt32())).ToArray(),
+                UniversalPass: scoring.GetProperty("universalPass").GetBoolean()),
+            "dual-level-profile" => ParseDtzScoring(scoring),
+            _ => throw new InvalidDataException($"Неизвестная схема оценивания экзамена: {type}.")
+        };
+    }
+
+    private static ExamScoringDefinition ParseDtzScoring(JsonElement scoring)
+    {
+        var receptive = scoring.GetProperty("receptiveCombined");
+        return new ExamScoringDefinition(
+            ExamScoringKind.DualLevelProfile,
+            UniversalPass: false,
+            ReceptiveMaximumItems: receptive.GetProperty("maxItems").GetInt32(),
+            ReceptiveA2MinimumCorrect: receptive.GetProperty("a2MinCorrect").GetInt32(),
+            ReceptiveB1MinimumCorrect: receptive.GetProperty("b1MinCorrect").GetInt32());
+    }
+
+    private static double Ratio(JsonElement element, string numerator, string denominator) =>
+        element.GetProperty(numerator).GetDouble() / element.GetProperty(denominator).GetDouble();
 
     private static string DescribeScoring(JsonElement scoring)
     {
@@ -109,4 +170,15 @@ public sealed class JsonExamBlueprintRepository(string contentRoot) : IExamBluep
             .Where(item => !string.IsNullOrWhiteSpace(item))
             .Select(item => item!)
             .ToArray();
+
+    private static int? OptionalInt(JsonElement element, string propertyName) =>
+        element.TryGetProperty(propertyName, out var value) ? value.GetInt32() : null;
+
+    private static bool OptionalBool(JsonElement element, string propertyName) =>
+        element.TryGetProperty(propertyName, out var value) && value.GetBoolean();
+
+    private static string? OptionalString(JsonElement element, string propertyName) =>
+        element.TryGetProperty(propertyName, out var value) && !string.IsNullOrWhiteSpace(value.GetString())
+            ? value.GetString()
+            : null;
 }

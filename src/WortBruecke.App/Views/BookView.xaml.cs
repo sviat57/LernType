@@ -46,6 +46,7 @@ public partial class BookView : UserControl
         if (_viewModel is not null)
         {
             _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+            _viewModel.CancelPendingOperations();
         }
     }
 

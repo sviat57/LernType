@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 using WortBruecke.Core.Training;
 
@@ -14,9 +15,10 @@ public sealed record CefrOption(string? Level, string Label);
 public sealed class TrainerViewModel : ObservableObject
 {
     private readonly IContentRepository _contentRepository;
-    private readonly IProgressRepository _progressRepository;
+    private readonly LearningAttemptSink _attemptSink;
     private readonly IKeyboardLayoutService _keyboardLayoutService;
     private readonly IImageProvider _imageProvider;
+    private readonly IReviewStateRepository? _reviewStateRepository;
     private readonly LanguagePair _pair = LanguagePair.RussianToGerman;
     private readonly List<WordEntry> _wordSession = [];
     private readonly List<SentenceEntry> _sentenceSession = [];
@@ -39,6 +41,8 @@ public sealed class TrainerViewModel : ObservableObject
     private string? _resolvedImagePath;
     private int _passageFrequency = 8;
     private string _selectionMessage = string.Empty;
+    private Guid _sessionId;
+    private DateTimeOffset _attemptStartedAtUtc;
 
     public TrainerViewModel(
         IContentRepository contentRepository,
@@ -47,7 +51,7 @@ public sealed class TrainerViewModel : ObservableObject
         IImageProvider imageProvider)
     {
         _contentRepository = contentRepository;
-        _progressRepository = progressRepository;
+        _attemptSink = new LearningAttemptSink(progressRepository);
         _keyboardLayoutService = keyboardLayoutService;
         _imageProvider = imageProvider;
 
@@ -61,6 +65,32 @@ public sealed class TrainerViewModel : ObservableObject
         PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Word, "Ступень 1 · Слова", "Образ и базовая лексика"));
         PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Sentence, "Ступень 2 · Предложения", "Грамматика в контексте"));
         PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Text, "Ступень 3 · Тексты", "Связный перевод A0–C2"));
+        SelectedPracticeUnit = PracticeUnits[0];
+    }
+
+    public TrainerViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IKeyboardLayoutService keyboardLayoutService,
+        IImageProvider imageProvider,
+        IReviewStateRepository? reviewStateRepository = null)
+    {
+        _contentRepository = contentRepository;
+        _attemptSink = new LearningAttemptSink(attemptRepository);
+        _keyboardLayoutService = keyboardLayoutService;
+        _imageProvider = imageProvider;
+        _reviewStateRepository = reviewStateRepository;
+
+        StartSessionCommand = new AsyncRelayCommand(StartSessionAsync, CanStartSession);
+        CheckAnswerCommand = new AsyncRelayCommand(CheckAnswerAsync, CanCheckAnswer);
+        AdvanceLanguageCommand = new RelayCommand(AdvanceToTargetLanguage, () => IsLevelThree && IsSourceStep && !string.IsNullOrWhiteSpace(SourceAnswer));
+        NextCommand = new RelayCommand(Next, () => ShowFeedback);
+        RestartCommand = new RelayCommand(ResetSelection);
+        InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
+
+        PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Word, "Ступень 1 · Слова", "Образ и базовая лексика"));
+        PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Sentence, "Ступень 2 · Предложения", "Грамматика в контексте"));
+        PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Text, "Ступень 3 · Тексты", "Связный перевод Pre-A1–C2"));
         SelectedPracticeUnit = PracticeUnits[0];
     }
 
@@ -342,7 +372,7 @@ public sealed class TrainerViewModel : ObservableObject
             : new[] { "A0", "A1", "A2", "B1" };
         foreach (var level in levels)
         {
-            CefrLevels.Add(new CefrOption(level, level));
+            CefrLevels.Add(new CefrOption(level, level == "A0" ? "Pre-A1" : level));
         }
         SelectedCefr = CefrLevels[0];
         StartSessionCommand.RaiseCanExecuteChanged();
@@ -365,12 +395,16 @@ public sealed class TrainerViewModel : ObservableObject
         if (IsSentenceUnit)
         {
             var sentences = await _contentRepository.GetSentencesAsync(SelectedTheme?.Id);
-            _sentenceSession.AddRange(FilterLevel(sentences, item => item.Level).OrderBy(_ => Random.Shared.Next()).Take(10));
+            _sentenceSession.AddRange(await SelectForSessionAsync(
+                FilterLevel(sentences, item => item.Level),
+                LearningContentKey.ForSentence));
         }
         else
         {
             var words = await _contentRepository.GetWordsAsync(SelectedTheme?.Id);
-            _wordSession.AddRange(FilterLevel(words, item => item.Level).OrderBy(_ => Random.Shared.Next()).Take(10));
+            _wordSession.AddRange(await SelectForSessionAsync(
+                FilterLevel(words, item => item.Level),
+                LearningContentKey.ForWord));
         }
 
         if (SessionCount == 0)
@@ -381,6 +415,7 @@ public sealed class TrainerViewModel : ObservableObject
 
         _currentIndex = 0;
         _correctCount = 0;
+        _sessionId = Guid.NewGuid();
         IsComplete = false;
         IsSessionActive = true;
         LoadCurrentItem();
@@ -390,6 +425,32 @@ public sealed class TrainerViewModel : ObservableObject
         string.IsNullOrWhiteSpace(SelectedCefr?.Level)
             ? source
             : source.Where(item => string.Equals(levelSelector(item), SelectedCefr.Level, StringComparison.OrdinalIgnoreCase));
+
+    private async Task<IReadOnlyList<T>> SelectForSessionAsync<T>(
+        IEnumerable<T> candidates,
+        Func<T, string> contentKey)
+    {
+        var pool = candidates.ToArray();
+        if (pool.Length <= 1)
+        {
+            return pool;
+        }
+        if (_reviewStateRepository is null)
+        {
+            return pool.OrderBy(_ => Random.Shared.Next()).Take(10).ToArray();
+        }
+
+        var due = await _reviewStateRepository.GetDueAsync(DateTimeOffset.UtcNow, 1_000);
+        var dueOrder = due.Select((item, index) => (item.ContentKey, index))
+            .ToDictionary(item => item.ContentKey, item => item.index, StringComparer.Ordinal);
+        return pool
+            .Select(item => (Item: item, Key: contentKey(item), TieBreaker: Random.Shared.Next()))
+            .OrderBy(item => dueOrder.TryGetValue(item.Key, out var index) ? index : int.MaxValue)
+            .ThenBy(item => item.TieBreaker)
+            .Take(10)
+            .Select(item => item.Item)
+            .ToArray();
+    }
 
     private async Task CheckAnswerAsync()
     {
@@ -413,7 +474,33 @@ public sealed class TrainerViewModel : ObservableObject
             _correctCount++;
         }
         ShowFeedback = true;
-        await _progressRepository.RecordAttemptAsync(IsSentenceUnit ? ContentType.Sentence : ContentType.Word, CurrentContentId, IsCorrect);
+        var direction = SelectedDifficulty?.Level switch
+        {
+            1 => AttemptDirection.GermanToRussian,
+            2 => AttemptDirection.RussianToGerman,
+            _ => AttemptDirection.Bidirectional
+        };
+        var skill = IsWordUnit
+            ? LanguageSkill.Vocabulary
+            : direction == AttemptDirection.GermanToRussian ? LanguageSkill.Reading : LanguageSkill.Writing;
+        var family = IsWordUnit && IsLevelThree ? ExerciseType.ImageAssociation : ExerciseType.BidirectionalTranslation;
+        var contentKey = _currentWord is not null
+            ? LearningContentKey.ForWord(_currentWord)
+            : LearningContentKey.ForSentence(_currentSentence!);
+        var level = _currentWord?.Level ?? _currentSentence!.Level;
+        var attempt = LearningEvidenceFactory.Create(
+            contentKey,
+            level,
+            skill,
+            family,
+            direction,
+            IsCorrect,
+            _sessionId,
+            _attemptStartedAtUtc);
+        await _attemptSink.RecordAsync(
+            attempt,
+            IsSentenceUnit ? ContentType.Sentence : ContentType.Word,
+            CurrentContentId);
         OnPropertyChanged(nameof(FeedbackTitle));
         OnPropertyChanged(nameof(FeedbackDetail));
     }
@@ -451,6 +538,7 @@ public sealed class TrainerViewModel : ObservableObject
     {
         _currentWord = IsWordUnit ? _wordSession[_currentIndex] : null;
         _currentSentence = IsSentenceUnit ? _sentenceSession[_currentIndex] : null;
+        _attemptStartedAtUtc = DateTimeOffset.UtcNow;
         _resolvedImagePath = _currentWord is null ? null : _imageProvider.Resolve(_currentWord.ImagePath);
         Answer = string.Empty;
         SourceAnswer = string.Empty;

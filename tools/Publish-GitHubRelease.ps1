@@ -13,8 +13,8 @@ param(
     [string]$Owner = 'sviat57',
     [string]$Repository = 'LernType',
     [string]$Branch = 'main',
-    [string]$Tag = 'v0.2.0',
-    [string]$ReleaseName = 'LernType v0.2.0',
+    [string]$Tag = 'v1.0.0',
+    [string]$ReleaseName = 'LernType v1.0.0',
     [string]$RemoteName = 'origin',
     [string]$RepositoryDescription = 'LernType — автономный тренажёр немецкого языка RU↔DE для Windows.',
     [string]$ReleaseNotesPath,
@@ -147,21 +147,24 @@ if ($secretFindings.Count -gt 0) {
 }
 
 $sensitiveFilePattern = '(^|/)(\.env($|\.)|id_(rsa|dsa|ecdsa|ed25519)(\.pub)?$)|\.(pfx|p12|pem|key)$'
-$sensitiveTrackedFiles = @((Invoke-Git -Arguments @('ls-tree', '-r', '--name-only', $expectedSha)).Output -split "`n" |
-    Where-Object { $_ -match $sensitiveFilePattern })
+$sensitiveTrackedFiles = @((Invoke-Git -Arguments @('log', '--all', '--name-only', '--format=')).Output -split "`n" |
+    Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -match $sensitiveFilePattern } |
+    Sort-Object -Unique)
 if ($sensitiveTrackedFiles.Count -gt 0) {
-    throw "В commit отслеживаются чувствительные файлы:`n$($sensitiveTrackedFiles -join "`n")"
+    throw "В Git-истории отслеживаются чувствительные файлы:`n$($sensitiveTrackedFiles -join "`n")"
 }
 
 $oversizedFiles = [Collections.Generic.List[string]]::new()
-foreach ($trackedPath in ((Invoke-Git -Arguments @('ls-tree', '-r', '--name-only', $expectedSha)).Output -split "`n")) {
-    if ([string]::IsNullOrWhiteSpace($trackedPath) -or -not (Test-Path -LiteralPath $trackedPath -PathType Leaf)) {
-        continue
-    }
-
-    $trackedFile = Get-Item -LiteralPath $trackedPath
-    if ($trackedFile.Length -ge 100MB) {
-        $oversizedFiles.Add("$trackedPath ($([math]::Round($trackedFile.Length / 1MB, 2)) MiB)")
+$objectList = (Invoke-Git -Arguments @('rev-list', '--objects', '--all')).Output -split "`n"
+$objectInventory = @($objectList | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' 2>&1)
+if ($LASTEXITCODE -ne 0) {
+    throw 'Не удалось проверить размеры объектов Git-истории.'
+}
+foreach ($objectLine in $objectInventory) {
+    $parts = ([string]$objectLine) -split ' ', 4
+    if ($parts.Count -ge 3 -and $parts[0] -eq 'blob' -and [long]$parts[2] -ge 100MB) {
+        $objectPath = if ($parts.Count -eq 4) { $parts[3] } else { $parts[1] }
+        $oversizedFiles.Add("$objectPath ($([math]::Round([long]$parts[2] / 1MB, 2)) MiB)")
     }
 }
 
@@ -200,9 +203,9 @@ if (-not (Test-Path -LiteralPath $solutionPath -PathType Leaf)) {
     throw "Solution-файл не найден: $solutionPath"
 }
 
-$bundledDotNet = Join-Path $repoRoot '.tools\dotnet\dotnet.exe'
-if (Test-Path -LiteralPath $bundledDotNet -PathType Leaf) {
-    $script:DotNetPath = $bundledDotNet
+$bundledDotNet10 = Join-Path $repoRoot '.tools\dotnet10\dotnet.exe'
+if (Test-Path -LiteralPath $bundledDotNet10 -PathType Leaf) {
+    $script:DotNetPath = $bundledDotNet10
 }
 else {
     $dotnetCommand = Get-Command dotnet -ErrorAction Stop
@@ -210,10 +213,19 @@ else {
 }
 
 if (-not $SkipQa) {
+    Write-Host 'QA: locked dependency restore...'
+    Invoke-DotNet -Arguments @('restore', $solutionPath, '--locked-mode')
+    Write-Host 'QA: formatting gate...'
+    Invoke-DotNet -Arguments @('format', $solutionPath, '--verify-no-changes', '--no-restore')
     Write-Host 'QA: Release build с предупреждениями как ошибками...'
     Invoke-DotNet -Arguments @('build', $solutionPath, '-c', 'Release', '--no-restore', '-warnaserror')
     Write-Host 'QA: полный набор Release-тестов...'
-    Invoke-DotNet -Arguments @('test', $solutionPath, '-c', 'Release', '--no-build')
+    Invoke-DotNet -Arguments @('test', $solutionPath, '-c', 'Release', '--no-build', '--no-restore')
+}
+
+$actionSummary = "create the PUBLIC repository if needed, push $expectedSha to $Branch and publish $Tag with $($assetInfo.Name)"
+if (-not $PSCmdlet.ShouldProcess("https://github.com/$Owner/$Repository", $actionSummary)) {
+    return
 }
 
 $env:GCM_INTERACTIVE = 'Never'
@@ -258,11 +270,6 @@ try {
 
     if ($null -ne $remoteRepository -and $remoteRepository.private) {
         throw "Репозиторий $Owner/$Repository уже существует, но не является публичным."
-    }
-
-    $actionSummary = "создать при необходимости PUBLIC-репозиторий, отправить $expectedSha в $Branch и опубликовать $Tag с $($assetInfo.Name)"
-    if (-not $PSCmdlet.ShouldProcess("https://github.com/$Owner/$Repository", $actionSummary)) {
-        return
     }
 
     if ($null -eq $remoteRepository) {
@@ -337,7 +344,7 @@ try {
     }
     else {
         @"
-Windows x64 release of LernType.
+Self-contained Windows release of LernType.
 
 1. Download and extract ``$($assetInfo.Name)``.
 2. Run ``LernType.exe``.

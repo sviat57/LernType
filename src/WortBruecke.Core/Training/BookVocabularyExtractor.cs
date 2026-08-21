@@ -54,8 +54,13 @@ public sealed partial class BookVocabularyExtractor(IOfflineDictionaryService di
                 compactContext = compactContext[..177] + "…";
             }
 
+            var matchIndex = 0;
             foreach (Match match in WordPattern().Matches(sentence))
             {
+                if ((matchIndex++ & 0xFF) == 0)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
                 var surface = match.Value.Trim('—', '–', '-', '\'', '’').Normalize(NormalizationForm.FormC);
                 var occurrenceKey = preserveCase ? surface : surface.ToLower(culture);
                 if (occurrenceKey.Length < 2 || stopWords.Contains(occurrenceKey))
@@ -79,8 +84,17 @@ public sealed partial class BookVocabularyExtractor(IOfflineDictionaryService di
             .ThenBy(pair => pair.Key, StringComparer.Create(culture, true))
             .Take(maximumItems * 4)
             .ToArray();
-        var found = await dictionary.LookupBatchAsync(candidates.Select(pair => pair.Value.Surface).ToArray(), sourceCulture,
-            sourceCulture.StartsWith("de", StringComparison.OrdinalIgnoreCase) ? "ru-RU" : "de-DE", cancellationToken);
+        var targetCulture = sourceCulture.StartsWith("de", StringComparison.OrdinalIgnoreCase) ? "ru-RU" : "de-DE";
+        var found = new Dictionary<string, DictionaryEntry>(StringComparer.Ordinal);
+        foreach (var batch in candidates.Select(pair => pair.Value.Surface).Chunk(200))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var batchResult = await dictionary.LookupBatchAsync(batch, sourceCulture, targetCulture, cancellationToken);
+            foreach (var pair in batchResult)
+            {
+                found[pair.Key] = pair.Value;
+            }
+        }
 
         var items = candidates
             .Where(pair => found.ContainsKey(pair.Value.Surface))

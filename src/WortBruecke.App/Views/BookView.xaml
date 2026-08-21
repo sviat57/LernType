@@ -56,6 +56,8 @@
                                     Visibility="{Binding IsNotAnalyzing, Converter={StaticResource BoolToVisibility}}" AutomationProperties.Name="Извлечь слова из книги">
                                 <TextBlock Style="{StaticResource ButtonContentText}" Text="Извлечь слова локально" />
                             </Button>
+                            <Button Margin="0,10,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding CancelOperationCommand}"
+                                    Visibility="{Binding IsAnalyzing, Converter={StaticResource BoolToVisibility}}" Content="Отменить обработку" />
                             <Border Margin="0,10,0,0" Padding="14" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
                                 <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" LineHeight="19" Text="{Binding StatusMessage}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
                             </Border>
@@ -87,6 +89,15 @@
                                 <Button Margin="0,13,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding StartPracticeCommand}">
                                     <TextBlock Style="{StaticResource ButtonContentText}" Text="Начать тренировку по выбранным словам" />
                                 </Button>
+                                <TextBlock Margin="0,13,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" LineHeight="18"
+                                           Text="{Binding DraftPrivacyNote}" TextWrapping="Wrap" />
+                                <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="11"
+                                           Text="{Binding ProvenanceNote}" TextWrapping="Wrap" />
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <Button Style="{StaticResource SecondaryButton}" Command="{Binding SaveBookCommand}" Content="Сохранить локально" />
+                                    <Button Grid.Column="2" Style="{StaticResource SecondaryButton}" Command="{Binding ExportBookCommand}" Content="Экспортировать" />
+                                </Grid>
                             </StackPanel>
                         </StackPanel>
 
@@ -110,14 +121,31 @@
                                 <ItemsControl Margin="0,9,0,0" ItemsSource="{Binding RecentBooks}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Margin="0,0,0,7" Padding="13" HorizontalContentAlignment="Stretch" Style="{StaticResource SecondaryButton}"
-                                                    Command="{Binding DataContext.SelectRecentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
-                                                <Grid><TextBlock FontWeight="SemiBold" Text="{Binding Title}" TextTrimming="CharacterEllipsis" /><Path Width="14" Height="14" HorizontalAlignment="Right" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" /></Grid>
-                                            </Button>
+                                            <Grid Margin="0,0,0,7">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="7" /><ColumnDefinition Width="44" /></Grid.ColumnDefinitions>
+                                                <Button Padding="13" HorizontalContentAlignment="Stretch" Style="{StaticResource SecondaryButton}"
+                                                        Command="{Binding DataContext.SelectRecentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                                    <StackPanel><TextBlock FontWeight="SemiBold" Text="{Binding Title}" TextTrimming="CharacterEllipsis" /><TextBlock Margin="0,3,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextTertiary}" Text="{Binding VocabularyCount, StringFormat={}{0} слов}" /></StackPanel>
+                                                </Button>
+                                                <Button Grid.Column="2" Padding="0" Style="{StaticResource SecondaryButton}" Content="×"
+                                                        Command="{Binding DataContext.RequestDeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                                        AutomationProperties.Name="Удалить сохранённую книгу" />
+                                            </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                <Button Margin="0,5,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RequestDeleteAllCommand}" Content="Очистить библиотеку" />
                             </StackPanel>
+                            <Border Margin="0,12,0,0" Padding="13" Background="{DynamicResource Brush.WarningSoft}" CornerRadius="{DynamicResource Radius.Input}"
+                                    Visibility="{Binding HasPendingDeletion, Converter={StaticResource BoolToVisibility}}">
+                                <StackPanel>
+                                    <TextBlock Foreground="{DynamicResource Brush.Warning}" FontSize="12" TextWrapping="Wrap" Text="{Binding DeletionPrompt}" />
+                                    <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="7" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                        <Button Style="{StaticResource SecondaryButton}" Command="{Binding CancelDeleteCommand}" Content="Оставить" />
+                                        <Button Grid.Column="2" Style="{StaticResource SecondaryButton}" Command="{Binding ConfirmDeleteCommand}" Content="Удалить" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
                             <Button Margin="0,12,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding NewBookCommand}" Content="Новый текст" />
                         </StackPanel>
                     </Grid>

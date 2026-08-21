@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Input;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
@@ -9,6 +11,8 @@ using WortBruecke.Core.Models;
 namespace WortBruecke.App.ViewModels;
 
 public sealed record ExamLevelOption(string? Level, string Label);
+public sealed record ExamTargetOption(GermanLevel Level, string Label);
+public sealed record ExamModuleOption(string? ModuleId, string Label);
 public sealed record ExamSegmentViewModel(string Title, string Skills, string Duration, string Tasks);
 public sealed record ExamReadinessItemViewModel(string Title, string Evidence, string Score, string State);
 
@@ -18,14 +22,19 @@ public sealed class ExamCenterViewModel : ObservableObject
         ["goethe.de", "telc.net", "testdaf.de", "bamf.de"];
 
     private readonly IExamBlueprintRepository _examRepository;
-    private readonly ILearningProgressRepository _learningProgressRepository;
+    private readonly IAttemptRepository? _attemptRepository;
+    private readonly ILearningProgressRepository? _compatibilityRepository;
     private readonly Action<string> _navigate;
     private readonly List<ExamBlueprint> _allExams = [];
-    private IReadOnlyList<LearningAttempt> _attempts = [];
+    private IReadOnlyList<AttemptEvent> _attempts = [];
     private ExamLevelOption? _selectedLevel;
     private ExamBlueprint? _selectedExam;
+    private ExamTargetOption? _selectedTarget;
+    private ExamModuleOption? _selectedModule;
     private string _verificationText = string.Empty;
     private string _disclaimerText = string.Empty;
+    private string _readinessSummary = "Нет данных";
+    private string _readinessDetailText = string.Empty;
 
     public ExamCenterViewModel(
         IExamBlueprintRepository examRepository,
@@ -33,7 +42,7 @@ public sealed class ExamCenterViewModel : ObservableObject
         Action<string> navigate)
     {
         _examRepository = examRepository;
-        _learningProgressRepository = learningProgressRepository;
+        _compatibilityRepository = learningProgressRepository;
         _navigate = navigate;
         Levels = new ObservableCollection<ExamLevelOption>(
         [
@@ -49,6 +58,32 @@ public sealed class ExamCenterViewModel : ObservableObject
         OpenSourceCommand = new ParameterizedRelayCommand(OpenSource, parameter => parameter is ExamSourceLink source && CanOpen(source.Url));
         OpenWritingPracticeCommand = new RelayCommand(() => _navigate("telc"));
         OpenLearningPathCommand = new RelayCommand(() => _navigate("path"));
+        RefreshCommand = new AsyncRelayCommand(InitializeAsync);
+    }
+
+    public ExamCenterViewModel(
+        IExamBlueprintRepository examRepository,
+        IAttemptRepository attemptRepository,
+        Action<string> navigate)
+    {
+        _examRepository = examRepository;
+        _attemptRepository = attemptRepository;
+        _navigate = navigate;
+        Levels = new ObservableCollection<ExamLevelOption>(
+        [
+            new(null, "Все уровни"),
+            new("A1", "A1 · Первый сертификат"),
+            new("A2", "A2 · Бытовое общение"),
+            new("B1", "B1 · Самостоятельность"),
+            new("B2", "B2 · Учёба и работа"),
+            new("C1", "C1 · Продвинутый"),
+            new("C2", "C2 · Точное владение")
+        ]);
+        _selectedLevel = Levels[0];
+        OpenSourceCommand = new ParameterizedRelayCommand(OpenSource, parameter => parameter is ExamSourceLink source && CanOpen(source.Url));
+        OpenWritingPracticeCommand = new RelayCommand(() => _navigate("telc"));
+        OpenLearningPathCommand = new RelayCommand(() => _navigate("path"));
+        RefreshCommand = new AsyncRelayCommand(InitializeAsync);
     }
 
     public ObservableCollection<ExamLevelOption> Levels { get; }
@@ -56,9 +91,12 @@ public sealed class ExamCenterViewModel : ObservableObject
     public ObservableCollection<ExamSegmentViewModel> Segments { get; } = [];
     public ObservableCollection<ExamReadinessItemViewModel> Readiness { get; } = [];
     public ObservableCollection<ExamSourceLink> Sources { get; } = [];
+    public ObservableCollection<ExamTargetOption> Targets { get; } = [];
+    public ObservableCollection<ExamModuleOption> Modules { get; } = [];
     public ICommand OpenSourceCommand { get; }
     public ICommand OpenWritingPracticeCommand { get; }
     public ICommand OpenLearningPathCommand { get; }
+    public AsyncRelayCommand RefreshCommand { get; }
 
     public ExamLevelOption? SelectedLevel
     {
@@ -84,21 +122,48 @@ public sealed class ExamCenterViewModel : ObservableObject
         }
     }
 
+    public ExamTargetOption? SelectedTarget
+    {
+        get => _selectedTarget;
+        set
+        {
+            if (SetProperty(ref _selectedTarget, value))
+            {
+                UpdateReadiness();
+            }
+        }
+    }
+
+    public ExamModuleOption? SelectedModule
+    {
+        get => _selectedModule;
+        set
+        {
+            if (SetProperty(ref _selectedModule, value))
+            {
+                UpdateReadiness();
+            }
+        }
+    }
+
     public string VerificationText { get => _verificationText; private set => SetProperty(ref _verificationText, value); }
     public string DisclaimerText { get => _disclaimerText; private set => SetProperty(ref _disclaimerText, value); }
     public bool HasExam => SelectedExam is not null;
     public string ProviderText => SelectedExam?.ProviderName ?? string.Empty;
     public string LevelText => SelectedExam is null ? string.Empty : string.Join(" / ", SelectedExam.Levels);
-    public string WorkingTimeText => SelectedExam is null ? string.Empty : $"Рабочее время: около {SelectedExam.TotalWorkingMinutes} мин.";
+    public string WorkingTimeText => SelectedExam is null
+        ? string.Empty
+        : SelectedExam.TotalSessionMinutes == SelectedExam.TotalWorkingMinutes
+            ? $"Рабочее время: около {SelectedExam.TotalWorkingMinutes} мин."
+            : $"Рабочее время: {SelectedExam.TotalWorkingMinutes} мин. · с подготовкой и перерывом: около {SelectedExam.TotalSessionMinutes} мин.";
     public string ScoringSummary => SelectedExam?.ScoringSummary ?? string.Empty;
-    public string ReadinessSummary => Readiness.Count == 0
-        ? "Нет данных"
-        : $"Готово разделов: {Readiness.Count(item => item.State == "Готов")} из {Readiness.Count}";
+    public string ReadinessSummary { get => _readinessSummary; private set => SetProperty(ref _readinessSummary, value); }
+    public string ReadinessDetailText { get => _readinessDetailText; private set => SetProperty(ref _readinessDetailText, value); }
 
     public async Task InitializeAsync()
     {
         var catalogTask = _examRepository.LoadAsync();
-        var attemptsTask = _learningProgressRepository.GetAllAsync();
+        var attemptsTask = LoadAttemptsAsync();
         await Task.WhenAll(catalogTask, attemptsTask);
         var catalog = await catalogTask;
         _attempts = await attemptsTask;
@@ -108,6 +173,8 @@ public sealed class ExamCenterViewModel : ObservableObject
         DisclaimerText = catalog.ReadinessDisclaimer;
         ApplyFilter();
     }
+
+    public Task ActivateAsync() => InitializeAsync();
 
     private void ApplyFilter()
     {
@@ -126,6 +193,8 @@ public sealed class ExamCenterViewModel : ObservableObject
         Segments.Clear();
         Sources.Clear();
         Readiness.Clear();
+        Targets.Clear();
+        Modules.Clear();
         if (SelectedExam is null)
         {
             RaiseExamProperties();
@@ -134,36 +203,135 @@ public sealed class ExamCenterViewModel : ObservableObject
 
         foreach (var segment in SelectedExam.Segments)
         {
+            var details = new List<string> { $"{segment.Parts} ч." };
+            if (segment.Items is { } items)
+            {
+                details.Add($"{items} заданий");
+            }
+            if (segment.PreparationMinutes > 0)
+            {
+                details.Add($"подготовка {segment.PreparationMinutes} мин.");
+            }
+            if (segment.IsPairFormat)
+            {
+                details.Add("в паре");
+            }
+            else if (segment.IsGroupFormat)
+            {
+                details.Add("в группе");
+            }
+            else if (segment.IsIndividualFormat || segment.IsRecordedComputerFormat)
+            {
+                details.Add("индивидуально");
+            }
+            if (segment.IsDurationPerParticipant)
+            {
+                details.Add("время на участника");
+            }
+            details.Add(string.Join(", ", segment.TaskFamilies.Take(3).Select(TaskLabel)));
             Segments.Add(new ExamSegmentViewModel(
                 SegmentLabel(segment.Id),
                 string.Join(" · ", segment.Skills.Select(SkillLabel)),
                 segment.IsApproximate ? $"≈ {segment.DurationMinutes} мин." : $"{segment.DurationMinutes} мин.",
-                $"{segment.Parts} ч. · {string.Join(", ", segment.TaskFamilies.Take(3).Select(TaskLabel))}"));
+                string.Join(" · ", details)));
         }
         foreach (var source in SelectedExam.Sources)
         {
             Sources.Add(source);
         }
 
-        if (GermanLevelExtensions.TryParse(SelectedExam.Levels.FirstOrDefault(), out var level) && level.IsCefrLevel())
+        foreach (var levelText in SelectedExam.Levels)
         {
-            var genericExam = GermanCurriculum.CreateGenericFourSkillExam(
-                $"readiness-{SelectedExam.Id}",
-                SelectedExam.Name,
-                level);
-            var readiness = new LearningProgressService().EvaluateExamReadiness(genericExam, _attempts);
-            foreach (var section in readiness.Sections)
+            if (GermanLevelExtensions.TryParse(levelText, out var level) && level.IsCefrLevel())
             {
-                Readiness.Add(new ExamReadinessItemViewModel(
-                    section.Definition.Title,
-                    $"Попытки: {section.EvidenceCount}/{section.Definition.MinimumEvidenceCount}; с таймером: {section.TimedEvidenceCount}/{section.Definition.MinimumTimedEvidenceCount}",
-                    $"Последний средний результат: {section.RecentScore:P0}",
-                    section.IsReady ? "Готов" : "Нужна практика"));
+                Targets.Add(new ExamTargetOption(level, $"Цель {level}"));
             }
         }
+        Modules.Add(new ExamModuleOption(null, "Полный экзамен"));
+        foreach (var segment in SelectedExam.Segments)
+        {
+            Modules.Add(new ExamModuleOption(segment.Id, SegmentLabel(segment.Id)));
+        }
+        _selectedTarget = Targets.OrderByDescending(item => item.Level).FirstOrDefault();
+        OnPropertyChanged(nameof(SelectedTarget));
+        _selectedModule = SelectedExam.Scoring.Kind == ExamScoringKind.IndependentModules
+            ? Modules.Skip(1).FirstOrDefault()
+            : Modules.FirstOrDefault();
+        OnPropertyChanged(nameof(SelectedModule));
+        UpdateReadiness();
 
         RaiseExamProperties();
     }
+
+    private void UpdateReadiness()
+    {
+        Readiness.Clear();
+        if (SelectedExam is null || SelectedTarget is null)
+        {
+            ReadinessSummary = "Нет данных";
+            ReadinessDetailText = string.Empty;
+            RaiseExamProperties();
+            return;
+        }
+
+        var target = new ExamReadinessTarget(
+            SelectedTarget.Level,
+            SelectedModule?.ModuleId,
+            SelectedExam.Scoring.Kind == ExamScoringKind.BandPerSkill ? "TDN4" : null);
+        var readiness = new ExamPolicyService().Evaluate(SelectedExam, target, _attempts);
+        var directModulePolicy = SelectedExam.Scoring.Kind is ExamScoringKind.IndependentModules or ExamScoringKind.BandPerSkill;
+        foreach (var module in readiness.Modules)
+        {
+            Readiness.Add(new ExamReadinessItemViewModel(
+                module.Title,
+                $"Подтверждений: {module.EvidenceCount}; с таймером: {module.TimedEvidenceCount}",
+                module.Band is null ? $"Результат: {module.Score:P0}" : $"Результат: {module.Band}",
+                directModulePolicy
+                    ? module.MeetsPolicy ? "Порог выполнен" : "Нужна практика"
+                    : module.EvidenceCount > 0 ? "Учтено" : "Нет данных"));
+        }
+        ReadinessSummary = readiness.IsReady
+            ? "Готовность подтверждена двумя пробными экзаменами"
+            : readiness.PolicySatisfied
+                ? $"Порог выполнен · пробные с запасом {readiness.BufferedPassingMockCount}/2"
+                : "Порог выбранного формата пока не выполнен";
+        ReadinessDetailText = string.Join(" ", readiness.MissingRequirements);
+        RaiseExamProperties();
+    }
+
+    private async Task<IReadOnlyList<AttemptEvent>> LoadAttemptsAsync()
+    {
+        if (_attemptRepository is not null)
+        {
+            return await _attemptRepository.GetAsync();
+        }
+        if (_compatibilityRepository is null)
+        {
+            return [];
+        }
+        var legacy = await _compatibilityRepository.GetAllAsync();
+        return legacy.Select((item, index) => new AttemptEvent(
+            DeterministicGuid($"exam|{item.CompletedAtUtc:O}|{index}"),
+            $"legacy.exam.{item.Level.ToString().ToLowerInvariant()}.{index}",
+            1,
+            item.Level,
+            item.Skill,
+            item.ExerciseType,
+            AttemptDirection.NotApplicable,
+            item.Score,
+            item.Mode,
+            item.CompletedAtUtc,
+            item.CompletedAtUtc,
+            item.SessionId ?? DeterministicGuid($"session|{item.CompletedAtUtc:O}|{index}"),
+            "legacy-exam-v1",
+            EvidenceQuality.HistoricalAggregate,
+            item.ObjectiveId,
+            item.WasTimed,
+            item.Mode == AssessmentMode.MockExam ? "legacy-unknown-exam" : null)).ToArray();
+    }
+
+    private static Guid DeterministicGuid(string value) =>
+        new(SHA256.HashData(Encoding.UTF8.GetBytes(value)).AsSpan(0, 16));
 
     private void RaiseExamProperties()
     {

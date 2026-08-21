@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Input;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
 using WortBruecke.Core.Learning;
-using WortBruecke.Core.Models;
 
 namespace WortBruecke.App.ViewModels;
 
@@ -27,9 +28,10 @@ public sealed record LearningLevelCardViewModel(
 public sealed class LearningPathViewModel : ObservableObject
 {
     private readonly IContentRepository _contentRepository;
-    private readonly IProgressRepository _legacyProgressRepository;
-    private readonly ILearningProgressRepository _learningProgressRepository;
+    private readonly IAttemptRepository? _attemptRepository;
+    private readonly ILearningProgressRepository? _compatibilityRepository;
     private readonly IExamBlueprintRepository _examBlueprintRepository;
+    private readonly IPlacementResultProvider? _placementProvider;
     private readonly Action<string> _navigate;
     private readonly LearningPathDefinition _definition = GermanCurriculum.CreateDefault();
     private readonly LearningProgressService _progressService = new();
@@ -46,9 +48,24 @@ public sealed class LearningPathViewModel : ObservableObject
         Action<string> navigate)
     {
         _contentRepository = contentRepository;
-        _legacyProgressRepository = legacyProgressRepository;
-        _learningProgressRepository = learningProgressRepository;
+        _ = legacyProgressRepository;
+        _compatibilityRepository = learningProgressRepository;
         _examBlueprintRepository = examBlueprintRepository;
+        _navigate = navigate;
+        RefreshCommand = new AsyncRelayCommand(InitializeAsync);
+    }
+
+    public LearningPathViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IExamBlueprintRepository examBlueprintRepository,
+        Action<string> navigate,
+        IPlacementResultProvider? placementProvider = null)
+    {
+        _contentRepository = contentRepository;
+        _attemptRepository = attemptRepository;
+        _examBlueprintRepository = examBlueprintRepository;
+        _placementProvider = placementProvider;
         _navigate = navigate;
         RefreshCommand = new AsyncRelayCommand(InitializeAsync);
     }
@@ -66,19 +83,18 @@ public sealed class LearningPathViewModel : ObservableObject
         var sentencesTask = _contentRepository.GetSentencesAsync();
         var passagesTask = _contentRepository.GetPassagesAsync();
         var grammarTask = _contentRepository.GetGrammarTasksAsync();
-        var legacyProgressTask = _legacyProgressRepository.GetAllAsync();
-        var learningAttemptsTask = _learningProgressRepository.GetAllAsync();
+        var attemptsTask = LoadAttemptsAsync();
+        var placementTask = _placementProvider?.GetLatestAsync() ?? Task.FromResult<PlacementResult?>(null);
         var examCatalogTask = _examBlueprintRepository.LoadAsync();
-        await Task.WhenAll(wordsTask, sentencesTask, passagesTask, grammarTask, legacyProgressTask, learningAttemptsTask, examCatalogTask);
+        await Task.WhenAll(wordsTask, sentencesTask, passagesTask, grammarTask, attemptsTask, placementTask, examCatalogTask);
 
         var words = await wordsTask;
         var sentences = await sentencesTask;
         var passages = await passagesTask;
         var grammar = await grammarTask;
-        var legacyProgress = await legacyProgressTask;
-        var attempts = (await learningAttemptsTask).ToList();
-        attempts.AddRange(AdaptLegacyEvidence(legacyProgress, words, sentences, passages, grammar));
-        var path = _progressService.EvaluatePath(_definition, attempts);
+        var attempts = await attemptsTask;
+        var placement = await placementTask;
+        var path = _progressService.EvaluatePathFromEvents(_definition, attempts, placement?.RecommendedLevel);
         var examCatalog = await examCatalogTask;
 
         Levels.Clear();
@@ -92,7 +108,13 @@ public sealed class LearningPathViewModel : ObservableObject
             var levelGrammar = grammar.Count(item => MatchesLevel(item.Level, level));
             var contentCount = levelWords + levelSentences + levelPassages + levelGrammar;
             var coveredSkills = CoveredSkills(levelWords, levelSentences, levelPassages, levelGrammar);
-            var requiredSkills = levelProgress.Definition.Objectives.Select(item => item.Skill).Distinct().ToArray();
+            var releasedObjectives = levelProgress.Definition.Objectives
+                .Where(item => item.Availability == ObjectiveAvailability.Published)
+                .ToArray();
+            var plannedObjectives = levelProgress.Definition.Objectives
+                .Where(item => item.Availability != ObjectiveAvailability.Published)
+                .ToArray();
+            var requiredSkills = releasedObjectives.Select(item => item.Skill).Distinct().ToArray();
             var missingSkills = requiredSkills.Except(coveredSkills).ToArray();
             var examCount = examCatalog.Exams.Count(exam => exam.Levels.Contains(levelCode, StringComparer.OrdinalIgnoreCase));
             var state = levelProgress.IsCompleted
@@ -102,16 +124,16 @@ public sealed class LearningPathViewModel : ObservableObject
                     : levelProgress.IsUnlocked ? "Доступен" : "Следующий этап";
 
             Levels.Add(new LearningLevelCardViewModel(
-                levelCode,
+                LevelLabel(level),
                 levelProgress.Definition.Title,
                 levelProgress.Definition.Outcome,
                 state,
                 $"Освоено целей: {levelProgress.MasteredRequiredObjectiveCount} из {levelProgress.RequiredObjectiveCount}",
                 levelProgress.Completion * 100,
-                $"{contentCount} упражнений · покрыто {coveredSkills.Count} из {requiredSkills.Length} навыков",
+                $"{contentCount} упражнений · опубликовано целей: {releasedObjectives.Length}",
                 examCount == 0 ? "Внутренний этап Pre-A1" : $"Официальных форматов в каталоге: {examCount}",
-                missingSkills.Length == 0 ? string.Empty : $"Нужно добавить: {string.Join(", ", missingSkills.Select(SkillLabel))}",
-                missingSkills.Length > 0,
+                BuildAvailabilityText(missingSkills, plannedObjectives),
+                missingSkills.Length > 0 || plannedObjectives.Length > 0,
                 levelProgress.IsUnlocked,
                 levelProgress.Definition.Level == path.CurrentLevel,
                 levelProgress.IsCompleted,
@@ -119,76 +141,48 @@ public sealed class LearningPathViewModel : ObservableObject
                 new RelayCommand(() => _navigate("exams"), () => examCount > 0)));
         }
 
-        CurrentLevelText = path.CurrentLevel.ToString();
+        CurrentLevelText = LevelLabel(path.CurrentLevel);
         OverallProgressValue = path.OverallCompletion * 100;
         OverallProgressText = $"{OverallProgressValue:0}% пути подтверждено попытками";
         CatalogStatusText = $"Экзаменационные форматы проверены {examCatalog.LastVerified:dd.MM.yyyy}. " +
-            "A0 — внутренний этап; официальные сертификаты начинаются с A1.";
+            "Pre-A1 — внутренний этап; невыпущенные цели не снижают прогресс и не блокируют A1.";
     }
 
-    private IEnumerable<LearningAttempt> AdaptLegacyEvidence(
-        IReadOnlyList<ProgressRecord> records,
-        IReadOnlyList<WordEntry> words,
-        IReadOnlyList<SentenceEntry> sentences,
-        IReadOnlyList<Passage> passages,
-        IReadOnlyList<GrammarTask> grammar)
+    public Task ActivateAsync() => InitializeAsync();
+
+    private async Task<IReadOnlyList<AttemptEvent>> LoadAttemptsAsync()
     {
-        var wordsById = words.ToDictionary(item => (long)item.Id);
-        var sentencesById = sentences.ToDictionary(item => (long)item.Id);
-        var passagesById = passages.ToDictionary(item => (long)item.Id);
-        var grammarById = grammar.ToDictionary(item => (long)item.Id);
-
-        foreach (var record in records.Where(item => item.AttemptCount > 0))
+        if (_attemptRepository is not null)
         {
-            var mapped = record.ContentType switch
-            {
-                ContentType.Word or ContentType.AssessmentWord when wordsById.TryGetValue(record.ContentId, out var word) =>
-                    Map(word.Level, LanguageSkill.Vocabulary, ExerciseType.BidirectionalTranslation),
-                ContentType.Sentence when sentencesById.TryGetValue(record.ContentId, out var sentence) =>
-                    Map(sentence.Level, LanguageSkill.Writing, ExerciseType.GuidedWriting),
-                ContentType.Passage when passagesById.TryGetValue(record.ContentId, out var passage) =>
-                    Map(passage.Level, LanguageSkill.Reading, ExerciseType.ReadingComprehension),
-                ContentType.Grammar when grammarById.TryGetValue(record.ContentId, out var grammarTask) =>
-                    Map(grammarTask.Level, LanguageSkill.Grammar, ExerciseType.GrammarTransformation),
-                _ => null
-            };
-            if (mapped is null)
-            {
-                continue;
-            }
-
-            var (level, skill, exerciseType, objectiveId) = mapped.Value;
-            var timestamp = record.LastAttemptUtc ?? DateTimeOffset.UtcNow;
-            var mode = record.ContentType == ContentType.AssessmentWord ? AssessmentMode.Diagnostic : AssessmentMode.Practice;
-            for (var index = 0; index < Math.Min(record.AttemptCount, 10); index++)
-            {
-                yield return new LearningAttempt(
-                    level,
-                    skill,
-                    exerciseType,
-                    record.Accuracy,
-                    timestamp.AddSeconds(-index),
-                    mode,
-                    objectiveId: objectiveId);
-            }
+            return await _attemptRepository.GetAsync();
         }
+        if (_compatibilityRepository is null)
+        {
+            return [];
+        }
+        var legacy = await _compatibilityRepository.GetAllAsync();
+        return legacy.Select((item, index) => new AttemptEvent(
+            DeterministicGuid($"{item.CompletedAtUtc:O}|{item.ObjectiveId}|{index}"),
+            $"legacy.learning.{item.Level.ToString().ToLowerInvariant()}.{item.ObjectiveId ?? item.Skill.ToString().ToLowerInvariant()}",
+            1,
+            item.Level,
+            item.Skill,
+            item.ExerciseType,
+            AttemptDirection.NotApplicable,
+            item.Score,
+            item.Mode,
+            item.CompletedAtUtc,
+            item.CompletedAtUtc,
+            item.SessionId ?? DeterministicGuid($"session|{item.CompletedAtUtc:O}|{index}"),
+            "legacy-learning-v1",
+            EvidenceQuality.HistoricalAggregate,
+            item.ObjectiveId,
+            item.WasTimed,
+            item.Mode == AssessmentMode.MockExam ? "legacy-unknown-exam" : null)).ToArray();
     }
 
-    private (GermanLevel Level, LanguageSkill Skill, ExerciseType ExerciseType, string ObjectiveId)? Map(
-        string levelText,
-        LanguageSkill skill,
-        ExerciseType preferredType)
-    {
-        if (!GermanLevelExtensions.TryParse(levelText, out var level))
-        {
-            return null;
-        }
-
-        var definition = _definition.Levels.Single(item => item.Level == level);
-        var objective = definition.Objectives.FirstOrDefault(item => item.Skill == skill && item.ExerciseType == preferredType)
-            ?? definition.Objectives.FirstOrDefault(item => item.Skill == skill);
-        return objective is null ? null : (level, skill, objective.ExerciseType, objective.Id);
-    }
+    private static Guid DeterministicGuid(string value) =>
+        new(SHA256.HashData(Encoding.UTF8.GetBytes(value)).AsSpan(0, 16));
 
     private static bool MatchesLevel(string value, GermanLevel level) =>
         GermanLevelExtensions.TryParse(value, out var parsed) && parsed == level;
@@ -227,4 +221,22 @@ public sealed class LearningPathViewModel : ObservableObject
         LanguageSkill.Mediation => "медиация",
         _ => skill.ToString()
     };
+
+    private static string LevelLabel(GermanLevel level) => level == GermanLevel.A0 ? "Pre-A1" : level.ToString();
+
+    private static string BuildAvailabilityText(
+        IReadOnlyCollection<LanguageSkill> missingPublishedSkills,
+        IReadOnlyCollection<LearningObjective> plannedObjectives)
+    {
+        var parts = new List<string>();
+        if (missingPublishedSkills.Count > 0)
+        {
+            parts.Add($"Нет заданий: {string.Join(", ", missingPublishedSkills.Select(SkillLabel))}");
+        }
+        if (plannedObjectives.Count > 0)
+        {
+            parts.Add($"В разработке: {string.Join(", ", plannedObjectives.Select(item => SkillLabel(item.Skill)).Distinct())}");
+        }
+        return string.Join(" · ", parts);
+    }
 }

@@ -38,6 +38,12 @@
                     <Label Padding="0" Margin="0,18,0,6" Content="Экзамен" Target="{Binding ElementName=ExamBox}" />
                     <ComboBox x:Name="ExamBox" ItemsSource="{Binding Exams}" SelectedItem="{Binding SelectedExam}" DisplayMemberPath="Name"
                               AutomationProperties.Name="Выбор официального экзамена" />
+                    <Label Padding="0" Margin="0,18,0,6" Content="Целевой результат" Target="{Binding ElementName=ExamTargetBox}" />
+                    <ComboBox x:Name="ExamTargetBox" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}" DisplayMemberPath="Label"
+                              AutomationProperties.Name="Целевой уровень результата" />
+                    <Label Padding="0" Margin="0,18,0,6" Content="Модуль" Target="{Binding ElementName=ExamModuleBox}" />
+                    <ComboBox x:Name="ExamModuleBox" ItemsSource="{Binding Modules}" SelectedItem="{Binding SelectedModule}" DisplayMemberPath="Label"
+                              AutomationProperties.Name="Целевой модуль экзамена" />
 
                     <Separator Margin="0,22,0,18" />
                     <TextBlock Style="{StaticResource MetaText}" Text="ВАЖНО" />
@@ -93,6 +99,8 @@
                         <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Доказательная готовность" />
                         <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding ReadinessSummary}" />
                     </Grid>
+                    <TextBlock Margin="0,0,0,10" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12"
+                               TextWrapping="Wrap" Text="{Binding ReadinessDetailText}" />
                     <ItemsControl ItemsSource="{Binding Readiness}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

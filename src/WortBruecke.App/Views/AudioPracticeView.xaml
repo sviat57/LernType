@@ -1,0 +1,84 @@
+<UserControl x:Class="WortBruecke.App.Views.AudioPracticeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Аудирование и устная практика">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="40,32,40,48" MaxWidth="1120" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ОФЛАЙН · ГОЛОС WINDOWS · ЗАПИСИ ВРЕМЕННЫЕ" />
+                <TextBlock Margin="0,8,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Слушайте. Говорите. Сравнивайте." />
+                <TextBlock Margin="0,10,0,0" MaxWidth="760" HorizontalAlignment="Left" Style="{StaticResource BodySecondary}"
+                           Text="Диктант даёт объективную проверку текста. Устный ответ сохраняется только на время этой сессии и оценивается вами по записи." />
+            </StackPanel>
+
+            <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.85*" MinWidth="240" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="1.4*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource MetaText}" Text="ЗАДАНИЕ" />
+                        <ComboBox Margin="0,8,0,0" ItemsSource="{Binding Prompts}" SelectedItem="{Binding SelectedPrompt}" DisplayMemberPath="DisplayTitle"
+                                  IsEnabled="{Binding CanSelectAudioOptions}"
+                                  AutomationProperties.Name="Выбрать уровень и аудиозадание" />
+                        <TextBlock Margin="0,22,0,0" Style="{StaticResource MetaText}" Text="МИКРОФОН" />
+                        <ComboBox Margin="0,8,0,0" ItemsSource="{Binding InputDevices}" SelectedItem="{Binding SelectedDevice}" DisplayMemberPath="Name"
+                                  IsEnabled="{Binding CanSelectAudioOptions}"
+                                  AutomationProperties.Name="Выбрать микрофон" />
+
+                        <Border Margin="0,18,0,0" Padding="14" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}"
+                                Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Foreground="{DynamicResource Brush.Error}" TextWrapping="Wrap" Text="{Binding ErrorMessage}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="1. Аудирование и диктант" />
+                        <StackPanel Margin="0,14,0,0" Orientation="Horizontal">
+                            <Button Style="{StaticResource SecondaryButton}" Command="{Binding ListenCommand}" Content="Прослушать фразу" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Style="{StaticResource BodySecondary}" Text="Текст скрыт до проверки" />
+                        </StackPanel>
+                        <TextBox Margin="0,12,0,0" Text="{Binding Transcript, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinHeight="76"
+                                 AutomationProperties.Name="Введите услышанную немецкую фразу" />
+                        <Button Margin="0,10,0,0" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}" Command="{Binding CheckTranscriptCommand}" Content="Проверить диктант" />
+
+                        <Border Margin="0,18,0,0" Height="1" Background="{DynamicResource Brush.BorderSubtle}" />
+                        <TextBlock Margin="0,18,0,0" Style="{StaticResource SectionTitle}" Text="2. Устный ответ" />
+                        <TextBlock Margin="0,7,0,0" TextWrapping="Wrap" Style="{StaticResource BodySecondary}" Text="{Binding SelectedPrompt.SpeakingInstruction}" />
+                        <StackPanel Margin="0,14,0,0" Orientation="Horizontal">
+                            <Button Style="{StaticResource PrimaryButton}" Command="{Binding StartTimedRecordingCommand}" Content="Подготовка и запись" />
+                            <Button Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding StopRecordingCommand}" Content="Остановить" />
+                            <Button Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding PlayRecordingCommand}" Content="Прослушать себя" />
+                        </StackPanel>
+                        <TextBlock Margin="0,9,0,0" Foreground="{DynamicResource Brush.AccentText}" FontWeight="SemiBold" Text="{Binding TimerText}" />
+
+                        <StackPanel Margin="0,14,0,0" Orientation="Horizontal" Visibility="{Binding HasRecording, Converter={StaticResource BoolToVisibility}}">
+                            <Button Style="{StaticResource SecondaryButton}" Command="{Binding RateSpeakingCommand}" CommandParameter="0.4" Content="Нужно повторить" />
+                            <Button Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RateSpeakingCommand}" CommandParameter="0.75" Content="Смысл передан" />
+                            <Button Margin="8,0,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RateSpeakingCommand}" CommandParameter="1" Content="Уверенный ответ" />
+                        </StackPanel>
+
+                        <Border Margin="0,16,0,0" Padding="14" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="{DynamicResource Radius.Input}"
+                                Visibility="{Binding HasFeedback, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Foreground="{DynamicResource Brush.TextPrimary}" TextWrapping="Wrap" Text="{Binding Feedback}" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <TextBlock Grid.Row="4" Style="{StaticResource BodySecondary}" FontSize="12" TextWrapping="Wrap"
+                       Text="Самооценка речи имеет низкий уровень доказательности и не повышает экзаменационную готовность. Для readiness используется только откалиброванная или проверенная оценка." />
+        </Grid>
+    </ScrollViewer>
+</UserControl>

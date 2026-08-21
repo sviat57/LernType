@@ -12,12 +12,35 @@ public sealed class SqliteProgressRepository(SqliteDatabase database) : IProgres
         await connection.OpenAsync(cancellationToken);
         await using var command = connection.CreateCommand();
         command.CommandText = """
-            INSERT INTO user_progress(content_type, content_id, attempt_count, correct_count, last_attempt_utc)
-            VALUES($type, $id, 1, $correct, $now)
+            INSERT INTO user_progress(
+                content_type, content_id, attempt_count, correct_count, last_attempt_utc,
+                semantic_key, catalog_revision, migration_status)
+            VALUES(
+                $type, $id, 1, $correct, $now,
+                COALESCE(
+                    (SELECT semantic_key FROM content_identities
+                     WHERE content_type=$type AND legacy_numeric_id=$id
+                     ORDER BY catalog_revision DESC LIMIT 1),
+                    CASE WHEN $type='BookWord' THEN 'user.book-word.' || $id END),
+                (SELECT catalog_revision FROM content_identities
+                 WHERE content_type=$type AND legacy_numeric_id=$id
+                 ORDER BY catalog_revision DESC LIMIT 1),
+                CASE
+                    WHEN $type='BookWord' THEN 'user_content'
+                    WHEN EXISTS(SELECT 1 FROM content_identities
+                                WHERE content_type=$type AND legacy_numeric_id=$id) THEN 'resolved'
+                    ELSE 'unclassified'
+                END)
             ON CONFLICT(content_type, content_id) DO UPDATE SET
                 attempt_count = attempt_count + 1,
                 correct_count = correct_count + excluded.correct_count,
-                last_attempt_utc = excluded.last_attempt_utc;
+                last_attempt_utc = excluded.last_attempt_utc,
+                semantic_key = COALESCE(user_progress.semantic_key, excluded.semantic_key),
+                catalog_revision = COALESCE(user_progress.catalog_revision, excluded.catalog_revision),
+                migration_status = CASE
+                    WHEN user_progress.migration_status IN ('resolved', 'user_content')
+                        THEN user_progress.migration_status
+                    ELSE excluded.migration_status END;
             """;
         command.Parameters.AddWithValue("$type", contentType.ToString());
         command.Parameters.AddWithValue("$id", contentId);

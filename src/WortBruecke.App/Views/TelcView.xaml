@@ -20,7 +20,7 @@
                             <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding CharacterHint}" />
                         </Border>
                     </Grid>
-                    <TextBox x:Name="TelcInputBox" Margin="0,8,0,0" MinHeight="190" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                    <TextBox x:Name="TelcInputBox" Margin="0,8,0,0" MinHeight="190" MaxLength="20000" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                              Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Текст для TELC-анализа" />
 
                     <Grid Margin="0,10,0,0">

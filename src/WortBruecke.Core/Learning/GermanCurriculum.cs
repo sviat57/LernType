@@ -12,7 +12,7 @@ public static class GermanCurriculum
     [
         Level(
             GermanLevel.A0,
-            "A0 · Старт",
+            "Pre-A1 · Внутренний старт",
             "Узнавать базовые слова и воспроизводить самые короткие бытовые реплики.",
             O(GermanLevel.A0, LanguageSkill.Vocabulary, ExerciseType.ImageAssociation, "core-words", "Первые слова", "Узнавать предметы, числа, людей и действия по слову или изображению."),
             O(GermanLevel.A0, LanguageSkill.Grammar, ExerciseType.SentenceAssembly, "first-patterns", "Базовые модели", "Собирать утвердительную фразу и простой вопрос из готовых частей."),
@@ -129,7 +129,10 @@ public static class GermanCurriculum
         string key,
         string title,
         string descriptor,
-        int minimumAttempts = 3) => new(
+        int minimumAttempts = 3)
+    {
+        var availability = Availability(level, skill);
+        return new LearningObjective(
             $"{level.ToString().ToLowerInvariant()}.{skill.ToString().ToLowerInvariant()}.{key}",
             level,
             skill,
@@ -137,7 +140,39 @@ public static class GermanCurriculum
             title,
             descriptor,
             minimumAttempts,
-            MasteryThreshold(level));
+            MasteryThreshold(level),
+            isRequired: true,
+            availability,
+            AcceptedTypes(skill, type),
+            minimumDistinctItems: Math.Min(3, minimumAttempts),
+            minimumDistinctDays: Math.Min(2, minimumAttempts),
+            minimumEvidenceQuality: EvidenceQuality.Deterministic);
+    }
+
+    /// <summary>
+    /// Reflects exercises that are actually assessable in the bundled catalog. Planned skills are
+    /// still visible on the route but never shown as learner failure and never block progression.
+    /// </summary>
+    private static ObjectiveAvailability Availability(GermanLevel level, LanguageSkill skill) => skill switch
+    {
+        LanguageSkill.Vocabulary when level <= GermanLevel.B1 => ObjectiveAvailability.Published,
+        LanguageSkill.Vocabulary => ObjectiveAvailability.Planned,
+        LanguageSkill.Reading or LanguageSkill.Writing or LanguageSkill.Mediation => ObjectiveAvailability.Published,
+        LanguageSkill.Grammar => ObjectiveAvailability.PracticeOnly,
+        // Local TTS/dictation and timed self-review are real practice routes, but the speaking
+        // result remains self-reported and therefore is not mastery/certification evidence.
+        LanguageSkill.Listening or LanguageSkill.Speaking => ObjectiveAvailability.PracticeOnly,
+        _ => ObjectiveAvailability.Planned
+    };
+
+    private static IEnumerable<ExerciseType> AcceptedTypes(LanguageSkill skill, ExerciseType primary) => skill switch
+    {
+        LanguageSkill.Vocabulary => [primary, ExerciseType.BidirectionalTranslation, ExerciseType.ImageAssociation, ExerciseType.VocabularyRecall, ExerciseType.VocabularyRecognition],
+        LanguageSkill.Reading => [primary, ExerciseType.BidirectionalTranslation, ExerciseType.ReadingComprehension, ExerciseType.InformationMatching],
+        LanguageSkill.Writing => [primary, ExerciseType.BidirectionalTranslation, ExerciseType.GuidedWriting, ExerciseType.FunctionalWriting, ExerciseType.EssayWriting],
+        LanguageSkill.Mediation => [primary, ExerciseType.BidirectionalTranslation, ExerciseType.MediationSummary],
+        _ => [primary]
+    };
 
     private static ExamSectionDefinition Section(
         string id,

@@ -16,6 +16,8 @@
             <infra:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
             <infra:BooleanToStatusBrushConverter x:Key="StatusBrushConverter" />
             <infra:LocalizedTextConverter x:Key="LocalizedTextConverter" />
+            <infra:WindowWidthToVisibilityConverter x:Key="WindowWidthVisibility" />
+            <infra:WindowWidthToNavigationWidthConverter x:Key="ResponsiveNavigationWidth" />
             <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>
@@ -36,6 +38,12 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:VocabularyTestViewModel}">
                 <views:VocabularyTestView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AudioPracticeViewModel}">
+                <views:AudioPracticeView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ProgressViewModel}">
+                <views:ProgressView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:GrammarViewModel}">
                 <views:GrammarView />

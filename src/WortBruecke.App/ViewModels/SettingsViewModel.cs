@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
 using WortBruecke.Core.Models;
@@ -20,6 +21,7 @@ public sealed class SettingsViewModel : ObservableObject
     private PassageModeOption? _selectedPassageMode;
     private string _apiModel = "gpt-5-mini";
     private string _apiKey = string.Empty;
+    private bool _allowOnlineLanguageAnalysis;
     private bool _useDarkTheme;
     private string _saveStatus = string.Empty;
 
@@ -36,7 +38,10 @@ public sealed class SettingsViewModel : ObservableObject
             new PassageModeOption(PassagePracticeMode.Translation, "Перевод по предложениям", "RU → DE"),
             new PassageModeOption(PassagePracticeMode.GermanTyping, "Чистый набор немецкого", "DE → DE")
         ];
-        SaveCommand = new AsyncRelayCommand(SaveAsync, () => !string.IsNullOrWhiteSpace(ApiModel));
+        SaveCommand = new AsyncRelayCommand(
+            SaveAsync,
+            () => !string.IsNullOrWhiteSpace(ApiModel),
+            error => SaveStatus = error.UserMessage);
         RefreshLayoutsCommand = new RelayCommand(RefreshLayouts);
         OpenWindowsSettingsCommand = new RelayCommand(() =>
             Process.Start(new ProcessStartInfo("ms-settings:regionlanguage") { UseShellExecute = true }));
@@ -78,6 +83,12 @@ public sealed class SettingsViewModel : ObservableObject
         set => SetProperty(ref _apiKey, value);
     }
 
+    public bool AllowOnlineLanguageAnalysis
+    {
+        get => _allowOnlineLanguageAnalysis;
+        set => SetProperty(ref _allowOnlineLanguageAnalysis, value);
+    }
+
     public bool UseDarkTheme
     {
         get => _useDarkTheme;
@@ -96,6 +107,8 @@ public sealed class SettingsViewModel : ObservableObject
         private set => SetProperty(ref _saveStatus, value);
     }
 
+    public string VersionText => $"LernType {Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.0.0"}";
+
     public async Task InitializeAsync()
     {
         var settings = await _settingsStore.LoadAsync();
@@ -103,6 +116,7 @@ public sealed class SettingsViewModel : ObservableObject
         SelectedPassageMode = PassageModes.First(mode => mode.Mode == settings.PassageMode);
         ApiModel = settings.ApiModel;
         ApiKey = settings.ApiKey;
+        AllowOnlineLanguageAnalysis = settings.AllowOnlineLanguageAnalysis;
         _useDarkTheme = settings.UseDarkTheme;
         OnPropertyChanged(nameof(UseDarkTheme));
         RefreshLayouts();
@@ -119,6 +133,7 @@ public sealed class SettingsViewModel : ObservableObject
             PassageMode = SelectedPassageMode?.Mode ?? PassagePracticeMode.Translation,
             ApiModel = ApiModel.Trim(),
             ApiKey = ApiKey.Trim(),
+            AllowOnlineLanguageAnalysis = AllowOnlineLanguageAnalysis,
             UseDarkTheme = UseDarkTheme
         };
         await _settingsStore.SaveAsync(settings);

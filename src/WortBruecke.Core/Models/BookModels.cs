@@ -27,3 +27,12 @@ public sealed record UserBook(
     string RawText,
     DateTimeOffset CreatedUtc,
     IReadOnlyList<ExtractedVocabularyItem> Vocabulary);
+
+/// <summary>A privacy-preserving list item: it never materializes the imported text or word contexts.</summary>
+public sealed record UserBookSummary(
+    long Id,
+    string Title,
+    string SourceCulture,
+    DateTimeOffset CreatedUtc,
+    int CharacterCount,
+    int VocabularyCount);

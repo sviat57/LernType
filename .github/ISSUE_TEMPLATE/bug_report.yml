@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible LernType problem without personal learning data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not attach API keys, lerntype.db, private book text, answers or recordings."
+  - type: input
+    id: version
+    attributes:
+      label: LernType version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and display scaling
+      placeholder: Windows 11 24H2, 150%
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true
+  - type: dropdown
+    id: distribution
+    attributes:
+      label: Distribution
+      options: [Microsoft Store/MSIX, AppInstaller, ZIP, Source build]
+    validations:
+      required: true

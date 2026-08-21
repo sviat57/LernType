@@ -14,6 +14,8 @@ public sealed class HomeViewModel(Action<string> navigate)
 
     public ICommand OpenTrainerCommand { get; } = new RelayCommand(() => navigate("trainer"));
     public ICommand OpenLearningPathCommand { get; } = new RelayCommand(() => navigate("path"));
+    public ICommand OpenAudioCommand { get; } = new RelayCommand(() => navigate("audio"));
+    public ICommand OpenProgressCommand { get; } = new RelayCommand(() => navigate("progress"));
     public ICommand OpenTextsCommand { get; } = new RelayCommand(() => navigate("texts"));
     public ICommand OpenBooksCommand { get; } = new RelayCommand(() => navigate("books"));
     public ICommand OpenVocabularyTestCommand { get; } = new RelayCommand(() => navigate("test"));

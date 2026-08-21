@@ -34,3 +34,33 @@ public sealed class LocalizedTextConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
 }
+
+public sealed class WindowWidthToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var width = value is double actualWidth ? actualWidth : 0d;
+        var text = parameter?.ToString() ?? "1060";
+        var showBelow = text.StartsWith("<", StringComparison.Ordinal);
+        if (!double.TryParse(text.TrimStart('<', '>'), NumberStyles.Number, CultureInfo.InvariantCulture, out var threshold))
+        {
+            threshold = 1060d;
+        }
+        var visible = showBelow ? width < threshold : width >= threshold;
+        return visible ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+}
+
+public sealed class WindowWidthToNavigationWidthConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        // 112 DIP leaves room for the 24-DIP icon, focus ring and a vertical scrollbar at the
+        // minimum supported window height; narrower rails clipped icons when scrolling appeared.
+        return new GridLength(value is double width && width < 1060d ? 112d : 244d);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+}

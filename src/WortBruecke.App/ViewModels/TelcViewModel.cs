@@ -71,14 +71,16 @@ public sealed class TelcViewModel : ObservableObject
 
     public void Activate() => _keyboardLayoutService.SwitchTo(_pair.Target.CultureCode);
 
-    private async Task AnalyzeAsync()
+    public void CancelOnlineAnalysis() => AnalyzeCommand.Cancel();
+
+    private async Task AnalyzeAsync(CancellationToken cancellationToken)
     {
         IsBusy = true;
         HasError = false;
         HasResult = false;
         try
         {
-            var result = await _analysisService.AnalyzeTelcAsync(InputText);
+            var result = await _analysisService.AnalyzeTelcAsync(InputText, cancellationToken);
             Level = result.Level;
             ConfidenceText = $"Уверенность {result.Confidence:P0}";
             Summary = result.Summary;
@@ -97,6 +99,11 @@ public sealed class TelcViewModel : ObservableObject
         catch (LanguageAnalysisUnavailableException exception)
         {
             ErrorMessage = exception.Message;
+            HasError = true;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            ErrorMessage = "Онлайн-анализ отменён.";
             HasError = true;
         }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or InvalidDataException)

@@ -28,7 +28,13 @@ public static partial class AnswerEvaluator
 
     public static string Normalize(string value, string cultureCode)
     {
-        var normalized = CollapseWhitespace().Replace(value.Trim(), " ").ToLower(CultureInfo.GetCultureInfo(cultureCode));
+        var normalized = value
+            .Normalize(NormalizationForm.FormKC)
+            .Trim()
+            .ToLower(CultureInfo.GetCultureInfo(cultureCode));
+        normalized = IgnorablePunctuation().Replace(normalized, " ");
+        normalized = JoinableDashes().Replace(normalized, string.Empty);
+        normalized = CollapseWhitespace().Replace(normalized, " ").Trim();
         if (cultureCode.StartsWith("de", StringComparison.OrdinalIgnoreCase))
         {
             normalized = normalized
@@ -38,9 +44,15 @@ public static partial class AnswerEvaluator
                 .Replace("ß", "ss", StringComparison.Ordinal);
         }
 
-        return normalized.Normalize(NormalizationForm.FormC);
+        return normalized.Trim().Normalize(NormalizationForm.FormC);
     }
 
     [GeneratedRegex(@"\s+")]
     private static partial Regex CollapseWhitespace();
+
+    [GeneratedRegex("""[\.,!?;:"„“‚‘’'«»()\[\]{}…/\\]+""")]
+    private static partial Regex IgnorablePunctuation();
+
+    [GeneratedRegex(@"[-‐‑‒–—―]")]
+    private static partial Regex JoinableDashes();
 }

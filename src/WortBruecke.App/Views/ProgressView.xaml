@@ -1,0 +1,98 @@
+<UserControl x:Class="WortBruecke.App.Views.ProgressView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Прогресс LernType">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="40,32,40,48" MaxWidth="1120" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="22" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="EVIDENCE · MASTERY · ПОВТОРЕНИЕ" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Ваш прогресс без условных баллов" />
+                    <TextBlock Margin="0,9,0,0" Style="{StaticResource BodySecondary}" Text="Засчитываются реальные разные задания, выполненные в разные дни." />
+                </StackPanel>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshCommand}" Content="Обновить" />
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.35*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Padding="24" Style="{StaticResource Panel}" AutomationProperties.Name="Очередь повторений">
+                    <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="К ПОВТОРЕНИЮ" />
+                        <StackPanel Grid.Row="1" Margin="0,12,0,18" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="40" FontWeight="SemiBold" Text="{Binding DueCount}" />
+                            <TextBlock Margin="0,5,0,0" MaxWidth="520" Style="{StaticResource BodySecondary}" FontSize="13"
+                                       Text="Просроченные карточки попадут в начало следующей сессии; новые задания заполнят оставшиеся места." />
+                        </StackPanel>
+                        <Button Grid.Row="2" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}" Command="{Binding StartReviewCommand}"
+                                AutomationProperties.Name="Начать сессию с приоритетом повторений" Content="Начать повторение" />
+                    </Grid>
+                </Border>
+
+                <StackPanel Grid.Column="2">
+                    <Border Margin="0,0,0,9" Padding="17" Style="{StaticResource GlassInset}">
+                        <Grid><TextBlock Style="{StaticResource MetaText}" Text="ТЕКУЩИЙ ЭТАП" /><TextBlock HorizontalAlignment="Right" FontSize="23" FontWeight="SemiBold" Text="{Binding CurrentLevel}" /></Grid>
+                    </Border>
+                    <Border Margin="0,0,0,9" Padding="17" Style="{StaticResource GlassInset}">
+                        <Grid><TextBlock Style="{StaticResource MetaText}" Text="ПОПЫТОК ЗА 7 ДНЕЙ" /><TextBlock HorizontalAlignment="Right" FontSize="23" FontWeight="SemiBold" Text="{Binding WeekAttempts}" /></Grid>
+                    </Border>
+                    <Border Padding="17" Style="{StaticResource GlassInset}">
+                        <StackPanel><TextBlock Style="{StaticResource MetaText}" Text="ЗОНА ВНИМАНИЯ" /><TextBlock Margin="0,7,0,0" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding WeakestSkill}" /></StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="4" Padding="24" Style="{StaticResource Panel}"
+                    Visibility="{Binding HasData, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="Навыки" />
+                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource BodySecondary}" Text="{Binding TotalAttempts, StringFormat={}{0} подтверждённых попыток}" />
+                    </Grid>
+                    <ItemsControl Margin="0,18,0,0" ItemsSource="{Binding Skills}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="238" MinHeight="116" Margin="0,0,12,12" Padding="16" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
+                                    <StackPanel>
+                                        <Grid><TextBlock FontWeight="SemiBold" Text="{Binding Title}" /><TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource Brush.AccentText}" FontWeight="SemiBold" Text="{Binding ScoreText}" /></Grid>
+                                        <TextBlock Margin="0,9,0,0" Style="{StaticResource BodySecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding DetailText}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ProgressBar Margin="0,10,0,0" Height="7" Minimum="0" Maximum="1" Value="{Binding OverallCompletion, Mode=OneWay}" AutomationProperties.Name="Общий прогресс учебного пути" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="12" Text="{Binding OverallCompletion, StringFormat=Освоено опубликованных целей: {0:P0}}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="4" Padding="28" Style="{StaticResource Panel}"
+                    Visibility="{Binding HasData, Converter={StaticResource InverseBoolToVisibility}}"
+                    AutomationProperties.Name="Прогресс пока пуст">
+                <StackPanel MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center" TextBlock.TextAlignment="Center">
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="Здесь появятся только реальные попытки" />
+                    <TextBlock Margin="0,10,0,18" Style="{StaticResource BodySecondary}"
+                               Text="Выполните первое упражнение. LernType не заполняет графики условными баллами и не считает просмотр материала освоением." />
+                    <Button HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" Command="{Binding StartReviewCommand}" Content="Начать первую практику" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="4" Margin="0,0,0,0" Padding="16" VerticalAlignment="Top" Background="{DynamicResource Brush.ErrorSoft}" CornerRadius="{DynamicResource Radius.Input}"
+                    Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Foreground="{DynamicResource Brush.Error}" TextWrapping="Wrap" Text="{Binding ErrorMessage}" />
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

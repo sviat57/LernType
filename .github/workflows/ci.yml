@@ -2,29 +2,246 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_VERSION: "1.0.0"
+  MSIX_VERSION: "1.0.0.0"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  NUGET_XMLDOC_MODE: skip
+
 jobs:
-  build-and-test:
+  quality:
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.302
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
 
-      - name: Restore
-        run: dotnet restore LernType.sln
+      - name: Verify release version metadata
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content src/WortBruecke.App/WortBruecke.App.csproj -Raw
+          $appVersion = [string]($project.Project.PropertyGroup.Version | Select-Object -First 1)
+          $fileVersion = [string]($project.Project.PropertyGroup.FileVersion | Select-Object -First 1)
+          $readyToRun = [string]($project.Project.PropertyGroup.PublishReadyToRun | Select-Object -First 1)
+          $trimmed = [string]($project.Project.PropertyGroup.PublishTrimmed | Select-Object -First 1)
+          if ($appVersion -ne $env:APP_VERSION) {
+            throw "Project Version '$appVersion' does not match CI APP_VERSION '$env:APP_VERSION'."
+          }
+          if ($fileVersion -ne $env:MSIX_VERSION) {
+            throw "Project FileVersion '$fileVersion' does not match CI MSIX_VERSION '$env:MSIX_VERSION'."
+          }
+          if ($readyToRun -ne 'true' -or $trimmed -ne 'false') {
+            throw "Release publish must keep PublishReadyToRun=true and PublishTrimmed=false for the WPF application."
+          }
 
-      - name: Build
+      - name: Restore locked dependencies and tools
+        shell: pwsh
+        run: |
+          dotnet tool restore
+          if ($LASTEXITCODE -ne 0) { throw "dotnet tool restore failed with exit code $LASTEXITCODE." }
+          dotnet restore LernType.sln --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw "Locked restore failed with exit code $LASTEXITCODE." }
+
+      - name: Verify formatting
+        run: dotnet format LernType.sln --verify-no-changes --no-restore
+
+      - name: Build Debug
+        run: dotnet build LernType.sln -c Debug --no-restore -warnaserror
+
+      - name: Build Release
         run: dotnet build LernType.sln -c Release --no-restore -warnaserror
 
-      - name: Test
-        run: dotnet test LernType.sln -c Release --no-build
+      - name: Test with coverage
+        shell: pwsh
+        run: |
+          dotnet test LernType.sln -c Release --no-build --no-restore --collect:"XPlat Code Coverage" --results-directory TestResults --logger "trx;LogFileName=tests.trx" --blame-hang-timeout 3m
+          if ($LASTEXITCODE -ne 0) { throw "Test run failed with exit code $LASTEXITCODE." }
+          $report = Get-ChildItem TestResults -Recurse -Filter coverage.cobertura.xml | Select-Object -First 1
+          if (-not $report) { throw "Coverage report was not produced." }
+          [xml]$coverage = Get-Content $report.FullName
+          $culture = [Globalization.CultureInfo]::InvariantCulture
+          $lineRate = [double]::Parse($coverage.coverage.'line-rate', $culture)
+          $branchRate = [double]::Parse($coverage.coverage.'branch-rate', $culture)
+          $line = $lineRate * 100
+          $branch = $branchRate * 100
+          "Line coverage: {0:N1}% | Branch coverage: {1:N1}%" -f $line, $branch
+          if ($line -lt 45 -or $branch -lt 30) {
+            throw "Coverage fell below the protected baseline (45% line / 30% branch)."
+          }
+
+      - name: Audit transitive dependencies
+        shell: pwsh
+        run: |
+          $json = dotnet list LernType.sln package --vulnerable --include-transitive --format json
+          if ($LASTEXITCODE -ne 0) { throw "NuGet vulnerability audit failed with exit code $LASTEXITCODE." }
+          $json | Set-Content vulnerabilities.json -Encoding utf8NoBOM
+          $audit = $json | ConvertFrom-Json
+          $vulnerabilities = @(
+            foreach ($project in @($audit.projects)) {
+              foreach ($framework in @($project.frameworks)) {
+                foreach ($package in @($framework.topLevelPackages) + @($framework.transitivePackages)) {
+                  foreach ($finding in @($package.vulnerabilities)) {
+                    if ($null -ne $finding) { $finding }
+                  }
+                }
+              }
+            }
+          )
+          if ($vulnerabilities.Count -gt 0) {
+            throw "NuGet vulnerability audit found $($vulnerabilities.Count) vulnerable package finding(s)."
+          }
+
+      - name: Generate and validate CycloneDX SBOM
+        shell: pwsh
+        run: |
+          dotnet CycloneDX src/WortBruecke.App/WortBruecke.App.csproj --exclude-dev --disable-package-restore --output artifacts/sbom --filename LernType.cdx.json --output-format Json --set-name LernType --set-version "${{ env.APP_VERSION }}" --set-type Application
+          if ($LASTEXITCODE -ne 0) { throw "CycloneDX generation failed with exit code $LASTEXITCODE." }
+          $sbomPath = "artifacts/sbom/LernType.cdx.json"
+          if (-not (Test-Path $sbomPath -PathType Leaf)) { throw "CycloneDX SBOM is missing." }
+          $sbom = Get-Content $sbomPath -Raw | ConvertFrom-Json
+          if ($sbom.bomFormat -ne "CycloneDX" -or $sbom.specVersion -notmatch '^1\.') {
+            throw "CycloneDX SBOM metadata is invalid."
+          }
+          if (@($sbom.components).Count -eq 0) { throw "CycloneDX SBOM contains no components." }
+          $missingLicense = @($sbom.components | Where-Object { -not $_.licenses -or @($_.licenses).Count -eq 0 })
+          if ($missingLicense.Count -gt 0) {
+            throw "CycloneDX SBOM has $($missingLicense.Count) component(s) without license metadata."
+          }
+
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qa-evidence
+          path: |
+            TestResults
+            artifacts/sbom
+            vulnerabilities.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low
+          deny-licenses: GPL-2.0-only, GPL-2.0-or-later, GPL-3.0-only, GPL-3.0-or-later, AGPL-1.0-only, AGPL-1.0-or-later, AGPL-3.0-only, AGPL-3.0-or-later, SSPL-1.0
+
+  publish:
+    needs: quality
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        rid: [win-x64, win-arm64]
+        include:
+          - rid: win-x64
+            architecture: x64
+          - rid: win-arm64
+            architecture: arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 10.0.302
+
+      - name: Restore locked runtime dependencies
+        # The lock captures both RuntimeIdentifiers declared by the app. A single-RID
+        # restore would intentionally change that locked graph and fail with NU1004.
+        run: dotnet restore src/WortBruecke.App/WortBruecke.App.csproj --locked-mode
+
+      - name: Publish self-contained app
+        shell: pwsh
+        run: |
+          $out = "artifacts/publish/${{ matrix.rid }}"
+          dotnet publish src/WortBruecke.App/WortBruecke.App.csproj -c Release -r "${{ matrix.rid }}" --self-contained true --no-restore -o $out -warnaserror
+          if ($LASTEXITCODE -ne 0) { throw "Publish failed with exit code $LASTEXITCODE." }
+          if (-not (Test-Path "$out/LernType.exe" -PathType Leaf)) { throw "LernType.exe is missing." }
+          $zip = "artifacts/LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}.zip"
+          Compress-Archive -Path "$out/*" -DestinationPath $zip -CompressionLevel Optimal
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $([IO.Path]::GetFileName($zip))" | Set-Content "$zip.sha256" -Encoding ascii
+
+      - name: Validate unsigned MSIX layout
+        shell: pwsh
+        run: |
+          $package = & ./tools/Build-Msix.ps1 -PublishDirectory "artifacts/publish/${{ matrix.rid }}" -Architecture "${{ matrix.architecture }}" -Version "${{ env.MSIX_VERSION }}" -AllowUnsigned -OutputDirectory "artifacts/msix-validation"
+          if (-not $package -or -not (Test-Path $package.Package -PathType Leaf)) { throw "MSIX validation package is missing." }
+          if ($package.Signed) { throw "Unsigned validation unexpectedly reported a signature." }
+
+      - name: Upload release candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}
+          path: |
+            artifacts/LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}.zip
+            artifacts/LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload MSIX validation evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: msix-validation-${{ matrix.rid }}
+          path: |
+            artifacts/msix-validation/*.msix
+            artifacts/msix-validation/*.sha256
+          if-no-files-found: error
+          retention-days: 3
+
+  codeql:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      security-events: write
+      packages: read
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
+        with:
+          languages: csharp
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: 10.0.302
+      - name: Restore locked dependencies
+        run: dotnet restore LernType.sln --locked-mode
+      - name: Build
+        run: dotnet build LernType.sln -c Release --no-restore -warnaserror
+      - name: Analyze
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4

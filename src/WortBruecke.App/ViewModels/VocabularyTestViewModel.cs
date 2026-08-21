@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 using WortBruecke.Core.Training;
 
@@ -22,7 +23,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
     private const int RequestedQuestionCount = 20;
 
     private readonly IContentRepository _contentRepository;
-    private readonly IProgressRepository _progressRepository;
+    private readonly LearningAttemptSink _attemptSink;
     private readonly IKeyboardLayoutService _keyboardLayoutService;
     private readonly List<WordEntry> _allWords = [];
     private readonly LanguagePair _pair = LanguagePair.RussianToGerman;
@@ -36,6 +37,8 @@ public sealed class VocabularyTestViewModel : ObservableObject
     private string _selectionMessage = string.Empty;
     private bool _isTestActive;
     private bool _isComplete;
+    private Guid _sessionId;
+    private DateTimeOffset _attemptStartedAtUtc;
 
     public VocabularyTestViewModel(
         IContentRepository contentRepository,
@@ -43,13 +46,40 @@ public sealed class VocabularyTestViewModel : ObservableObject
         IKeyboardLayoutService keyboardLayoutService)
     {
         _contentRepository = contentRepository;
-        _progressRepository = progressRepository;
+        _attemptSink = new LearningAttemptSink(progressRepository);
         _keyboardLayoutService = keyboardLayoutService;
 
         Levels =
         [
-            new VocabularyTestLevelOption(null, "Все уровни", "Смешанный тест A0–B1"),
-            new VocabularyTestLevelOption("A0", "A0 · Первый шаг", "Самые наглядные слова"),
+            new VocabularyTestLevelOption(null, "Все уровни", "Смешанный тест Pre-A1–B1"),
+            new VocabularyTestLevelOption("A0", "Pre-A1 · Первый шаг", "Самые наглядные слова"),
+            new VocabularyTestLevelOption("A1", "A1 · База", "Самые частые слова"),
+            new VocabularyTestLevelOption("A2", "A2 · Уверенный старт", "Повседневная лексика"),
+            new VocabularyTestLevelOption("B1", "B1 · Средний", "Более точные значения")
+        ];
+
+        _selectedLevel = Levels[0];
+        StartCommand = new RelayCommand(Start, CanStart);
+        SubmitCommand = new AsyncRelayCommand(SubmitAsync, CanSubmit);
+        RestartCommand = new RelayCommand(Restart);
+        InsertGermanCharacterCommand = new ParameterizedRelayCommand(
+            InsertGermanCharacter,
+            parameter => parameter is string && ShowGermanCharacterPanel);
+    }
+
+    public VocabularyTestViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IKeyboardLayoutService keyboardLayoutService)
+    {
+        _contentRepository = contentRepository;
+        _attemptSink = new LearningAttemptSink(attemptRepository);
+        _keyboardLayoutService = keyboardLayoutService;
+
+        Levels =
+        [
+            new VocabularyTestLevelOption(null, "Все уровни", "Смешанный тест Pre-A1–B1"),
+            new VocabularyTestLevelOption("A0", "Pre-A1 · Первый шаг", "Самые наглядные слова"),
             new VocabularyTestLevelOption("A1", "A1 · База", "Самые частые слова"),
             new VocabularyTestLevelOption("A2", "A2 · Уверенный старт", "Повседневная лексика"),
             new VocabularyTestLevelOption("B1", "B1 · Средний", "Более точные значения")
@@ -162,7 +192,12 @@ public sealed class VocabularyTestViewModel : ObservableObject
         ? "Нет доступных вопросов"
         : $"Начать тест · {EffectiveQuestionCount} вопросов";
 
-    public string SelectedLevelLabel => SelectedLevel?.Level ?? "A0–B1";
+    public string SelectedLevelLabel => SelectedLevel?.Level switch
+    {
+        "A0" => "Pre-A1",
+        { } level => level,
+        _ => "Pre-A1–B1"
+    };
     public string Prompt => CurrentQuestion?.Prompt ?? string.Empty;
     public string DirectionLabel => CurrentQuestion?.Direction == TranslationDirection.SourceToTarget
         ? "RU → DE"
@@ -252,6 +287,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
 
         _result = null;
         _currentQuestionIndex = 0;
+        _sessionId = Guid.NewGuid();
         Mistakes.Clear();
         IsComplete = false;
         IsTestActive = true;
@@ -270,10 +306,20 @@ public sealed class VocabularyTestViewModel : ObservableObject
         var questionResult = session.SubmitAnswer(question.Number, Answer);
         var completed = session.IsComplete;
 
-        await _progressRepository.RecordAttemptAsync(
-            ContentType.AssessmentWord,
-            question.WordId,
-            questionResult.IsCorrect);
+        var word = _allWords.Single(item => item.Id == question.WordId);
+        var attempt = LearningEvidenceFactory.Create(
+            LearningContentKey.ForWord(word),
+            question.Level,
+            LanguageSkill.Vocabulary,
+            ExerciseType.BidirectionalTranslation,
+            question.Direction == TranslationDirection.SourceToTarget
+                ? AttemptDirection.RussianToGerman
+                : AttemptDirection.GermanToRussian,
+            questionResult.IsCorrect,
+            _sessionId,
+            _attemptStartedAtUtc,
+            mode: AssessmentMode.Diagnostic);
+        await _attemptSink.RecordAsync(attempt, ContentType.AssessmentWord, question.WordId);
 
         // The progress write yields to the dispatcher. Work only with the captured session
         // afterwards so a reset or navigation action cannot invalidate this continuation.
@@ -303,6 +349,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
 
         Answer = string.Empty;
         CurrentQuestion = _session.Questions[_currentQuestionIndex];
+        _attemptStartedAtUtc = DateTimeOffset.UtcNow;
         _keyboardLayoutService.SwitchTo(CurrentQuestion.AnswerCultureCode);
     }
 

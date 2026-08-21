@@ -102,8 +102,16 @@
                             <Label Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Модель OpenAI" Target="{Binding ElementName=ModelBox}" />
                             <TextBox x:Name="ModelBox" Margin="0,6,0,0" Text="{Binding ApiModel, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Модель OpenAI" />
                             <Label Margin="0,18,0,0" Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="API-ключ" Target="{Binding ElementName=ApiKeyBox}" />
-                            <PasswordBox x:Name="ApiKeyBox" Margin="0,6,0,0" PasswordChanged="OnPasswordChanged" AutomationProperties.Name="API-ключ OpenAI" />
+                            <PasswordBox x:Name="ApiKeyBox" Margin="0,6,0,0" MaxLength="512" PasswordChanged="OnPasswordChanged" AutomationProperties.Name="API-ключ OpenAI" />
                             <TextBlock Margin="0,7,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextTertiary}" Text="Ключ не записывается в appsettings.json и не попадает в Git." />
+                            <Border Margin="0,18,0,0" Padding="14" Background="{DynamicResource Brush.InfoSoft}" CornerRadius="{DynamicResource Radius.Input}">
+                                <StackPanel>
+                                    <CheckBox IsChecked="{Binding AllowOnlineLanguageAnalysis}" FontWeight="SemiBold"
+                                              Content="Разрешить отправку текста на онлайн-анализ" AutomationProperties.Name="Разрешить онлайн-анализ" />
+                                    <TextBlock Margin="24,7,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" LineHeight="18" TextWrapping="Wrap"
+                                               Text="Только при запуске TELC/LLM-проверки введённый немецкий текст отправляется в OpenAI. Книги, локальные упражнения и прогресс не отправляются. Запросы создаются с store=false; согласие можно отозвать здесь." />
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Grid>
 
@@ -112,6 +120,22 @@
                         <Button Width="220" HorizontalAlignment="Right" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" AutomationProperties.Name="Сохранить настройки">
                             <TextBlock Style="{StaticResource ButtonContentText}" Text="Сохранить настройки" />
                         </Button>
+                    </Grid>
+
+                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="О приложении" />
+                            <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Версия и локальный жизненный цикл данных." />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding VersionText}" />
+                            <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" FontSize="12" LineHeight="18"
+                                       Text="База, резервные копии и диагностика находятся в %LOCALAPPDATA%\LernType. Диагностика не содержит ответов, книжных текстов, путей или сообщений исключений." />
+                            <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" FontSize="12" LineHeight="18"
+                                       Text="Удаление книги также очищает связанные попытки, очередь повторений, WAL и управляемые резервные копии." />
+                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>

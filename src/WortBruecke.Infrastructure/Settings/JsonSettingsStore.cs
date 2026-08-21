@@ -41,6 +41,7 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
                 PassageMode = persisted.PassageMode,
                 ApiModel = string.IsNullOrWhiteSpace(persisted.ApiModel) ? "gpt-5-mini" : persisted.ApiModel,
                 ApiKey = Unprotect(persisted.ProtectedApiKey),
+                OnlineAnalysisConsentVersion = Math.Clamp(persisted.OnlineAnalysisConsentVersion, 0, AppSettings.CurrentOnlineAnalysisDisclosureVersion),
                 UseDarkTheme = persisted.UseDarkTheme
             };
         }
@@ -66,6 +67,9 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
                 PassageMode = settings.PassageMode,
                 ApiModel = settings.ApiModel,
                 ProtectedApiKey = Protect(settings.ApiKey),
+                OnlineAnalysisConsentVersion = settings.AllowOnlineLanguageAnalysis
+                    ? AppSettings.CurrentOnlineAnalysisDisclosureVersion
+                    : 0,
                 UseDarkTheme = settings.UseDarkTheme
             };
             temporaryPath = $"{paths.LocalSettingsPath}.{Guid.NewGuid():N}.tmp";
@@ -104,8 +108,21 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
         {
             return string.Empty;
         }
-        var protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(value), OptionalEntropy, DataProtectionScope.CurrentUser);
-        return Convert.ToBase64String(protectedBytes);
+        var plainBytes = Encoding.UTF8.GetBytes(value);
+        byte[]? protectedBytes = null;
+        try
+        {
+            protectedBytes = ProtectedData.Protect(plainBytes, OptionalEntropy, DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(protectedBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(plainBytes);
+            if (protectedBytes is not null)
+            {
+                CryptographicOperations.ZeroMemory(protectedBytes);
+            }
+        }
     }
 
     private static string Unprotect(string value)
@@ -116,8 +133,21 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
         }
         try
         {
-            var plainBytes = ProtectedData.Unprotect(Convert.FromBase64String(value), OptionalEntropy, DataProtectionScope.CurrentUser);
-            return Encoding.UTF8.GetString(plainBytes);
+            var protectedBytes = Convert.FromBase64String(value);
+            byte[]? plainBytes = null;
+            try
+            {
+                plainBytes = ProtectedData.Unprotect(protectedBytes, OptionalEntropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(plainBytes);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(protectedBytes);
+                if (plainBytes is not null)
+                {
+                    CryptographicOperations.ZeroMemory(plainBytes);
+                }
+            }
         }
         catch (Exception exception) when (exception is CryptographicException or FormatException)
         {
@@ -133,6 +163,7 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
         public PassagePracticeMode PassageMode { get; init; } = PassagePracticeMode.Translation;
         public string ApiModel { get; init; } = "gpt-5-mini";
         public string ProtectedApiKey { get; init; } = string.Empty;
+        public int OnlineAnalysisConsentVersion { get; init; }
         public bool UseDarkTheme { get; init; }
     }
 }

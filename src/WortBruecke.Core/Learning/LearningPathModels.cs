@@ -1,5 +1,12 @@
 namespace WortBruecke.Core.Learning;
 
+public enum ObjectiveAvailability
+{
+    Published,
+    PracticeOnly,
+    Planned
+}
+
 public sealed class LearningObjective
 {
     public LearningObjective(
@@ -11,7 +18,12 @@ public sealed class LearningObjective
         string descriptor,
         int minimumAttempts = 3,
         double masteryThreshold = 0.75,
-        bool isRequired = true)
+        bool isRequired = true,
+        ObjectiveAvailability availability = ObjectiveAvailability.Published,
+        IEnumerable<ExerciseType>? acceptedExerciseTypes = null,
+        int minimumDistinctItems = 1,
+        int minimumDistinctDays = 1,
+        EvidenceQuality minimumEvidenceQuality = EvidenceQuality.Deterministic)
     {
         Id = RequireText(id, nameof(id));
         Level = EnsureDefined(level, nameof(level));
@@ -27,10 +39,37 @@ public sealed class LearningObjective
         {
             throw new ArgumentOutOfRangeException(nameof(masteryThreshold), masteryThreshold, "Mastery threshold must be between 0 and 1.");
         }
+        if (!Enum.IsDefined(availability))
+        {
+            throw new ArgumentOutOfRangeException(nameof(availability), availability, "Unknown objective availability.");
+        }
+        if (!Enum.IsDefined(minimumEvidenceQuality))
+        {
+            throw new ArgumentOutOfRangeException(nameof(minimumEvidenceQuality), minimumEvidenceQuality, "Unknown evidence quality.");
+        }
+        if (minimumDistinctItems <= 0 || minimumDistinctItems > minimumAttempts)
+        {
+            throw new ArgumentOutOfRangeException(nameof(minimumDistinctItems), minimumDistinctItems, "Distinct items must fit inside the attempt requirement.");
+        }
+        if (minimumDistinctDays <= 0 || minimumDistinctDays > minimumAttempts)
+        {
+            throw new ArgumentOutOfRangeException(nameof(minimumDistinctDays), minimumDistinctDays, "Distinct days must fit inside the attempt requirement.");
+        }
+
+        var acceptedTypes = (acceptedExerciseTypes ?? [exerciseType]).Distinct().ToArray();
+        if (acceptedTypes.Length == 0 || acceptedTypes.Any(type => !Enum.IsDefined(type)))
+        {
+            throw new ArgumentException("At least one known exercise type is required.", nameof(acceptedExerciseTypes));
+        }
 
         MinimumAttempts = minimumAttempts;
         MasteryThreshold = masteryThreshold;
         IsRequired = isRequired;
+        Availability = availability;
+        AcceptedExerciseTypes = Array.AsReadOnly(acceptedTypes);
+        MinimumDistinctItems = minimumDistinctItems;
+        MinimumDistinctDays = minimumDistinctDays;
+        MinimumEvidenceQuality = minimumEvidenceQuality;
     }
 
     public string Id { get; }
@@ -42,6 +81,12 @@ public sealed class LearningObjective
     public int MinimumAttempts { get; }
     public double MasteryThreshold { get; }
     public bool IsRequired { get; }
+    public ObjectiveAvailability Availability { get; }
+    public IReadOnlyList<ExerciseType> AcceptedExerciseTypes { get; }
+    public int MinimumDistinctItems { get; }
+    public int MinimumDistinctDays { get; }
+    public EvidenceQuality MinimumEvidenceQuality { get; }
+    public bool ContributesToProgress => IsRequired && Availability == ObjectiveAvailability.Published;
 
     private static string RequireText(string value, string parameterName)
     {
@@ -209,7 +254,12 @@ public sealed record ObjectiveProgress(
     LearningObjective Objective,
     int AttemptCount,
     double RecentScore,
-    bool IsMastered);
+    bool IsMastered)
+{
+    public int DistinctItemCount { get; init; }
+    public int DistinctDayCount { get; init; }
+    public bool IsAssessable => Objective.Availability == ObjectiveAvailability.Published;
+}
 
 public sealed record SkillProgress(
     LanguageSkill Skill,

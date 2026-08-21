@@ -139,8 +139,8 @@
       "delivery": ["paper", "online-at-authorized-setting"],
       "partialExamAvailable": false,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 25, "taskFamilies": ["short-notes", "classified-ads", "signs", "notices"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 20, "taskFamilies": ["everyday-dialogue", "telephone-message", "public-announcement"]},
+        {"id": "reading", "skills": ["reading"], "parts": 3, "durationMinutes": 25, "taskFamilies": ["short-notes", "classified-ads", "signs", "notices"]},
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 20, "taskFamilies": ["everyday-dialogue", "telephone-message", "public-announcement"]},
         {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 20, "taskFamilies": ["form-completion", "short-personal-text"]},
         {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "groupFormat": true, "taskFamilies": ["self-introduction", "ask-and-answer", "make-a-request"]}
       ],
@@ -158,9 +158,9 @@
       "delivery": ["paper"],
       "partialExamAvailable": false,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["short-news", "email", "advertisement", "public-information-board"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["everyday-dialogue", "radio-interview", "telephone-message", "public-announcement"]},
-        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["everyday-message"]},
+        {"id": "reading", "skills": ["reading"], "parts": 4, "durationMinutes": 30, "taskFamilies": ["short-news", "email", "advertisement", "public-information-board"]},
+        {"id": "listening", "skills": ["listening"], "parts": 4, "durationMinutes": 30, "taskFamilies": ["everyday-dialogue", "radio-interview", "telephone-message", "public-announcement"]},
+        {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 30, "taskFamilies": ["everyday-message"]},
         {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "pairFormat": true, "taskFamilies": ["personal-questions", "describe-own-life", "make-arrangements"]}
       ],
       "scoring": {"type": "whole-exam-with-component-thresholds", "maxPoints": 100, "passPoints": 60, "writtenMaxPoints": 75, "writtenPassPoints": 45, "oralMaxPoints": 25, "oralPassPoints": 15, "conditions": ["all-sections-taken"]},
@@ -177,10 +177,10 @@
       "delivery": ["paper", "digital-at-test-center"],
       "partialExamAvailable": true,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["blog", "email", "newspaper-article", "advertisement", "instruction"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["announcement", "short-presentation", "informal-conversation", "radio-discussion"]},
-        {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 60, "taskFamilies": ["personal-email", "formal-email", "forum-opinion"]},
-        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 1, "durationMinutes": 15, "approximate": true, "pairFormat": true, "taskFamilies": ["plan-together", "everyday-presentation", "answer-questions"]}
+        {"id": "reading", "skills": ["reading"], "parts": 5, "durationMinutes": 65, "taskFamilies": ["blog", "email", "newspaper-article", "advertisement", "instruction"]},
+        {"id": "listening", "skills": ["listening"], "parts": 4, "durationMinutes": 40, "approximate": true, "taskFamilies": ["announcement", "short-presentation", "informal-conversation", "radio-discussion"]},
+        {"id": "writing", "skills": ["writing"], "parts": 3, "durationMinutes": 60, "taskFamilies": ["personal-email", "formal-email", "forum-opinion"]},
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 15, "approximate": true, "pairFormat": true, "taskFamilies": ["plan-together", "everyday-presentation", "answer-questions"]}
       ],
       "scoring": {"type": "independent-modules", "moduleMaxPoints": 100, "modulePassPoints": 60, "modulePassPercent": 60},
       "rubricRefs": ["goethe-productive"],
@@ -196,8 +196,8 @@
       "delivery": ["paper", "digital-at-test-center"],
       "partialExamAvailable": true,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["forum-post", "press-article", "commentary", "instruction"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["interview", "presentation", "conversation", "radio-broadcast"]},
+        {"id": "reading", "skills": ["reading"], "parts": 5, "durationMinutes": 65, "taskFamilies": ["forum-post", "press-article", "commentary", "instruction"]},
+        {"id": "listening", "skills": ["listening"], "parts": 4, "durationMinutes": 40, "approximate": true, "taskFamilies": ["interview", "presentation", "conversation", "radio-broadcast"]},
         {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 75, "taskFamilies": ["social-topic-forum-post", "formal-professional-message"]},
         {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 15, "pairFormat": true, "taskFamilies": ["short-presentation", "discussion", "exchange-arguments"]}
       ],
@@ -215,8 +215,8 @@
       "delivery": ["paper", "digital-at-test-center"],
       "partialExamAvailable": true,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 65, "taskFamilies": ["online-article", "newspaper-article", "magazine-contribution", "viewpoint-analysis"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 40, "approximate": true, "taskFamilies": ["podcast", "interview", "discussion", "lecture"]},
+        {"id": "reading", "skills": ["reading"], "parts": 4, "durationMinutes": 65, "taskFamilies": ["online-article", "newspaper-article", "magazine-contribution", "viewpoint-analysis"]},
+        {"id": "listening", "skills": ["listening"], "parts": 4, "durationMinutes": 40, "approximate": true, "taskFamilies": ["podcast", "interview", "discussion", "lecture"]},
         {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 75, "taskFamilies": ["current-social-topic-forum-post", "register-controlled-formal-message"]},
         {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 20, "pairFormat": true, "taskFamilies": ["complex-topic-presentation", "controversial-discussion"]}
       ],
@@ -234,8 +234,8 @@
       "delivery": ["paper", "digital-at-test-center"],
       "partialExamAvailable": true,
       "segments": [
-        {"id": "reading", "skills": ["reading"], "parts": 1, "durationMinutes": 80, "taskFamilies": ["complex-nonfiction", "literary-and-stylistic-analysis", "precise-detail-and-implication"]},
-        {"id": "listening", "skills": ["listening"], "parts": 1, "durationMinutes": 35, "approximate": true, "taskFamilies": ["media-report", "informal-discussion", "expert-interview"]},
+        {"id": "reading", "skills": ["reading"], "parts": 4, "durationMinutes": 80, "taskFamilies": ["complex-nonfiction", "literary-and-stylistic-analysis", "precise-detail-and-implication"]},
+        {"id": "listening", "skills": ["listening"], "parts": 3, "durationMinutes": 35, "approximate": true, "taskFamilies": ["media-report", "informal-discussion", "expert-interview"]},
         {"id": "writing", "skills": ["writing"], "parts": 2, "durationMinutes": 80, "taskFamilies": ["reformulation", "letter-to-editor", "book-review-or-general-essay"]},
         {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 2, "durationMinutes": 15, "approximate": true, "taskFamilies": ["complex-presentation", "defend-position-in-discussion"]}
       ],
@@ -403,7 +403,7 @@
         {"id": "listening", "skills": ["listening"], "parts": 4, "items": 20, "durationMinutes": 25, "taskFamilies": ["telephone-and-public-announcement", "radio-information", "conversation", "speaker-opinion"]},
         {"id": "reading", "skills": ["reading"], "parts": 5, "items": 25, "durationMinutes": 45, "taskFamilies": ["directory", "advertisement", "press-and-formal-notice", "information-brochure", "formal-letter"]},
         {"id": "writing", "skills": ["writing"], "parts": 1, "durationMinutes": 30, "taskFamilies": ["formal-letter-or-short-message-with-four-content-points"]},
-        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 10, "approximate": true, "durationPerParticipant": true, "pairFormat": true, "taskFamilies": ["introduce-and-answer-follow-up", "describe-picture-and-report-experience", "negotiate-plan"]}
+        {"id": "speaking", "skills": ["speaking", "interaction", "pronunciation"], "parts": 3, "durationMinutes": 16, "approximate": true, "durationPerParticipant": true, "pairFormat": true, "taskFamilies": ["introduce-and-answer-follow-up", "describe-picture-and-report-experience", "negotiate-plan"]}
       ],
       "scoring": {
         "type": "dual-level-profile",

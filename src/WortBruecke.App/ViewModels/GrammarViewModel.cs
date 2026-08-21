@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 
 namespace WortBruecke.App.ViewModels;
@@ -10,7 +11,7 @@ namespace WortBruecke.App.ViewModels;
 public sealed class GrammarViewModel : ObservableObject
 {
     private readonly IContentRepository _contentRepository;
-    private readonly IProgressRepository _progressRepository;
+    private readonly LearningAttemptSink _attemptSink;
     private readonly IKeyboardLayoutService _keyboardLayoutService;
     private readonly IGrammarHeuristicService _heuristicService;
     private readonly ILanguageAnalysisService _analysisService;
@@ -23,6 +24,8 @@ public sealed class GrammarViewModel : ObservableObject
     private string _onlineFeedback = string.Empty;
     private string _onlineError = string.Empty;
     private bool _hasOnlineFeedback;
+    private readonly Guid _sessionId = Guid.NewGuid();
+    private DateTimeOffset _attemptStartedAtUtc = DateTimeOffset.UtcNow;
 
     public GrammarViewModel(
         IContentRepository contentRepository,
@@ -32,7 +35,24 @@ public sealed class GrammarViewModel : ObservableObject
         ILanguageAnalysisService analysisService)
     {
         _contentRepository = contentRepository;
-        _progressRepository = progressRepository;
+        _attemptSink = new LearningAttemptSink(progressRepository);
+        _keyboardLayoutService = keyboardLayoutService;
+        _heuristicService = heuristicService;
+        _analysisService = analysisService;
+        CheckCommand = new AsyncRelayCommand(CheckAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
+        OnlineCheckCommand = new AsyncRelayCommand(CheckOnlineAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
+        InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
+    }
+
+    public GrammarViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IKeyboardLayoutService keyboardLayoutService,
+        IGrammarHeuristicService heuristicService,
+        ILanguageAnalysisService analysisService)
+    {
+        _contentRepository = contentRepository;
+        _attemptSink = new LearningAttemptSink(attemptRepository);
         _keyboardLayoutService = keyboardLayoutService;
         _heuristicService = heuristicService;
         _analysisService = analysisService;
@@ -56,6 +76,7 @@ public sealed class GrammarViewModel : ObservableObject
             if (SetProperty(ref _selectedTask, value))
             {
                 Answer = string.Empty;
+                _attemptStartedAtUtc = DateTimeOffset.UtcNow;
                 HasFeedback = false;
                 OnPropertyChanged(nameof(Instruction));
                 OnPropertyChanged(nameof(SourceText));
@@ -118,6 +139,8 @@ public sealed class GrammarViewModel : ObservableObject
 
     public void Activate() => _keyboardLayoutService.SwitchTo(_pair.Target.CultureCode);
 
+    public void CancelOnlineAnalysis() => OnlineCheckCommand.Cancel();
+
     private async Task CheckAsync()
     {
         if (SelectedTask is null)
@@ -138,10 +161,21 @@ public sealed class GrammarViewModel : ObservableObject
             MissingMarkers.Add(marker);
         }
         HasFeedback = true;
-        await _progressRepository.RecordAttemptAsync(ContentType.Grammar, SelectedTask.Id, feedback.HasExpectedMarkers);
+        var attempt = LearningEvidenceFactory.Create(
+            LearningContentKey.ForGrammar(SelectedTask),
+            SelectedTask.Level,
+            LanguageSkill.Grammar,
+            ExerciseType.GrammarTransformation,
+            AttemptDirection.GermanProduction,
+            feedback.HasExpectedMarkers,
+            _sessionId,
+            _attemptStartedAtUtc,
+            EvidenceQuality.Heuristic,
+            rubricVersion: LearningEvidenceFactory.HeuristicGrammarRubric);
+        await _attemptSink.RecordAsync(attempt, ContentType.Grammar, SelectedTask.Id);
     }
 
-    private async Task CheckOnlineAsync()
+    private async Task CheckOnlineAsync(CancellationToken cancellationToken)
     {
         if (SelectedTask is null)
         {
@@ -149,13 +183,18 @@ public sealed class GrammarViewModel : ObservableObject
         }
         try
         {
-            OnlineFeedback = await _analysisService.AnalyzeGrammarAsync(SourceText, Instruction, Answer);
+            OnlineFeedback = await _analysisService.AnalyzeGrammarAsync(SourceText, Instruction, Answer, cancellationToken);
             OnlineError = string.Empty;
         }
         catch (LanguageAnalysisUnavailableException exception)
         {
             OnlineFeedback = string.Empty;
             OnlineError = exception.Message;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            OnlineFeedback = string.Empty;
+            OnlineError = "Онлайн-разбор отменён.";
         }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or InvalidDataException)
         {

@@ -7,7 +7,11 @@ namespace WortBruecke.App.Views;
 
 public partial class GrammarView : UserControl
 {
-    public GrammarView() => InitializeComponent();
+    public GrammarView()
+    {
+        InitializeComponent();
+        Unloaded += OnUnloaded;
+    }
 
     private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
     {
@@ -29,6 +33,14 @@ public partial class GrammarView : UserControl
         {
             viewModel.CheckCommand.Execute(null);
             e.Handled = true;
+        }
+    }
+
+    private void OnUnloaded(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is GrammarViewModel viewModel)
+        {
+            viewModel.CancelOnlineAnalysis();
         }
     }
 }

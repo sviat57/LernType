@@ -28,4 +28,20 @@ public sealed class AnswerEvaluatorTests
     {
         Assert.False(AnswerEvaluator.Evaluate("Apfel", "der Apfel", "de-DE").IsCorrect);
     }
+
+    [Theory]
+    [InlineData("Guten Morgen!", "Guten Morgen.", "de-DE")]
+    [InlineData("Wie geht es dir?", "Wie geht es dir", "de-DE")]
+    [InlineData("E-Mail", "EMail", "de-DE")]
+    [InlineData("«Доброе утро!»", "Доброе утро", "ru-RU")]
+    public void Evaluate_IgnoresNonSemanticPunctuation(string actual, string expected, string culture)
+    {
+        Assert.True(AnswerEvaluator.Evaluate(actual, expected, culture).IsCorrect);
+    }
+
+    [Fact]
+    public void Evaluate_StillRejectsMissingOrDifferentWords()
+    {
+        Assert.False(AnswerEvaluator.Evaluate("Ich komme morgen.", "Ich komme heute.", "de-DE").IsCorrect);
+    }
 }

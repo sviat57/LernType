@@ -77,6 +77,30 @@ public sealed class BookVocabularyExtractorTests
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => extractor.ExtractAsync("Слово. Другое слово.", "ru-RU", cancellationToken: source.Token));
     }
 
+    [Fact]
+    public async Task Extract_BatchesLargeCandidateSetInsteadOfBuildingOneLargeDictionaryQuery()
+    {
+        var dictionary = new FakeDictionary(new Dictionary<string, string[]>());
+        var extractor = new BookVocabularyExtractor(dictionary);
+        var words = Enumerable.Range(0, 250).Select(ToAlphabeticWord);
+
+        await extractor.ExtractAsync(string.Join(' ', words), "de-DE", 100);
+
+        Assert.Equal(2, dictionary.BatchCalls);
+        Assert.True(dictionary.LastBatch.Count <= 200);
+    }
+
+    private static string ToAlphabeticWord(int value)
+    {
+        Span<char> suffix = stackalloc char[3];
+        for (var index = suffix.Length - 1; index >= 0; index--)
+        {
+            suffix[index] = (char)('a' + value % 26);
+            value /= 26;
+        }
+        return "wort" + suffix.ToString();
+    }
+
     private sealed class FakeDictionary(IReadOnlyDictionary<string, string[]> entries) : IOfflineDictionaryService
     {
         public int BatchCalls { get; private set; }

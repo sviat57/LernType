@@ -7,7 +7,11 @@ namespace WortBruecke.App.Views;
 
 public partial class TelcView : UserControl
 {
-    public TelcView() => InitializeComponent();
+    public TelcView()
+    {
+        InitializeComponent();
+        Unloaded += OnUnloaded;
+    }
 
     private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
     {
@@ -20,5 +24,13 @@ public partial class TelcView : UserControl
             TelcInputBox.Focus();
             Keyboard.Focus(TelcInputBox);
         }, DispatcherPriority.Input);
+    }
+
+    private void OnUnloaded(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (DataContext is TelcViewModel viewModel)
+        {
+            viewModel.CancelOnlineAnalysis();
+        }
     }
 }

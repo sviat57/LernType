@@ -7,11 +7,14 @@ namespace WortBruecke.Infrastructure.Persistence;
 
 public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoader)
 {
+    private readonly SemaphoreSlim _initializeGate = new(1, 1);
     private readonly string _connectionString = new SqliteConnectionStringBuilder
     {
         DataSource = paths.DatabasePath,
         Mode = SqliteOpenMode.ReadWriteCreate,
-        Cache = SqliteCacheMode.Shared,
+        // WAL already provides concurrent readers. Shared-cache mode adds lock coupling between
+        // connections and is explicitly discouraged for modern SQLite workloads.
+        Cache = SqliteCacheMode.Default,
         ForeignKeys = true,
         Pooling = false
     }.ToString();
@@ -20,27 +23,40 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        paths.EnsureDataDirectory();
-        await using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync(cancellationToken);
-        await using (var pragma = connection.CreateCommand())
+        await _initializeGate.WaitAsync(cancellationToken);
+        try
         {
-            pragma.CommandText = "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;";
-            await pragma.ExecuteNonQueryAsync(cancellationToken);
-        }
+            await new DataRootMigrator(paths).MigrateAsync(cancellationToken);
+            await using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken);
+            await using (var pragma = connection.CreateCommand())
+            {
+                pragma.CommandText = "PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;";
+                await pragma.ExecuteNonQueryAsync(cancellationToken);
+            }
 
-        await CreateSchemaAsync(connection, cancellationToken);
-        var catalog = await contentLoader.LoadAsync(paths.ContentRoot, cancellationToken);
-        var currentRevision = await GetRevisionAsync(connection, cancellationToken);
-        if (currentRevision != catalog.Revision)
+            await new DatabaseMigrationRunner(paths.BackupRoot).MigrateAsync(connection, cancellationToken);
+            var catalog = await contentLoader.LoadAsync(paths.ContentRoot, cancellationToken);
+            var currentRevision = await GetRevisionAsync(connection, cancellationToken);
+            if (currentRevision != catalog.Revision)
+            {
+                await ImportCatalogAsync(connection, catalog, currentRevision, cancellationToken);
+            }
+            await new ManagedBackupService(paths).ApplyRetentionAsync(cancellationToken);
+        }
+        finally
         {
-            await ImportCatalogAsync(connection, catalog, cancellationToken);
+            _initializeGate.Release();
         }
     }
 
-    private static async Task CreateSchemaAsync(SqliteConnection connection, CancellationToken cancellationToken)
+    internal static async Task ApplyBaselineSchemaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
     {
         await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             CREATE TABLE IF NOT EXISTS metadata (
                 key TEXT PRIMARY KEY,
@@ -173,9 +189,19 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
         return result is string value && int.TryParse(value, out var revision) ? revision : -1;
     }
 
-    private static async Task ImportCatalogAsync(SqliteConnection connection, ContentCatalog catalog, CancellationToken cancellationToken)
+    private static async Task ImportCatalogAsync(
+        SqliteConnection connection,
+        ContentCatalog catalog,
+        int previousRevision,
+        CancellationToken cancellationToken)
     {
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await ContentIdentityMigrator.PrepareCatalogTransitionAsync(
+            connection,
+            (SqliteTransaction)transaction,
+            previousRevision,
+            catalog,
+            cancellationToken);
         foreach (var table in new[]
                  {
                      "grammar_task_translations", "grammar_tasks", "passage_segment_translations", "passage_segments",

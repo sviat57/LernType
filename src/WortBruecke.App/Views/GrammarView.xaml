@@ -48,7 +48,7 @@
                     </Grid>
 
                     <Label Margin="0,22,0,6" Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Ваш пересказ по-немецки" Target="{Binding ElementName=GrammarAnswerBox}" />
-                    <TextBox x:Name="GrammarAnswerBox" MinHeight="150" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                    <TextBox x:Name="GrammarAnswerBox" MinHeight="150" MaxLength="12000" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                              Text="{Binding Answer, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Текст грамматического пересказа" />
 
                     <Grid Margin="0,10,0,0">

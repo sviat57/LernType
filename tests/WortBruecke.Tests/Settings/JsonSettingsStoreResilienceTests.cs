@@ -34,6 +34,7 @@ public sealed class JsonSettingsStoreResilienceTests : IDisposable
         Assert.Equal(PassagePracticeMode.GermanTyping, loaded.PassageMode);
         Assert.True(loaded.UseDarkTheme);
         Assert.Empty(loaded.ApiKey);
+        Assert.False(loaded.AllowOnlineLanguageAnalysis);
     }
 
     [Fact]

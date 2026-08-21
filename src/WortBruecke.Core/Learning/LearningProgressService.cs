@@ -6,6 +6,25 @@ namespace WortBruecke.Core.Learning;
 /// </summary>
 public sealed class LearningProgressService
 {
+    public LearningPathProgress EvaluatePathFromEvents(
+        LearningPathDefinition definition,
+        IEnumerable<AttemptEvent> attempts,
+        GermanLevel? placementLevel = null)
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        ArgumentNullException.ThrowIfNull(attempts);
+        if (placementLevel is { } placement && !Enum.IsDefined(placement))
+        {
+            throw new ArgumentOutOfRangeException(nameof(placementLevel), placement, "Unknown placement level.");
+        }
+
+        var evidence = attempts.ToArray();
+        return EvaluatePathCore(
+            definition,
+            placementLevel,
+            objective => EvaluateObjective(objective, evidence, definition.RecentAttemptWindow));
+    }
+
     public LearningPathProgress EvaluatePath(
         LearningPathDefinition definition,
         IEnumerable<LearningAttempt> attempts,
@@ -19,15 +38,26 @@ public sealed class LearningProgressService
         }
 
         var evidence = attempts.ToArray();
+        return EvaluatePathCore(
+            definition,
+            placementLevel,
+            objective => EvaluateObjective(objective, evidence, definition.RecentAttemptWindow));
+    }
+
+    private static LearningPathProgress EvaluatePathCore(
+        LearningPathDefinition definition,
+        GermanLevel? placementLevel,
+        Func<LearningObjective, ObjectiveProgress> evaluateObjective)
+    {
         var results = new List<LevelProgress>(definition.Levels.Count);
         var previousCompleted = false;
 
         foreach (var level in definition.Levels)
         {
             var objectiveProgress = level.Objectives
-                .Select(objective => EvaluateObjective(objective, evidence, definition.RecentAttemptWindow))
+                .Select(evaluateObjective)
                 .ToArray();
-            var required = objectiveProgress.Where(progress => progress.Objective.IsRequired).ToArray();
+            var required = objectiveProgress.Where(progress => progress.Objective.ContributesToProgress).ToArray();
             var masteredRequiredCount = required.Count(progress => progress.IsMastered);
             var satisfiedByPlacement = placementLevel is { } placed && level.Level < placed;
             var unlocked = level.Level == GermanLevel.A0
@@ -41,7 +71,7 @@ public sealed class LearningProgressService
                 .OrderBy(group => group.Key)
                 .Select(group =>
                 {
-                    var requiredForSkill = group.Where(progress => progress.Objective.IsRequired).ToArray();
+                    var requiredForSkill = group.Where(progress => progress.Objective.ContributesToProgress).ToArray();
                     return new SkillProgress(
                         group.Key,
                         requiredForSkill.Length,
@@ -59,7 +89,7 @@ public sealed class LearningProgressService
                 required.Length,
                 masteredRequiredCount,
                 completed ? 1 : Ratio(masteredRequiredCount, required.Length),
-                Average(objectiveProgress.Select(progress => progress.RecentScore)),
+                Average(required.Select(progress => progress.RecentScore)),
                 Array.AsReadOnly(objectiveProgress),
                 Array.AsReadOnly(skillProgress)));
             previousCompleted = completed;
@@ -149,6 +179,42 @@ public sealed class LearningProgressService
             matching.Length,
             recentScore,
             matching.Length >= objective.MinimumAttempts && recentScore >= objective.MasteryThreshold);
+    }
+
+    private static ObjectiveProgress EvaluateObjective(
+        LearningObjective objective,
+        IReadOnlyCollection<AttemptEvent> attempts,
+        int recentAttemptWindow)
+    {
+        if (objective.Availability != ObjectiveAvailability.Published)
+        {
+            return new ObjectiveProgress(objective, 0, 0, false);
+        }
+
+        var matching = attempts
+            .Where(attempt => string.Equals(attempt.ObjectiveId, objective.Id, StringComparison.OrdinalIgnoreCase)
+                && attempt.Level == objective.Level
+                && attempt.Skill == objective.Skill
+                && objective.AcceptedExerciseTypes.Contains(attempt.ExerciseFamily)
+                && attempt.EvidenceQuality >= objective.MinimumEvidenceQuality)
+            .OrderByDescending(attempt => attempt.CompletedAtUtc)
+            .ToArray();
+        var recent = matching.Take(recentAttemptWindow).ToArray();
+        var recentScore = Average(recent.Select(attempt => attempt.Score));
+        var distinctItems = matching.Select(attempt => attempt.ContentKey).Distinct(StringComparer.Ordinal).Count();
+        var distinctDays = matching.Select(attempt => DateOnly.FromDateTime(attempt.CompletedAtUtc.UtcDateTime)).Distinct().Count();
+        return new ObjectiveProgress(
+            objective,
+            matching.Length,
+            recentScore,
+            matching.Length >= objective.MinimumAttempts
+                && distinctItems >= objective.MinimumDistinctItems
+                && distinctDays >= objective.MinimumDistinctDays
+                && recentScore >= objective.MasteryThreshold)
+        {
+            DistinctItemCount = distinctItems,
+            DistinctDayCount = distinctDays
+        };
     }
 
     private static int CountCompleteMockExams(ExamDefinition exam, IEnumerable<LearningAttempt> levelEvidence) =>
