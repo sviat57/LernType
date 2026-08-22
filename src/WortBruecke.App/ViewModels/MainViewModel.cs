@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 using WortBruecke.Core.Training;
 using WortBruecke.Infrastructure.Audio;
@@ -13,6 +14,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly TrainerViewModel _trainer;
     private readonly LearningPathViewModel _learningPath;
+    private readonly LevelStudyViewModel _levelStudy;
     private readonly ExamCenterViewModel _examCenter;
     private readonly TextPracticeViewModel _texts;
     private readonly BookViewModel _books;
@@ -29,6 +31,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     private readonly HashSet<string> _initializedScreens = new(StringComparer.Ordinal) { "home" };
     private readonly object _initializationSync = new();
     private readonly CancellationTokenSource _lifetime = new();
+    private long _navigationGeneration;
     private object _currentViewModel;
     private string _currentKey = "home";
     private string _currentTitle = "Сегодня";
@@ -69,8 +72,19 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
 
         var home = new HomeViewModel(Navigate);
         _learningPath = attemptRepository is null
-            ? new LearningPathViewModel(contentRepository, progressRepository, learningProgressRepository, examBlueprintRepository, Navigate)
-            : new LearningPathViewModel(contentRepository, attemptRepository, examBlueprintRepository, Navigate);
+            ? new LearningPathViewModel(
+                contentRepository,
+                progressRepository,
+                learningProgressRepository,
+                examBlueprintRepository,
+                Navigate,
+                request => ObserveNavigation(OpenLevelAsync(request)))
+            : new LearningPathViewModel(
+                contentRepository,
+                attemptRepository,
+                examBlueprintRepository,
+                Navigate,
+                request => ObserveNavigation(OpenLevelAsync(request)));
         _examCenter = attemptRepository is null
             ? new ExamCenterViewModel(examBlueprintRepository, learningProgressRepository, Navigate)
             : new ExamCenterViewModel(examBlueprintRepository, attemptRepository, Navigate);
@@ -103,16 +117,39 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
                 recordingStore: temporaryAudioRecordingStore);
         }
 
-        _trainer.PassageExerciseRequested += (_, _) =>
-            ObserveNavigation(OpenTextPracticeAsync(level: null, suggested: true));
+        _levelStudy = attemptRepository is null
+            ? new LevelStudyViewModel(
+                contentRepository,
+                learningProgressRepository,
+                launch => ObserveNavigation(OpenLevelModuleAsync(launch)),
+                () => Navigate("path"),
+                audioPracticeAvailable: _audio is not null)
+            : new LevelStudyViewModel(
+                contentRepository,
+                attemptRepository,
+                launch => ObserveNavigation(OpenLevelModuleAsync(launch)),
+                () => Navigate("path"),
+                audioPracticeAvailable: _audio is not null);
+
         _trainer.TextPracticeRequested += level =>
-            ObserveNavigation(OpenTextPracticeAsync(level, suggested: false));
-        _texts.SuggestedPracticeCompleted += (_, _) => Navigate("trainer");
+            ObserveNavigation(OpenTextPracticeAsync(level));
+        _trainer.ReturnToLevelRequested += level =>
+            ObserveNavigation(OpenLevelAsync(new LevelStudyRequest(level)));
+        _texts.ReturnToLevelRequested += level =>
+            ObserveNavigation(OpenLevelAsync(new LevelStudyRequest(level)));
+        _grammar.ReturnToLevelRequested += level =>
+            ObserveNavigation(OpenLevelAsync(new LevelStudyRequest(level)));
+        if (_audio is not null)
+        {
+            _audio.ReturnToLevelRequested += level =>
+                ObserveNavigation(OpenLevelAsync(new LevelStudyRequest(level)));
+        }
 
         _screens = new Dictionary<string, object>(StringComparer.Ordinal)
         {
             ["home"] = home,
             ["path"] = _learningPath,
+            ["level"] = _levelStudy,
             ["exams"] = _examCenter,
             ["trainer"] = _trainer,
             ["texts"] = _texts,
@@ -129,6 +166,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         {
             ["home"] = "Сегодня",
             ["path"] = "Учебный путь",
+            ["level"] = "Уровень",
             ["exams"] = "Экзаменационный центр",
             ["trainer"] = "Практика",
             ["texts"] = "Тексты",
@@ -282,8 +320,12 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             return;
         }
 
+        var navigation = BeginNavigation();
         CancelOutgoingWork();
         if (key == "texts") _texts.ApplyLevelFilter(null);
+        if (key == "trainer") _trainer.ClearLevelContext();
+        if (key == "grammar") _grammar.ApplyLevelFilter(null);
+        if (key == "audio" && _audio is not null) _audio.ApplyLevelFilter(null);
         _currentKey = key;
         CurrentViewModel = screen;
         CurrentTitle = _titles[key];
@@ -294,33 +336,158 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         try
         {
             var initializedNow = await EnsureInitializedAsync(key, cancellationToken);
-            if (string.Equals(_currentKey, key, StringComparison.Ordinal))
+            if (IsCurrentNavigation(navigation))
             {
                 await ActivateAsync(key, initializedNow);
-                ShellStatus = "Готово к автономной работе";
+                if (IsCurrentNavigation(navigation))
+                {
+                    ShellStatus = "Готово к автономной работе";
+                }
             }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || _lifetime.IsCancellationRequested)
         {
-            ShellStatus = "Операция отменена";
+            if (IsCurrentNavigation(navigation))
+            {
+                ShellStatus = "Операция отменена";
+            }
         }
         catch (Exception exception)
         {
-            SetShellError(OperationError.FromException(exception, $"Раздел «{_titles[key]}» не загрузился. Повторите попытку."));
+            if (IsCurrentNavigation(navigation))
+            {
+                SetShellError(OperationError.FromException(exception, $"Раздел «{_titles[key]}» не загрузился. Повторите попытку."));
+            }
         }
         finally
         {
-            if (string.Equals(_currentKey, key, StringComparison.Ordinal)) IsShellBusy = false;
+            if (IsCurrentNavigation(navigation)) IsShellBusy = false;
         }
     }
 
-    private async Task OpenTextPracticeAsync(string? level, bool suggested)
+    private async Task OpenLevelAsync(LevelStudyRequest request)
     {
         if (!IsStorageReady)
         {
             SetShellError(new OperationError(OperationErrorKind.StorageUnavailable, "Локальные данные ещё не готовы.", "StorageNotReady"));
             return;
         }
+
+        var navigation = BeginNavigation();
+        CancelOutgoingWork();
+        _currentKey = "level";
+        CurrentViewModel = _levelStudy;
+        CurrentTitle = $"Уровень {LevelLabel(request.Level)}";
+        SetSelection("path");
+        ClearShellError();
+        IsShellBusy = true;
+        ShellStatus = $"Открываем уровень {LevelLabel(request.Level)}…";
+        try
+        {
+            await _levelStudy.PrepareAsync(request, _lifetime.Token);
+            if (IsCurrentNavigation(navigation))
+            {
+                ShellStatus = "Готово к автономной работе";
+            }
+        }
+        catch (Exception exception)
+        {
+            if (IsCurrentNavigation(navigation))
+            {
+                SetShellError(OperationError.FromException(exception, $"Уровень {LevelLabel(request.Level)} не загрузился."));
+            }
+        }
+        finally
+        {
+            if (IsCurrentNavigation(navigation)) IsShellBusy = false;
+        }
+    }
+
+    private async Task OpenLevelModuleAsync(LevelModuleLaunch launch)
+    {
+        if (!IsStorageReady)
+        {
+            SetShellError(new OperationError(OperationErrorKind.StorageUnavailable, "Локальные данные ещё не готовы.", "StorageNotReady"));
+            return;
+        }
+
+        var navigation = BeginNavigation();
+        CancelOutgoingWork();
+        ClearShellError();
+        IsShellBusy = true;
+        SetSelection("path");
+        var levelText = launch.Level.ToString();
+        try
+        {
+            if (launch.TryGetPracticeRequest(out var practiceRequest) && practiceRequest is not null)
+            {
+                await EnsureInitializedAsync("trainer", _lifetime.Token);
+                if (!IsCurrentNavigation(navigation)) return;
+                _trainer.Prepare(practiceRequest);
+                _currentKey = "trainer";
+                CurrentViewModel = _trainer;
+                CurrentTitle = $"{LevelLabel(launch.Level)} · Практика";
+            }
+            else if (launch.Module == LevelModuleKind.Text)
+            {
+                await EnsureInitializedAsync("texts", _lifetime.Token);
+                if (!IsCurrentNavigation(navigation)) return;
+                _texts.ApplyLevelFilter(levelText);
+                _currentKey = "texts";
+                CurrentViewModel = _texts;
+                CurrentTitle = $"{LevelLabel(launch.Level)} · Тексты";
+            }
+            else if (launch.Module == LevelModuleKind.Grammar)
+            {
+                await EnsureInitializedAsync("grammar", _lifetime.Token);
+                if (!IsCurrentNavigation(navigation)) return;
+                _grammar.ApplyLevelFilter(levelText);
+                _grammar.Activate();
+                _currentKey = "grammar";
+                CurrentViewModel = _grammar;
+                CurrentTitle = $"{LevelLabel(launch.Level)} · Грамматика";
+            }
+            else if (launch.Module == LevelModuleKind.Audio && _audio is not null)
+            {
+                await EnsureInitializedAsync("audio", _lifetime.Token);
+                if (!IsCurrentNavigation(navigation)) return;
+                _audio.ApplyLevelFilter(launch.Level);
+                _audio.Activate();
+                _currentKey = "audio";
+                CurrentViewModel = _audio;
+                CurrentTitle = $"{LevelLabel(launch.Level)} · Аудирование и речь";
+            }
+            else
+            {
+                SetShellError(new OperationError(OperationErrorKind.Validation, "Этот модуль пока недоступен.", "LevelModuleUnavailable"));
+                return;
+            }
+            if (IsCurrentNavigation(navigation))
+            {
+                ShellStatus = "Готово к автономной работе";
+            }
+        }
+        catch (Exception exception)
+        {
+            if (IsCurrentNavigation(navigation))
+            {
+                SetShellError(OperationError.FromException(exception, $"Модуль уровня {LevelLabel(launch.Level)} не загрузился."));
+            }
+        }
+        finally
+        {
+            if (IsCurrentNavigation(navigation)) IsShellBusy = false;
+        }
+    }
+
+    private async Task OpenTextPracticeAsync(string? level)
+    {
+        if (!IsStorageReady)
+        {
+            SetShellError(new OperationError(OperationErrorKind.StorageUnavailable, "Локальные данные ещё не готовы.", "StorageNotReady"));
+            return;
+        }
+        var navigation = BeginNavigation();
         CancelOutgoingWork();
         _currentKey = "texts";
         CurrentViewModel = _texts;
@@ -331,17 +498,20 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         try
         {
             await EnsureInitializedAsync("texts", _lifetime.Token);
-            if (suggested) _texts.StartSuggested();
-            else _texts.ApplyLevelFilter(level);
+            if (!IsCurrentNavigation(navigation)) return;
+            _texts.ApplyLevelFilter(level);
             ShellStatus = "Готово к автономной работе";
         }
         catch (Exception exception)
         {
-            SetShellError(OperationError.FromException(exception, "Текстовая практика не загрузилась."));
+            if (IsCurrentNavigation(navigation))
+            {
+                SetShellError(OperationError.FromException(exception, "Текстовая практика не загрузилась."));
+            }
         }
         finally
         {
-            IsShellBusy = false;
+            if (IsCurrentNavigation(navigation)) IsShellBusy = false;
         }
     }
 
@@ -411,6 +581,9 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             case "path" when !initializedNow:
                 await _learningPath.ActivateAsync();
                 break;
+            case "level":
+                await _levelStudy.ActivateAsync();
+                break;
             case "exams" when !initializedNow:
                 await _examCenter.ActivateAsync();
                 break;
@@ -433,7 +606,6 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
 
     private void ApplySettings(AppSettings settings)
     {
-        _trainer.ApplySettings(settings);
         _texts.ApplySettings(settings);
         ThemeManager.Apply(settings.UseDarkTheme);
     }
@@ -474,6 +646,11 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         }
     }
 
+    private long BeginNavigation() => Interlocked.Increment(ref _navigationGeneration);
+
+    private bool IsCurrentNavigation(long navigation) =>
+        Volatile.Read(ref _navigationGeneration) == navigation;
+
     private void SetShellError(OperationError error)
     {
         ShellErrorMessage = error.UserMessage;
@@ -492,7 +669,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
 
     private NavigationItemViewModel CreateNav(string key, string title, string iconResource)
     {
-        var icon = Application.Current.TryFindResource(iconResource) as Geometry ?? Geometry.Empty;
+        var icon = Application.Current?.TryFindResource(iconResource) as Geometry ?? Geometry.Empty;
         return new NavigationItemViewModel(key, title, icon, new RelayCommand(() => Navigate(key)));
     }
 
@@ -500,6 +677,8 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     {
         foreach (var item in NavigationItems) item.IsSelected = item.Key == key;
     }
+
+    private static string LevelLabel(GermanLevel level) => level == GermanLevel.A0 ? "Pre-A1" : level.ToString();
 
     public async ValueTask DisposeAsync()
     {

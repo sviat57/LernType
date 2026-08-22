@@ -444,6 +444,13 @@ public sealed class SqliteBookRepository(
             await quarantine.ExecuteNonQueryAsync(cancellationToken);
         }
 
+        await using (var orphanMetadata = connection.CreateCommand())
+        {
+            orphanMetadata.Transaction = transaction;
+            orphanMetadata.CommandText = "DELETE FROM orphan_book_word_quarantine;";
+            await orphanMetadata.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         foreach (var table in new[] { "attempt_events", "review_state" })
         {
             await using var command = connection.CreateCommand();

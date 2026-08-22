@@ -14,7 +14,7 @@ Keep PFX files and passwords outside the repository. `.gitignore` excludes commo
 
 ## 1. Version and source gate
 
-Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.0.0` maps to MSIX `1.0.0.0`.
+Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.1.0` maps to MSIX `1.1.0.0`.
 
 ```powershell
 $dotnet = 'dotnet'
@@ -38,7 +38,7 @@ Audit every direct and transitive NuGet package and generate the production depe
 & $dotnet CycloneDX src/WortBruecke.App/WortBruecke.App.csproj `
   --exclude-dev --disable-package-restore `
   --output artifacts/sbom --filename LernType.cdx.json --output-format Json `
-  --set-name LernType --set-version 1.0.0 --set-type Application
+  --set-name LernType --set-version 1.1.0 --set-type Application
 ```
 
 Review the dependency diff on the pull request and confirm the license/provenance metadata in the CycloneDX file. CI rejects missing component-license metadata, known vulnerabilities at `low` severity or above, and GPL/AGPL/SSPL additions in dependency diffs.
@@ -80,14 +80,17 @@ Inspect every `smoke-result.json`, not only the process exit: require `expectedL
 
 Arm64 is cross-published in CI and its PE machine must be `0xAA64`; a stable Arm64 release additionally requires a native launch/route smoke on Arm64 hardware. A Windows 11 x64 smoke is not evidence for Windows 10 or Arm64 runtime behavior. Windows 10 22H2 remains a best-effort ZIP target until a separate run is recorded.
 
-Create ZIPs and portable checksum records:
+Create deterministic ZIPs and portable checksum records with the hardened archive tool (its
+rollback/path-safety suite must pass before release):
 
 ```powershell
 foreach ($rid in 'win-x64', 'win-arm64') {
-    $zip = "artifacts/LernType-1.0.0-$rid.zip"
-    Compress-Archive -Path "artifacts/publish/$rid/*" -DestinationPath $zip -CompressionLevel Optimal
-    $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
-    "$hash  $([IO.Path]::GetFileName($zip))" | Set-Content "$zip.sha256" -Encoding ascii
+    $zip = "artifacts/LernType-1.1.0-$rid.zip"
+    ./tools/New-ReleaseArchive.ps1 `
+      -PublishDirectory "artifacts/publish/$rid" `
+      -OutputPath $zip `
+      -RootFolder "LernType-1.1.0-$rid" `
+      -Confirm:$false
 }
 ```
 
@@ -98,7 +101,7 @@ First validate the package layout. The `-unsigned` filename is deliberate and mu
 ```powershell
 ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.0.0.0 -AllowUnsigned
+  -Architecture x64 -Version 1.1.0.0 -AllowUnsigned
 ```
 
 Build a distributable package only with the release certificate:
@@ -107,14 +110,14 @@ Build a distributable package only with the release certificate:
 $password = Read-Host 'PFX password' -AsSecureString
 $x64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.0.0.0 `
+  -Architecture x64 -Version 1.1.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
   -TimestampUri 'https://timestamp.example.org'
 $arm64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-arm64 `
-  -Architecture arm64 -Version 1.0.0.0 `
+  -Architecture arm64 -Version 1.1.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
@@ -127,11 +130,11 @@ Generate App Installer descriptors only after the signed MSIX files are uploaded
 
 ```powershell
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.0.0' `
-  -Architecture x64 -Version 1.0.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.1.0' `
+  -Architecture x64 -Version 1.1.0.0
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.0.0' `
-  -Architecture arm64 -Version 1.0.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.1.0' `
+  -Architecture arm64 -Version 1.1.0.0
 ```
 
 The HTTPS host must serve `.msix` and `.appinstaller` with the correct MIME types and an intact certificate chain.
@@ -153,4 +156,38 @@ Record, without secrets or personal test data:
 
 ## 5. Rollback
 
-Application rollback means reinstalling the last verified signed MSIX or extracting the prior ZIP into a new directory. Data rollback uses the application migration journal and the verified pre-upgrade SQLite backup; never replace only the `.db` file while detached `-wal`/`-shm` files are active.
+Run the copy-only rollback self-test against the SQLite runtime shipped in the reviewed x64 payload:
+
+```powershell
+./tools/Test-LernTypeDataRollback.ps1 `
+  -RuntimeDirectory artifacts/publish/win-x64 `
+  -OutputDirectory artifacts/verification/data-rollback `
+  -KeepArtifacts
+```
+
+Before launching a previous v1.0 binary, restore its schema-v2 profile with the explicit verified
+pre-upgrade backup. The tool stops when LernType is running, preserves the complete current v3
+file set and a consistent v3 SQLite snapshot, verifies the expected schema/catalog/FK/table
+inventory, promotes atomically, and writes a hashed JSON record. `RecoveryRoot` must be on the same
+volume as the active database.
+
+```powershell
+$dataRoot = Join-Path $env:LOCALAPPDATA 'LernType'
+$schemaV2Backup = 'C:\ABSOLUTE\VERIFIED\schema-v2-....db'
+$currentV11Runtime = 'C:\ABSOLUTE\LernType-1.1.0-win-x64'
+$recoveryRoot = Join-Path $dataRoot 'Backups\data-rollback'
+New-Item -ItemType Directory -Path $recoveryRoot -Force | Out-Null
+
+./tools/Invoke-LernTypeDataRollback.ps1 `
+  -CurrentDatabase (Join-Path $dataRoot 'lerntype.db') `
+  -SchemaV2Backup $schemaV2Backup `
+  -RuntimeDirectory $currentV11Runtime `
+  -RecoveryRoot $recoveryRoot `
+  -ExpectedContentRevision 4 `
+  -Confirm:$false
+```
+
+Keep the returned `recordPath`, verify its `.sha256` sidecar, and only then reinstall the last
+verified signed MSIX or extract the prior ZIP into a new directory. The result deliberately matches
+the backup's exact foreign-key inventory; a known legacy violation is recorded rather than silently
+discarded. Never replace only the `.db` file while detached `-wal`/`-shm` files are active.

@@ -32,7 +32,6 @@ public sealed class AppSettings
 
     public string SourceCulture { get; set; } = LanguagePair.RussianToGerman.Source.CultureCode;
     public string TargetCulture { get; set; } = LanguagePair.RussianToGerman.Target.CultureCode;
-    public int PassageFrequency { get; set; } = 8;
     public PassagePracticeMode PassageMode { get; set; } = PassagePracticeMode.Translation;
     public string ApiModel { get; set; } = "gpt-5-mini";
     public string ApiKey { get; set; } = string.Empty;

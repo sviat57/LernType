@@ -18,6 +18,13 @@ public sealed record VocabularyTestMistake(
     string SubmittedAnswer,
     string ExpectedAnswer);
 
+public sealed record VocabularyTestLenientAcceptance(
+    string Direction,
+    string Prompt,
+    string SubmittedAnswer,
+    string ExpectedAnswer,
+    string Message);
+
 public sealed class VocabularyTestViewModel : ObservableObject
 {
     private const int RequestedQuestionCount = 20;
@@ -96,6 +103,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
 
     public ObservableCollection<VocabularyTestLevelOption> Levels { get; }
     public ObservableCollection<VocabularyTestMistake> Mistakes { get; } = [];
+    public ObservableCollection<VocabularyTestLenientAcceptance> LenientAcceptances { get; } = [];
 
     public RelayCommand StartCommand { get; }
     public AsyncRelayCommand SubmitCommand { get; }
@@ -236,6 +244,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
         ? "0 из 0"
         : $"{_result.TargetToSourceCorrectCount} из {_result.TargetToSourceQuestionCount} · {FormatPercent(_result.TargetToSourceAccuracy)}";
     public bool HasMistakes => Mistakes.Count > 0;
+    public bool HasLenientAcceptances => LenientAcceptances.Count > 0;
     public bool IsPerfectResult => _result is not null && Mistakes.Count == 0;
     public string MistakesTitle => Mistakes.Count switch
     {
@@ -289,6 +298,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
         _currentQuestionIndex = 0;
         _sessionId = Guid.NewGuid();
         Mistakes.Clear();
+        LenientAcceptances.Clear();
         IsComplete = false;
         IsTestActive = true;
         LoadCurrentQuestion();
@@ -318,7 +328,10 @@ public sealed class VocabularyTestViewModel : ObservableObject
             questionResult.IsCorrect,
             _sessionId,
             _attemptStartedAtUtc,
-            mode: AssessmentMode.Diagnostic);
+            mode: AssessmentMode.Diagnostic,
+            rubricVersion: question.AnswerCultureCode.StartsWith("ru", StringComparison.OrdinalIgnoreCase)
+                ? LearningEvidenceFactory.RussianVocabularyLeniencyRubric
+                : LearningEvidenceFactory.ExactAnswerRubric);
         await _attemptSink.RecordAsync(attempt, ContentType.AssessmentWord, question.WordId);
 
         // The progress write yields to the dispatcher. Work only with the captured session
@@ -357,6 +370,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
     {
         _result = session.GetResult();
         Mistakes.Clear();
+        LenientAcceptances.Clear();
         foreach (var mistake in _result.QuestionResults.Where(item => item.IsAnswered && !item.IsCorrect))
         {
             Mistakes.Add(new VocabularyTestMistake(
@@ -364,6 +378,19 @@ public sealed class VocabularyTestViewModel : ObservableObject
                 mistake.Question.Prompt,
                 string.IsNullOrWhiteSpace(mistake.Answer) ? "—" : mistake.Answer,
                 mistake.Question.ExpectedAnswer));
+        }
+        foreach (var accepted in _result.QuestionResults.Where(item =>
+                     item.IsAnswered && item.IsCorrect &&
+                     item.MatchKind is AnswerMatchKind.AcceptedVariant or AnswerMatchKind.RussianTypo))
+        {
+            LenientAcceptances.Add(new VocabularyTestLenientAcceptance(
+                DirectionText(accepted.Question.Direction),
+                accepted.Question.Prompt,
+                accepted.Answer ?? string.Empty,
+                accepted.Question.ExpectedAnswer,
+                accepted.MatchKind == AnswerMatchKind.RussianTypo
+                    ? "Зачтено — проверьте написание"
+                    : "Верно — допустимый вариант"));
         }
 
         CurrentQuestion = null;
@@ -381,6 +408,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
         CurrentQuestion = null;
         Answer = string.Empty;
         Mistakes.Clear();
+        LenientAcceptances.Clear();
         IsComplete = false;
         IsTestActive = false;
         SelectionMessage = string.Empty;
@@ -412,6 +440,7 @@ public sealed class VocabularyTestViewModel : ObservableObject
         OnPropertyChanged(nameof(RussianToGermanResultText));
         OnPropertyChanged(nameof(GermanToRussianResultText));
         OnPropertyChanged(nameof(HasMistakes));
+        OnPropertyChanged(nameof(HasLenientAcceptances));
         OnPropertyChanged(nameof(IsPerfectResult));
         OnPropertyChanged(nameof(MistakesTitle));
     }

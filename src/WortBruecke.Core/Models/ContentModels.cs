@@ -14,7 +14,25 @@ public sealed record WordEntry(
     string Level,
     string PartOfSpeech,
     LocalizedText Translations,
-    LocalizedText Examples);
+    LocalizedText Examples)
+{
+    public LocalizedAnswerSet AcceptedAnswers { get; init; } = [];
+
+    public WordEntry(
+        int id,
+        int themeId,
+        string themeKey,
+        string imagePath,
+        string level,
+        string partOfSpeech,
+        LocalizedText translations,
+        LocalizedText examples,
+        LocalizedAnswerSet acceptedAnswers)
+        : this(id, themeId, themeKey, imagePath, level, partOfSpeech, translations, examples)
+    {
+        AcceptedAnswers = acceptedAnswers;
+    }
+}
 
 public sealed record SentenceEntry(
     int Id,

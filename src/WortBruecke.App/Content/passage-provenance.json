@@ -1,0 +1,216 @@
+{
+  "catalogRevision": 5,
+  "cefrStatement": "Level labels are editorial estimates for practice sequencing and are not an official CEFR certification.",
+  "passages": [
+    {
+      "key": "first_morning",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "market_visit",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "star_taler",
+      "origin": "Original LernType retelling inspired by a public-domain work.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "berlin_morning",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "sea_journey",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "odyssey_echo",
+      "origin": "Original LernType retelling inspired by a public-domain work.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "language_and_memory",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "family_at_home",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "my_room",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "breakfast_table",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "way_to_school",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "family_visit",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "city_bus",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "working_day",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "weekend_plans",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "new_apartment",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "doctor_visit",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "train_journey",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "language_course",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "new_job",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "neighbours_help",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "week_without_social_media",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "difficult_decision",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "car_free_city",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "remote_work",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "cultural_misunderstanding",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "urban_trees",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "language_and_belonging",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "ownership_of_data",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "shapes_of_memory",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "why_literature",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "the_unspoken",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "writing_history",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "theory_of_translation",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    },
+    {
+      "key": "progress_and_responsibility",
+      "origin": "Original learning text authored for LernType.",
+      "license": "MIT",
+      "reviewStatus": "pending-independent-review"
+    }
+  ]
+}

@@ -37,7 +37,6 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
             {
                 SourceCulture = persisted.SourceCulture,
                 TargetCulture = persisted.TargetCulture,
-                PassageFrequency = Math.Clamp(persisted.PassageFrequency, 1, 20),
                 PassageMode = persisted.PassageMode,
                 ApiModel = string.IsNullOrWhiteSpace(persisted.ApiModel) ? "gpt-5-mini" : persisted.ApiModel,
                 ApiKey = Unprotect(persisted.ProtectedApiKey),
@@ -63,7 +62,6 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
             {
                 SourceCulture = settings.SourceCulture,
                 TargetCulture = settings.TargetCulture,
-                PassageFrequency = Math.Clamp(settings.PassageFrequency, 1, 20),
                 PassageMode = settings.PassageMode,
                 ApiModel = settings.ApiModel,
                 ProtectedApiKey = Protect(settings.ApiKey),
@@ -159,7 +157,6 @@ public sealed class JsonSettingsStore(AppPaths paths) : ISettingsStore
     {
         public string SourceCulture { get; init; } = "ru-RU";
         public string TargetCulture { get; init; } = "de-DE";
-        public int PassageFrequency { get; init; } = 8;
         public PassagePracticeMode PassageMode { get; init; } = PassagePracticeMode.Translation;
         public string ApiModel { get; init; } = "gpt-5-mini";
         public string ProtectedApiKey { get; init; } = string.Empty;

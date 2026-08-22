@@ -1,3 +1,5 @@
+using WortBruecke.Core.Training;
+
 namespace WortBruecke.Core.Models;
 
 public sealed record VocabularyTestQuestion(
@@ -11,6 +13,7 @@ public sealed record VocabularyTestQuestion(
     string Level)
 {
     public PracticeUnit Unit => PracticeUnit.Word;
+    public IReadOnlyList<string> AcceptedAnswers { get; init; } = [];
 }
 
 public sealed record VocabularyTestQuestionResult(
@@ -19,6 +22,8 @@ public sealed record VocabularyTestQuestionResult(
     bool IsCorrect)
 {
     public bool IsAnswered => Answer is not null;
+    public AnswerMatchKind MatchKind { get; init; } = AnswerMatchKind.Incorrect;
+    public string? MatchedAnswer { get; init; }
 }
 
 public sealed record VocabularyTestResult(

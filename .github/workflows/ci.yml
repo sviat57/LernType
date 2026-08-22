@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_VERSION: "1.0.0"
-  MSIX_VERSION: "1.0.0.0"
+  APP_VERSION: "1.1.0"
+  MSIX_VERSION: "1.1.0.0"
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   DOTNET_NOLOGO: "1"
   NUGET_XMLDOC_MODE: skip
@@ -69,6 +69,10 @@ jobs:
 
       - name: Build Release
         run: dotnet build LernType.sln -c Release --no-restore -warnaserror
+
+      - name: Test release archive and binary rollback tools
+        shell: pwsh
+        run: ./tools/Test-ReleaseArchiveAndRollback.ps1
 
       - name: Test with coverage
         shell: pwsh
@@ -190,9 +194,19 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Publish failed with exit code $LASTEXITCODE." }
           if (-not (Test-Path "$out/LernType.exe" -PathType Leaf)) { throw "LernType.exe is missing." }
           $zip = "artifacts/LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}.zip"
-          Compress-Archive -Path "$out/*" -DestinationPath $zip -CompressionLevel Optimal
-          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$hash  $([IO.Path]::GetFileName($zip))" | Set-Content "$zip.sha256" -Encoding ascii
+          $archive = & ./tools/New-ReleaseArchive.ps1 `
+            -PublishDirectory $out `
+            -OutputPath $zip `
+            -RootFolder "LernType-${{ env.APP_VERSION }}-${{ matrix.rid }}" `
+            -Confirm:$false
+          if (-not $archive.Applied -or -not (Test-Path "$zip.sha256" -PathType Leaf)) {
+            throw "Deterministic release archive was not created."
+          }
+
+      - name: Test schema data rollback
+        if: matrix.rid == 'win-x64'
+        shell: pwsh
+        run: ./tools/Test-LernTypeDataRollback.ps1 -RuntimeDirectory artifacts/publish/win-x64
 
       - name: Validate unsigned MSIX layout
         shell: pwsh

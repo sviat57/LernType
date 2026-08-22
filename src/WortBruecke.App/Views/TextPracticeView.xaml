@@ -19,10 +19,10 @@
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid Margin="0,4,0,8">
-                <Border MaxWidth="840" Padding="38" HorizontalAlignment="Stretch" Style="{StaticResource Panel}"
+                <Border MaxWidth="1040" Padding="38" HorizontalAlignment="Stretch" Style="{StaticResource Panel}"
                         Visibility="{Binding IsSelectionVisible, Converter={StaticResource BoolToVisibility}}">
                     <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="1.15*" /><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="0.9*" /><ColumnDefinition Width="34" /><ColumnDefinition Width="1.1*" /></Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Style="{StaticResource MetaText}" Text="ВЫБОР ТЕКСТА" />
                             <TextBlock Margin="0,12,0,0" Style="{StaticResource SectionTitle}" FontSize="27" Text="Настройте упражнение" />
@@ -60,13 +60,36 @@
                         </StackPanel>
 
                         <Border Grid.Column="2" Padding="26" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Card}">
-                            <StackPanel VerticalAlignment="Center">
-                                <Path Width="46" Height="46" HorizontalAlignment="Left" Data="{StaticResource Icon.Document}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.5" Stretch="Uniform" />
-                                <TextBlock Margin="0,24,0,0" Style="{StaticResource SectionTitle}" Text="{Binding SelectedPassageTitle}" />
+                            <StackPanel VerticalAlignment="Stretch">
+                                <Grid>
+                                    <Path Width="38" Height="38" HorizontalAlignment="Left" Data="{StaticResource Icon.Document}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.5" Stretch="Uniform" />
+                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource MetaText}" Text="ПРЕДВАРИТЕЛЬНОЕ ЧТЕНИЕ" />
+                                </Grid>
+                                <TextBlock Margin="0,20,0,0" Style="{StaticResource SectionTitle}" Text="{Binding SelectedPassageTitle}" />
                                 <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding SelectedPassageMeta}" />
-                                <Border Margin="0,26,0,0" Padding="12" Background="{DynamicResource Brush.Surface}" CornerRadius="{DynamicResource Radius.Input}">
-                                    <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Text="Немецкая раскладка включится перед первым полем ввода." />
+
+                                <TextBlock Margin="0,22,0,0" Style="{StaticResource MetaText}" Text="НЕМЕЦКИЙ ТЕКСТ" />
+                                <Border Margin="0,8,0,0" Padding="14" Background="{DynamicResource Brush.Surface}" CornerRadius="{DynamicResource Radius.Input}">
+                                    <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <TextBlock FontSize="15" LineHeight="23" TextWrapping="Wrap" Text="{Binding FullGermanText}" />
+                                    </ScrollViewer>
                                 </Border>
+
+                                <Button Margin="0,12,0,0" HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding ToggleRussianPreviewCommand}" Content="{Binding RussianPreviewToggleText}"
+                                        AutomationProperties.Name="Показать или скрыть русский перевод" />
+                                <Border Margin="0,10,0,0" Padding="14" Background="{DynamicResource Brush.Raised}" CornerRadius="{DynamicResource Radius.Input}"
+                                        Visibility="{Binding IsRussianPreviewVisible, Converter={StaticResource BoolToVisibility}}">
+                                    <ScrollViewer MaxHeight="230" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource MetaText}" Text="РУССКИЙ ПЕРЕВОД" />
+                                            <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="14" LineHeight="22" TextWrapping="Wrap" Text="{Binding FullRussianText}" />
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+
+                                <TextBlock Margin="0,14,0,0" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12" TextWrapping="Wrap"
+                                           Text="Предварительное чтение не создаёт попытку и не изменяет прогресс. Немецкая раскладка включится перед первым полем ввода." />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -137,6 +160,10 @@
                         <TextBlock Margin="0,22,0,0" Style="{StaticResource PageTitle}" Text="Текст завершён" />
                         <TextBlock Margin="0,10,0,0" FontSize="18" FontWeight="SemiBold" Text="{Binding CompletionTitle}" />
                         <Button Width="210" Margin="0,28,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RestartCommand}" Content="Выбрать другой текст" />
+                        <Button MinWidth="230" Margin="0,10,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding ReturnToLevelCommand}"
+                                Visibility="{Binding HasLevelContext, Converter={StaticResource BoolToVisibility}}" AutomationProperties.Name="Вернуться в центр уровня">
+                            <TextBlock Style="{StaticResource ButtonContentText}" Text="{Binding ReturnToLevelText}" />
+                        </Button>
                     </StackPanel>
                 </Border>
             </Grid>

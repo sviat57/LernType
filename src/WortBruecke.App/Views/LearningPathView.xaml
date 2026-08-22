@@ -93,9 +93,9 @@
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                         <TextBlock Margin="0,0,0,10" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding ExamText}" />
                                         <Button MinHeight="44" Style="{StaticResource PrimaryButton}" Command="{Binding OpenPracticeCommand}"
-                                                AutomationProperties.Name="Открыть практику уровня" Content="Практика уровня" />
+                                                AutomationProperties.Name="{Binding PracticeAutomationName}" Content="Практика уровня" />
                                         <Button Margin="0,8,0,0" MinHeight="44" Style="{StaticResource SecondaryButton}" Command="{Binding OpenExamCommand}"
-                                                AutomationProperties.Name="Открыть экзамены уровня" Content="Форматы экзаменов" />
+                                                AutomationProperties.Name="{Binding ExamAutomationName}" Content="Форматы экзаменов" />
                                     </StackPanel>
                                 </Grid>
                             </Border>

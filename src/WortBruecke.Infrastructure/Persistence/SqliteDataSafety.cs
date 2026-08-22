@@ -13,6 +13,7 @@ internal static class SqliteDataSafety
     private static readonly HashSet<string> NonUserTables = new(StringComparer.OrdinalIgnoreCase)
     {
         "metadata", "schema_migrations", "themes", "theme_translations", "word_groups", "word_translations",
+        "word_accepted_answers",
         "sentence_groups", "sentence_translations", "passages", "passage_translations", "passage_segments",
         "passage_segment_translations", "grammar_tasks", "grammar_task_translations", "content_identities",
         "content_identity_migration_map", "sqlite_sequence"
@@ -72,6 +73,18 @@ internal static class SqliteDataSafety
         }
 
         return sawRow;
+    }
+
+    public static async Task<bool> ForeignKeyCheckAsync(
+        SqliteConnection connection,
+        CancellationToken cancellationToken,
+        SqliteTransaction? transaction = null)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "PRAGMA foreign_key_check;";
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return !await reader.ReadAsync(cancellationToken);
     }
 
     public static async Task<IReadOnlyDictionary<string, long>> ReadTableRowsAsync(

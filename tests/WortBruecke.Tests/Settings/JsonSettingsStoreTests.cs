@@ -13,7 +13,7 @@ public sealed class JsonSettingsStoreTests : IDisposable
     {
         var paths = new AppPaths(Path.Combine(_root, "Content"), _root);
         var store = new JsonSettingsStore(paths);
-        var settings = new AppSettings { ApiKey = "sk-test-secret-value", PassageFrequency = 11, UseDarkTheme = true, AllowOnlineLanguageAnalysis = true };
+        var settings = new AppSettings { ApiKey = "sk-test-secret-value", UseDarkTheme = true, AllowOnlineLanguageAnalysis = true };
 
         await store.SaveAsync(settings);
         var fileText = await File.ReadAllTextAsync(paths.LocalSettingsPath);
@@ -21,7 +21,6 @@ public sealed class JsonSettingsStoreTests : IDisposable
 
         Assert.DoesNotContain(settings.ApiKey, fileText, StringComparison.Ordinal);
         Assert.Equal(settings.ApiKey, loaded.ApiKey);
-        Assert.Equal(11, loaded.PassageFrequency);
         Assert.True(loaded.UseDarkTheme);
         Assert.True(loaded.AllowOnlineLanguageAnalysis);
     }

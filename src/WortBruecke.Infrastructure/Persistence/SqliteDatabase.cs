@@ -87,6 +87,14 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
                 example_text TEXT,
                 PRIMARY KEY(word_group_id, lang_code)
             );
+            CREATE TABLE IF NOT EXISTS word_accepted_answers (
+                word_group_id INTEGER NOT NULL REFERENCES word_groups(id) ON DELETE CASCADE,
+                lang_code TEXT NOT NULL,
+                text TEXT NOT NULL,
+                sort_order INTEGER NOT NULL CHECK(sort_order >= 0),
+                PRIMARY KEY(word_group_id, lang_code, sort_order),
+                UNIQUE(word_group_id, lang_code, text)
+            );
             CREATE TABLE IF NOT EXISTS sentence_groups (
                 id INTEGER PRIMARY KEY,
                 theme_id INTEGER NOT NULL REFERENCES themes(id),
@@ -175,6 +183,15 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
                 context_text TEXT NOT NULL,
                 part_of_speech TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS orphan_book_word_quarantine (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                legacy_word_id INTEGER NOT NULL,
+                missing_book_id INTEGER NOT NULL,
+                backup_path TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                quarantined_at_utc TEXT NOT NULL,
+                UNIQUE(legacy_word_id, missing_book_id, backup_path)
+            );
             CREATE INDEX IF NOT EXISTS ix_user_books_identity ON user_books(source_culture, title);
             CREATE INDEX IF NOT EXISTS ix_user_book_words_book_id ON user_book_words(book_id);
             """;
@@ -206,7 +223,7 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
                  {
                      "grammar_task_translations", "grammar_tasks", "passage_segment_translations", "passage_segments",
                      "passage_translations", "passages", "sentence_translations", "sentence_groups",
-                     "word_translations", "word_groups", "theme_translations", "themes"
+                     "word_accepted_answers", "word_translations", "word_groups", "theme_translations", "themes"
                  })
         {
             await ExecuteAsync(connection, transaction, $"DELETE FROM {table};", cancellationToken);
@@ -237,6 +254,23 @@ public sealed class SqliteDatabase(AppPaths paths, JsonContentLoader contentLoad
                 await ExecuteAsync(connection, transaction,
                     "INSERT INTO word_translations(word_group_id, lang_code, text, example_text) VALUES($id, $lang, $text, $example);",
                     cancellationToken, ("$id", word.Id), ("$lang", translation.Key), ("$text", translation.Value), ("$example", example));
+            }
+            foreach (var answerSet in word.AcceptedAnswers)
+            {
+                var answers = answerSet.Value
+                    .Where(answer => !string.IsNullOrWhiteSpace(answer))
+                    .Select(answer => answer.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                for (var index = 0; index < answers.Length; index++)
+                {
+                    await ExecuteAsync(connection, transaction, """
+                        INSERT INTO word_accepted_answers(word_group_id, lang_code, text, sort_order)
+                        VALUES($id, $lang, $text, $order);
+                        """, cancellationToken,
+                        ("$id", word.Id), ("$lang", answerSet.Key),
+                        ("$text", answers[index]), ("$order", index));
+                }
             }
         }
 

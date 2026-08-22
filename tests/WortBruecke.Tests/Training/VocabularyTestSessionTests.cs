@@ -154,6 +154,42 @@ public sealed class VocabularyTestSessionTests
     }
 
     [Fact]
+    public void SubmitAnswer_RussianTargetAcceptsTypoAndCuratedAliasWithMatchKinds()
+    {
+        var profession = CreateWordWithTranslations(402, "профессия", "der Beruf");
+        var professionSession = CreateSingleDirectionSession(profession, "ru-RU");
+        var typo = professionSession.SubmitAnswer(1, "професия");
+
+        var river = CreateWordWithTranslations(604, "река", "der Fluss") with
+        {
+            AcceptedAnswers = new LocalizedAnswerSet { ["ru-RU"] = ["речка"] }
+        };
+        var riverSession = CreateSingleDirectionSession(river, "ru-RU");
+        var alias = riverSession.SubmitAnswer(1, "речка");
+
+        Assert.True(typo.IsCorrect);
+        Assert.Equal(AnswerMatchKind.RussianTypo, typo.MatchKind);
+        Assert.Equal("профессия", typo.MatchedAnswer);
+        Assert.True(alias.IsCorrect);
+        Assert.Equal(AnswerMatchKind.AcceptedVariant, alias.MatchKind);
+        Assert.Equal("речка", alias.MatchedAnswer);
+    }
+
+    [Fact]
+    public void SubmitAnswer_GermanTargetRejectsTypoAndMissingArticle()
+    {
+        var word = CreateWordWithTranslations(402, "профессия", "der Beruf");
+
+        var missingArticle = CreateSingleDirectionSession(word, "de-DE").SubmitAnswer(1, "Beruf");
+        var typo = CreateSingleDirectionSession(word, "de-DE").SubmitAnswer(1, "der Beruff");
+
+        Assert.False(missingArticle.IsCorrect);
+        Assert.Equal(AnswerMatchKind.Incorrect, missingArticle.MatchKind);
+        Assert.False(typo.IsCorrect);
+        Assert.Equal(AnswerMatchKind.Incorrect, typo.MatchKind);
+    }
+
+    [Fact]
     public void GetResult_RepresentsUnansweredQuestionsWithoutMarkingThemAnswered()
     {
         var session = VocabularyTestSession.Create(CreateWords(4), requestedQuestionCount: 4, seed: 5);
@@ -190,6 +226,11 @@ public sealed class VocabularyTestSessionTests
 
     private static IReadOnlyList<WordEntry> CreateWords(int count) =>
         Enumerable.Range(1, count).Select(id => CreateWord(id)).ToList();
+
+    private static VocabularyTestSession CreateSingleDirectionSession(WordEntry word, string answerCultureCode) =>
+        Enumerable.Range(0, 100)
+            .Select(seed => VocabularyTestSession.Create([word], requestedQuestionCount: 1, seed: seed))
+            .First(session => session.Questions[0].AnswerCultureCode == answerCultureCode);
 
     private static WordEntry CreateWord(int id, bool includeTargetTranslation = true)
     {

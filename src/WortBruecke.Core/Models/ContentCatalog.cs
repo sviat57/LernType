@@ -35,6 +35,7 @@ public sealed class WordSeed
     public string PartOfSpeech { get; init; } = string.Empty;
     public LocalizedText Translations { get; init; } = [];
     public LocalizedText Examples { get; init; } = [];
+    public LocalizedAnswerSet AcceptedAnswers { get; init; } = [];
 }
 
 public sealed class PassageSeed

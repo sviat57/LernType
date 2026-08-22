@@ -27,6 +27,7 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
     private readonly IClock _clock;
     private readonly TemporaryAudioRecordingStore _recordingStore;
     private readonly bool _ownsRecordingStore;
+    private readonly IReadOnlyList<AudioPracticePrompt> _allPrompts;
     private readonly object _recordingCleanupSync = new();
     private readonly Guid _sessionId = Guid.NewGuid();
     private Task _recordingCleanupTask = Task.CompletedTask;
@@ -41,6 +42,7 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
     private bool _isInitialized;
     private string? _recordingPath;
     private DateTimeOffset _attemptStartedAtUtc;
+    private GermanLevel? _returnLevel;
 
     public AudioPracticeViewModel(
         IAudioPracticeService audio,
@@ -54,7 +56,8 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
         _recordingStore = recordingStore ?? new TemporaryAudioRecordingStore();
         _ownsRecordingStore = recordingStore is null;
         _attemptStartedAtUtc = _clock.UtcNow;
-        Prompts = new(CreatePrompts());
+        _allPrompts = CreatePrompts().ToArray();
+        Prompts = new(_allPrompts);
         _selectedPrompt = Prompts[0];
         ListenCommand = new AsyncRelayCommand(ListenAsync, () => HasGermanVoice, HandleCommandError);
         StartTimedRecordingCommand = new AsyncRelayCommand(StartTimedRecordingAsync, () => HasInputDevice && !IsRecording, HandleCommandError);
@@ -64,6 +67,7 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
         RateSpeakingCommand = new AsyncParameterizedRelayCommand(RateSpeakingAsync, parameter =>
             HasRecording && parameter is string value && double.TryParse(value, System.Globalization.CultureInfo.InvariantCulture, out _),
             HandleCommandError);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
     }
 
     public ObservableCollection<AudioPracticePrompt> Prompts { get; }
@@ -74,6 +78,12 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
     public AsyncRelayCommand PlayRecordingCommand { get; }
     public AsyncRelayCommand CheckTranscriptCommand { get; }
     public AsyncParameterizedRelayCommand RateSpeakingCommand { get; }
+    public RelayCommand ReturnToLevelCommand { get; }
+    public event Action<GermanLevel>? ReturnToLevelRequested;
+    public bool HasLevelContext => _returnLevel is not null;
+    public string ReturnToLevelText => _returnLevel is null
+        ? "Вернуться к уровню"
+        : $"Вернуться к уровню {(_returnLevel == GermanLevel.A0 ? "Pre-A1" : _returnLevel)}";
 
     public AudioPracticePrompt SelectedPrompt
     {
@@ -187,6 +197,36 @@ public sealed class AudioPracticeViewModel : ObservableObject, IAsyncDisposable
                 ? "Микрофон не найден. Аудирование остаётся доступным."
                 : string.Empty;
         OnPropertyChanged(nameof(HasError));
+    }
+
+    public void ApplyLevelFilter(GermanLevel? level)
+    {
+        if (IsRecording)
+        {
+            return;
+        }
+
+        _returnLevel = level;
+        OnPropertyChanged(nameof(HasLevelContext));
+        OnPropertyChanged(nameof(ReturnToLevelText));
+        ReturnToLevelCommand.RaiseCanExecuteChanged();
+        Prompts.Clear();
+        foreach (var prompt in _allPrompts.Where(prompt => level is null || prompt.Level == level))
+        {
+            Prompts.Add(prompt);
+        }
+        if (Prompts.Count > 0)
+        {
+            SelectedPrompt = Prompts[0];
+        }
+    }
+
+    private void ReturnToLevel()
+    {
+        if (_returnLevel is { } level)
+        {
+            ReturnToLevelRequested?.Invoke(level);
+        }
     }
 
     public void CancelPendingOperations()

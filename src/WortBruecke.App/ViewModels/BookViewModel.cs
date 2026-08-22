@@ -71,6 +71,8 @@ public sealed class BookViewModel : ObservableObject
     private OperationError? _operationError;
     private int _currentIndex;
     private int _correctCount;
+    private AnswerMatchKind _answerMatchKind = AnswerMatchKind.Incorrect;
+    private string? _matchedAnswer;
     private Guid _practiceSessionId;
     private DateTimeOffset _attemptStartedAtUtc;
 
@@ -330,14 +332,27 @@ public sealed class BookViewModel : ObservableObject
         ? "Перевод по-немецки" : "Перевод по-русски";
     public string ProgressText => _practiceWords.Count == 0 ? "0 / 0" : $"{Math.Min(_currentIndex + 1, _practiceWords.Count)} / {_practiceWords.Count}";
     public double ProgressValue => _practiceWords.Count == 0 ? 0 : (double)Math.Min(_currentIndex + 1, _practiceWords.Count) / _practiceWords.Count * 100;
-    public string FeedbackTitle => IsCorrect ? "Верно" : "Другой вариант";
-    public string FeedbackDetail => IsCorrect ? "Перевод найден среди словарных вариантов." : $"Принятые варианты: {AcceptedAnswers}";
+    public string FeedbackTitle => !IsCorrect
+        ? "Другой вариант"
+        : _answerMatchKind switch
+        {
+            AnswerMatchKind.AcceptedVariant => "Верно — допустимый вариант",
+            AnswerMatchKind.RussianTypo => "Зачтено — проверьте написание",
+            _ => "Верно"
+        };
+    public string FeedbackDetail => !IsCorrect
+        ? $"Принятые варианты: {AcceptedAnswers}"
+        : _answerMatchKind == AnswerMatchKind.RussianTypo
+            ? $"Нормативная форма: {_matchedAnswer}"
+            : "Перевод найден среди словарных вариантов.";
     public string CompletionTitle => $"{_correctCount} из {_practiceWords.Count} верно";
     public string CompletionDetail => _practiceWords.Count == 0 ? string.Empty : $"Точность: {(double)_correctCount / _practiceWords.Count:P0}. Можно изменить выбранные слова и повторить.";
 
     private BookWordViewModel? CurrentWord => _practiceWords.ElementAtOrDefault(_currentIndex);
     private BookLanguageOption? ActiveLanguage => _vocabularyLanguage ?? SelectedLanguage;
-    private string AcceptedAnswers => CurrentWord is null ? string.Empty : string.Join(" / ", CurrentWord.Item.Translations.Take(6));
+    private string AcceptedAnswers => CurrentWord is null
+        ? string.Empty
+        : string.Join(" / ", AcceptedTranslations(CurrentWord.Item.Translations, ActiveLanguage?.TargetCultureCode).Take(6));
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -501,8 +516,23 @@ public sealed class BookViewModel : ObservableObject
     private async Task CheckAsync(CancellationToken cancellationToken)
     {
         if (CurrentWord is null || ActiveLanguage is null) return;
-        IsCorrect = AnswerEvaluator.Evaluate(Answer, CurrentWord.Item.Translations, ActiveLanguage.TargetCultureCode).IsCorrect;
+        var accepted = AcceptedTranslations(CurrentWord.Item.Translations, ActiveLanguage.TargetCultureCode).ToArray();
+        var expected = accepted.FirstOrDefault() ?? string.Empty;
+        var russianAnswer = ActiveLanguage.TargetCultureCode.StartsWith("ru", StringComparison.OrdinalIgnoreCase);
+        var evaluation = russianAnswer
+            ? AnswerEvaluator.Evaluate(
+                Answer,
+                expected,
+                accepted.Skip(1).ToArray(),
+                ActiveLanguage.TargetCultureCode,
+                AnswerEvaluationMode.RussianVocabularyLenient)
+            : AnswerEvaluator.Evaluate(Answer, expected, ActiveLanguage.TargetCultureCode);
+        IsCorrect = evaluation.IsCorrect;
+        _answerMatchKind = evaluation.MatchKind;
+        _matchedAnswer = evaluation.MatchedAnswer;
         if (IsCorrect) _correctCount++;
+        OnPropertyChanged(nameof(FeedbackTitle));
+        OnPropertyChanged(nameof(FeedbackDetail));
         ShowFeedback = true;
         if (CurrentWord.Item.Id > 0 && _currentBookId is > 0 && _practiceSessionId != Guid.Empty)
         {
@@ -523,13 +553,13 @@ public sealed class BookViewModel : ObservableObject
                 _attemptStartedAtUtc,
                 completedAtUtc,
                 _practiceSessionId,
-                LearningEvidenceFactory.ExactAnswerRubric,
+                russianAnswer
+                    ? LearningEvidenceFactory.RussianVocabularyLeniencyRubric
+                    : LearningEvidenceFactory.ExactAnswerRubric,
                 EvidenceQuality.Deterministic,
                 objectiveId: "book.custom.vocabulary");
             await _attemptSink.RecordAsync(attempt, ContentType.BookWord, CurrentWord.Item.Id, cancellationToken);
         }
-        OnPropertyChanged(nameof(FeedbackTitle));
-        OnPropertyChanged(nameof(FeedbackDetail));
     }
 
     private void Next()
@@ -550,6 +580,8 @@ public sealed class BookViewModel : ObservableObject
     private void LoadQuestion()
     {
         Answer = string.Empty;
+        _answerMatchKind = AnswerMatchKind.Incorrect;
+        _matchedAnswer = null;
         ShowFeedback = false;
         if (ActiveLanguage is not null) _keyboardLayoutService.SwitchTo(ActiveLanguage.TargetCultureCode);
         _attemptStartedAtUtc = DateTimeOffset.UtcNow;
@@ -560,6 +592,13 @@ public sealed class BookViewModel : ObservableObject
         OnPropertyChanged(nameof(ProgressText));
         OnPropertyChanged(nameof(ProgressValue));
     }
+
+    private static IEnumerable<string> AcceptedTranslations(
+        IReadOnlyList<string> translations,
+        string? targetCultureCode) =>
+        targetCultureCode?.StartsWith("ru", StringComparison.OrdinalIgnoreCase) == true
+            ? translations
+            : translations.Take(1);
 
     private void BackToBook()
     {

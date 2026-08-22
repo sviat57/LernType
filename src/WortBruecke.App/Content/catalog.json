@@ -1,5 +1,5 @@
 {
-  "revision": 4,
+  "revision": 5,
   "themes": [
     {
       "id": 1,
@@ -1039,7 +1039,12 @@
         "ru-RU": "река",
         "de-DE": "der Fluss"
       },
-      "examples": {}
+      "examples": {},
+      "acceptedAnswers": {
+        "ru-RU": [
+          "речка"
+        ]
+      }
     },
     {
       "id": 605,
@@ -2838,6 +2843,1842 @@
           "translations": {
             "ru-RU": "В этой едва заметной перестройке раскрывается парадокс памяти: верность ей требует постоянного нового толкования.",
             "de-DE": "In dieser kaum merklichen Neuordnung zeigt sich das Paradox der Erinnerung: Treue zu ihr verlangt fortwährende neue Deutung."
+          }
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "key": "family_at_home",
+      "titles": {
+        "ru-RU": "Семья",
+        "de-DE": "Die Familie"
+      },
+      "kind": "Everyday",
+      "level": "A0",
+      "topic": "family",
+      "segments": [
+        {
+          "id": 101001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Это моя семья.",
+            "de-DE": "Das ist meine Familie."
+          }
+        },
+        {
+          "id": 101002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Мою маму зовут Анна, а папу — Виктор.",
+            "de-DE": "Meine Mutter heißt Anna, und mein Vater heißt Viktor."
+          }
+        },
+        {
+          "id": 101003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "У меня есть брат.",
+            "de-DE": "Ich habe einen Bruder."
+          }
+        },
+        {
+          "id": 101004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Мы живём вместе и ужинаем вечером.",
+            "de-DE": "Wir wohnen zusammen und essen am Abend."
+          }
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "key": "my_room",
+      "titles": {
+        "ru-RU": "Комната",
+        "de-DE": "Mein Zimmer"
+      },
+      "kind": "Everyday",
+      "level": "A0",
+      "topic": "home",
+      "segments": [
+        {
+          "id": 102001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Моя комната маленькая, но светлая.",
+            "de-DE": "Mein Zimmer ist klein, aber hell."
+          }
+        },
+        {
+          "id": 102002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "У окна стоит стол.",
+            "de-DE": "Am Fenster steht ein Tisch."
+          }
+        },
+        {
+          "id": 102003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "На столе лежат книга и стоит лампа.",
+            "de-DE": "Auf dem Tisch liegen ein Buch und eine Lampe."
+          }
+        },
+        {
+          "id": 102004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Моя кровать стоит рядом с дверью.",
+            "de-DE": "Mein Bett steht neben der Tür."
+          }
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "key": "breakfast_table",
+      "titles": {
+        "ru-RU": "Завтрак",
+        "de-DE": "Das Frühstück"
+      },
+      "kind": "Everyday",
+      "level": "A0",
+      "topic": "food",
+      "segments": [
+        {
+          "id": 103001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Утром мы сидим на кухне.",
+            "de-DE": "Am Morgen sitzen wir in der Küche."
+          }
+        },
+        {
+          "id": 103002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Я ем хлеб с сыром.",
+            "de-DE": "Ich esse Brot mit Käse."
+          }
+        },
+        {
+          "id": 103003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Моя сестра пьёт молоко, а папа пьёт кофе.",
+            "de-DE": "Meine Schwester trinkt Milch, und mein Vater trinkt Kaffee."
+          }
+        },
+        {
+          "id": 103004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Потом мы убираем со стола.",
+            "de-DE": "Dann räumen wir den Tisch ab."
+          }
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "key": "way_to_school",
+      "titles": {
+        "ru-RU": "Дорога в школу",
+        "de-DE": "Der Weg zur Schule"
+      },
+      "kind": "Everyday",
+      "level": "A0",
+      "topic": "school",
+      "segments": [
+        {
+          "id": 104001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "В восемь часов я выхожу из дома.",
+            "de-DE": "Um acht Uhr verlasse ich das Haus."
+          }
+        },
+        {
+          "id": 104002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Я иду в школу с подругой.",
+            "de-DE": "Ich gehe mit meiner Freundin zur Schule."
+          }
+        },
+        {
+          "id": 104003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Мы видим автобус и много велосипедов.",
+            "de-DE": "Wir sehen einen Bus und viele Fahrräder."
+          }
+        },
+        {
+          "id": 104004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Через десять минут мы на месте.",
+            "de-DE": "Nach zehn Minuten sind wir da."
+          }
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "key": "family_visit",
+      "titles": {
+        "ru-RU": "Семейный визит",
+        "de-DE": "Ein Familienbesuch"
+      },
+      "kind": "Everyday",
+      "level": "A1",
+      "topic": "family",
+      "segments": [
+        {
+          "id": 105001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "В воскресенье Нина навещает тётю в Потсдаме.",
+            "de-DE": "Am Sonntag besucht Nina ihre Tante in Potsdam."
+          }
+        },
+        {
+          "id": 105002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Она едет на поезде и берёт с собой пирог.",
+            "de-DE": "Sie fährt mit dem Zug und bringt einen Kuchen mit."
+          }
+        },
+        {
+          "id": 105003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Тётя открывает дверь и радуется визиту.",
+            "de-DE": "Die Tante öffnet die Tür und freut sich über den Besuch."
+          }
+        },
+        {
+          "id": 105004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "За кофе они рассказывают о семье и рассматривают старые фотографии.",
+            "de-DE": "Beim Kaffee erzählen sie von der Familie und sehen alte Fotos an."
+          }
+        },
+        {
+          "id": 105005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Вечером Нина возвращается домой уставшая, но довольная.",
+            "de-DE": "Am Abend fährt Nina müde, aber zufrieden nach Hause."
+          }
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "key": "city_bus",
+      "titles": {
+        "ru-RU": "Городской автобус",
+        "de-DE": "Der Stadtbus"
+      },
+      "kind": "Everyday",
+      "level": "A1",
+      "topic": "transport",
+      "segments": [
+        {
+          "id": 106001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Автобус каждое утро едет через наш район.",
+            "de-DE": "Der Bus fährt jeden Morgen durch unser Viertel."
+          }
+        },
+        {
+          "id": 106002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "На третьей остановке входит много школьников.",
+            "de-DE": "An der dritten Haltestelle steigen viele Schülerinnen und Schüler ein."
+          }
+        },
+        {
+          "id": 106003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Сегодня место у окна свободно, поэтому я сажусь туда.",
+            "de-DE": "Heute ist ein Platz am Fenster frei, deshalb setze ich mich dort hin."
+          }
+        },
+        {
+          "id": 106004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Пожилая женщина спрашивает дорогу к ратуше.",
+            "de-DE": "Eine ältere Frau fragt nach dem Weg zum Rathaus."
+          }
+        },
+        {
+          "id": 106005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Водитель любезно объясняет ей, где нужно выйти.",
+            "de-DE": "Der Fahrer erklärt ihr freundlich, wo sie aussteigen muss."
+          }
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "key": "working_day",
+      "titles": {
+        "ru-RU": "Рабочий день",
+        "de-DE": "Ein Arbeitstag"
+      },
+      "kind": "Everyday",
+      "level": "A1",
+      "topic": "work",
+      "segments": [
+        {
+          "id": 107001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Марек начинает работу в половине девятого.",
+            "de-DE": "Marek beginnt seine Arbeit um halb neun."
+          }
+        },
+        {
+          "id": 107002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Сначала он читает сообщения и планирует задачи на день.",
+            "de-DE": "Zuerst liest er seine Nachrichten und plant die Aufgaben für den Tag."
+          }
+        },
+        {
+          "id": 107003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "В одиннадцать он разговаривает с коллегой о новом проекте.",
+            "de-DE": "Um elf Uhr spricht er mit einer Kollegin über ein neues Projekt."
+          }
+        },
+        {
+          "id": 107004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "На перерыве они вдвоём едят суп в маленькой столовой.",
+            "de-DE": "In der Pause essen beide Suppe in der kleinen Kantine."
+          }
+        },
+        {
+          "id": 107005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "В пять Марек выключает компьютер и едет домой.",
+            "de-DE": "Um fünf schließt Marek den Computer und fährt nach Hause."
+          }
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "key": "weekend_plans",
+      "titles": {
+        "ru-RU": "Выходные",
+        "de-DE": "Das Wochenende"
+      },
+      "kind": "Everyday",
+      "level": "A1",
+      "topic": "leisure",
+      "segments": [
+        {
+          "id": 108001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "На субботу Леа и Йонас планируют поездку к озеру.",
+            "de-DE": "Für Samstag planen Lea und Jonas einen Ausflug an den See."
+          }
+        },
+        {
+          "id": 108002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Они берут бутерброды, воду и тёплую куртку.",
+            "de-DE": "Sie nehmen belegte Brote, Wasser und eine warme Jacke mit."
+          }
+        },
+        {
+          "id": 108003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Утром недолго идёт дождь, но позже появляется солнце.",
+            "de-DE": "Am Morgen regnet es kurz, doch später kommt die Sonne."
+          }
+        },
+        {
+          "id": 108004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "У озера они гуляют вдоль берега и делают много фотографий.",
+            "de-DE": "Am See laufen sie am Ufer entlang und machen viele Fotos."
+          }
+        },
+        {
+          "id": 108005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "В воскресенье они остаются дома и готовят вместе.",
+            "de-DE": "Am Sonntag bleiben sie zu Hause und kochen gemeinsam."
+          }
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "key": "new_apartment",
+      "titles": {
+        "ru-RU": "Квартира",
+        "de-DE": "Die neue Wohnung"
+      },
+      "kind": "Everyday",
+      "level": "A2",
+      "topic": "home",
+      "segments": [
+        {
+          "id": 109001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "После долгих поисков Дарья наконец нашла квартиру в тихом районе.",
+            "de-DE": "Nach langer Suche hat Daria endlich eine Wohnung in einem ruhigen Stadtteil gefunden."
+          }
+        },
+        {
+          "id": 109002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Она находится на третьем этаже старого дома и имеет две светлые комнаты.",
+            "de-DE": "Sie liegt im dritten Stock eines alten Hauses und hat zwei helle Zimmer."
+          }
+        },
+        {
+          "id": 109003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "На кухне пока нет стола, но плита и холодильник работают.",
+            "de-DE": "In der Küche fehlt noch ein Tisch, aber der Herd und der Kühlschrank funktionieren."
+          }
+        },
+        {
+          "id": 109004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "В субботу друзья помогают ей носить коробки и красить стены.",
+            "de-DE": "Am Samstag helfen ihr Freunde, Kisten zu tragen und die Wände zu streichen."
+          }
+        },
+        {
+          "id": 109005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "В благодарность Дарья заказывает пиццу и показывает всем маленький балкон.",
+            "de-DE": "Zum Dank bestellt Daria Pizza und zeigt allen den kleinen Balkon."
+          }
+        },
+        {
+          "id": 109006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Вечером компания сидит там и уже планирует следующую встречу.",
+            "de-DE": "Am Abend sitzt die Gruppe dort und plant schon den nächsten Besuch."
+          }
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "key": "doctor_visit",
+      "titles": {
+        "ru-RU": "У врача",
+        "de-DE": "Beim Arzt"
+      },
+      "kind": "Everyday",
+      "level": "A2",
+      "topic": "health",
+      "segments": [
+        {
+          "id": 110001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Уже два дня у Олега болит горло, и он чувствует необычную усталость.",
+            "de-DE": "Seit zwei Tagen hat Oleg Halsschmerzen und fühlt sich ungewöhnlich müde."
+          }
+        },
+        {
+          "id": 110002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Он звонит в поликлинику и получает запись на вторую половину дня.",
+            "de-DE": "Er ruft in der Praxis an und bekommt einen Termin am Nachmittag."
+          }
+        },
+        {
+          "id": 110003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Врач спрашивает о симптомах, измеряет температуру и слушает лёгкие.",
+            "de-DE": "Die Ärztin fragt nach seinen Beschwerden, misst die Temperatur und hört die Lunge ab."
+          }
+        },
+        {
+          "id": 110004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "К счастью, это всего лишь простуда, и Олегу не нужно сильное лекарство.",
+            "de-DE": "Zum Glück ist es nur eine Erkältung, und Oleg braucht kein starkes Medikament."
+          }
+        },
+        {
+          "id": 110005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Ему следует много пить, отдыхать и несколько дней оставаться дома.",
+            "de-DE": "Er soll viel trinken, sich ausruhen und einige Tage zu Hause bleiben."
+          }
+        },
+        {
+          "id": 110006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "По дороге назад он покупает чай, мёд и свежие фрукты.",
+            "de-DE": "Auf dem Rückweg kauft er Tee, Honig und frisches Obst."
+          }
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "key": "train_journey",
+      "titles": {
+        "ru-RU": "Поезд",
+        "de-DE": "Die Zugfahrt"
+      },
+      "kind": "Everyday",
+      "level": "A2",
+      "topic": "travel",
+      "segments": [
+        {
+          "id": 111001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Катя хочет навестить подругу и покупает для этого билет до Лейпцига.",
+            "de-DE": "Katja möchte ihre Freundin besuchen und bucht dafür eine Fahrkarte nach Leipzig."
+          }
+        },
+        {
+          "id": 111002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "На вокзале она узнаёт, что её поезд сегодня отправляется на двадцать минут позже.",
+            "de-DE": "Am Bahnhof entdeckt sie, dass ihr Zug heute zwanzig Minuten später abfährt."
+          }
+        },
+        {
+          "id": 111003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Она покупает газету и ждёт на платформе вместе с другими пассажирами.",
+            "de-DE": "Sie kauft eine Zeitung und wartet mit den anderen Reisenden am Gleis."
+          }
+        },
+        {
+          "id": 111004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "В поезде Катя находит своё забронированное место рядом с семьёй с двумя детьми.",
+            "de-DE": "Im Zug findet Katja ihren reservierten Platz neben einer Familie mit zwei Kindern."
+          }
+        },
+        {
+          "id": 111005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Во время поездки она читает, смотрит в окно и отвечает на сообщения.",
+            "de-DE": "Während der Fahrt liest sie, schaut aus dem Fenster und beantwortet Nachrichten."
+          }
+        },
+        {
+          "id": 111006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Незадолго до Лейпцига она звонит подруге, чтобы та её встретила.",
+            "de-DE": "Kurz vor Leipzig ruft sie ihre Freundin an, damit diese sie abholt."
+          }
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "key": "language_course",
+      "titles": {
+        "ru-RU": "Языковой курс",
+        "de-DE": "Der Sprachkurs"
+      },
+      "kind": "Everyday",
+      "level": "A2",
+      "topic": "education",
+      "segments": [
+        {
+          "id": 112001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "На новом курсе немецкого вместе учатся двенадцать человек из разных стран.",
+            "de-DE": "Im neuen Deutschkurs lernen zwölf Menschen aus verschiedenen Ländern zusammen."
+          }
+        },
+        {
+          "id": 112002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Преподаватель начинает каждый урок с короткого вопроса о повседневной жизни.",
+            "de-DE": "Die Lehrerin beginnt jede Stunde mit einer kurzen Frage über den Alltag."
+          }
+        },
+        {
+          "id": 112003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Затем участники работают в парах и тренируют небольшие диалоги.",
+            "de-DE": "Danach arbeiten die Teilnehmer in Paaren und üben kleine Gespräche."
+          }
+        },
+        {
+          "id": 112004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Сергей пока говорит медленно, но каждую неделю понимает немного больше.",
+            "de-DE": "Sergej spricht noch langsam, doch er versteht jede Woche etwas mehr."
+          }
+        },
+        {
+          "id": 112005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Особенно полезными он считает карточки с новыми словами и примерами.",
+            "de-DE": "Besonders hilfreich findet er die Karten mit neuen Wörtern und Beispielen."
+          }
+        },
+        {
+          "id": 112006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "После занятия некоторые вместе пьют кофе и продолжают говорить по-немецки.",
+            "de-DE": "Nach dem Unterricht trinken einige gemeinsam Kaffee und reden weiter auf Deutsch."
+          }
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "key": "new_job",
+      "titles": {
+        "ru-RU": "Новая работа",
+        "de-DE": "Die neue Arbeitsstelle"
+      },
+      "kind": "Everyday",
+      "level": "B1",
+      "topic": "work",
+      "segments": [
+        {
+          "id": 113001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Уже три недели Ирина работает в небольшой фирме, которая разрабатывает учебные программы для школ.",
+            "de-DE": "Seit drei Wochen arbeitet Irina in einer kleinen Firma, die Lernprogramme für Schulen entwickelt."
+          }
+        },
+        {
+          "id": 113002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "В первый день она нервничала, потому что не знала внутренних процессов и почти никого в команде.",
+            "de-DE": "Am ersten Tag war sie nervös, weil sie die internen Abläufe und fast niemanden im Team kannte."
+          }
+        },
+        {
+          "id": 113003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Её коллега Мириам терпеливо объяснила ей основные инструменты и брала её на все совещания.",
+            "de-DE": "Ihre Kollegin Miriam erklärte ihr geduldig die wichtigsten Werkzeuge und nahm sie zu allen Besprechungen mit."
+          }
+        },
+        {
+          "id": 113004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Теперь Ирина выполняет собственные задачи и каждый четверг представляет результаты на короткой встрече.",
+            "de-DE": "Inzwischen bearbeitet Irina eigene Aufgaben und stellt ihre Ergebnisse jeden Donnerstag in einer kurzen Runde vor."
+          }
+        },
+        {
+          "id": 113005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Иногда ей приходится спрашивать значение профессионального слова, но никто не ожидает, что всё сразу будет без ошибок.",
+            "de-DE": "Manchmal muss sie nach einem Fachwort fragen, doch niemand erwartet, dass sofort alles fehlerfrei läuft."
+          }
+        },
+        {
+          "id": 113006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Такая открытость помогает ей брать на себя ответственность и с каждым днём чувствовать себя увереннее.",
+            "de-DE": "Diese offene Haltung hilft ihr, Verantwortung zu übernehmen und sich jeden Tag sicherer zu fühlen."
+          }
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "key": "neighbours_help",
+      "titles": {
+        "ru-RU": "Помощь соседям",
+        "de-DE": "Hilfe unter Nachbarn"
+      },
+      "kind": "Everyday",
+      "level": "B1",
+      "topic": "community",
+      "segments": [
+        {
+          "id": 114001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Когда в доме внезапно сломался лифт, повседневная жизнь нескольких жильцов стала заметно сложнее.",
+            "de-DE": "Als im Haus plötzlich der Aufzug ausfiel, wurde der Alltag für mehrere Bewohner deutlich schwieriger."
+          }
+        },
+        {
+          "id": 114002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Особенно госпоже Кёниг с пятого этажа было трудно одной поднимать тяжёлые покупки.",
+            "de-DE": "Besonders Frau König aus dem fünften Stock konnte ihre schweren Einkäufe kaum allein nach oben tragen."
+          }
+        },
+        {
+          "id": 114003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Поэтому студент с первого этажа написал объявление и предложил общий план помощи.",
+            "de-DE": "Ein Student aus dem Erdgeschoss schrieb deshalb einen Zettel und schlug einen gemeinsamen Hilfsplan vor."
+          }
+        },
+        {
+          "id": 114004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Вскоре молодые соседи носили сумки, забирали лекарства и доставляли посылки прямо к дверям квартир.",
+            "de-DE": "Bald trugen jüngere Nachbarn Taschen, holten Medikamente ab und brachten Pakete bis vor die Wohnungstüren."
+          }
+        },
+        {
+          "id": 114005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Ремонт длился дольше обещанного, но благодаря практической помощи в подъезде завязались новые разговоры.",
+            "de-DE": "Die Reparatur dauerte länger als angekündigt, aber aus der praktischen Hilfe entstanden neue Gespräche im Treppenhaus."
+          }
+        },
+        {
+          "id": 114006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Когда лифт снова заработал, все решили сохранить список контактов для будущих экстренных случаев.",
+            "de-DE": "Nachdem der Aufzug wieder funktionierte, beschlossen alle, die Kontaktliste für spätere Notfälle zu behalten."
+          }
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "key": "week_without_social_media",
+      "titles": {
+        "ru-RU": "Неделя без соцсетей",
+        "de-DE": "Eine Woche ohne soziale Medien"
+      },
+      "kind": "Everyday",
+      "level": "B1",
+      "topic": "media",
+      "segments": [
+        {
+          "id": 115001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Мила заметила, что даже во время коротких пауз автоматически брала телефон в руки.",
+            "de-DE": "Mila bemerkte, dass sie ihr Telefon selbst bei kurzen Pausen automatisch in die Hand nahm."
+          }
+        },
+        {
+          "id": 115002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Поэтому она на неделю удалила социальные сети, заранее предупредив близких друзей.",
+            "de-DE": "Deshalb löschte sie für eine Woche die sozialen Netzwerke und informierte vorher ihre engsten Freunde."
+          }
+        },
+        {
+          "id": 115003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Первые вечера казались непривычно тихими, и несколько раз она по привычке искала удалённые значки.",
+            "de-DE": "Die ersten Abende wirkten ungewohnt still, und mehrmals suchte sie aus Gewohnheit nach den entfernten Symbolen."
+          }
+        },
+        {
+          "id": 115004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Затем она снова начала читать, гуляла после работы и дольше разговаривала с сестрой по телефону.",
+            "de-DE": "Dann begann sie wieder zu lesen, ging nach der Arbeit spazieren und telefonierte länger mit ihrer Schwester."
+          }
+        },
+        {
+          "id": 115005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "В конце ей не хватало некоторых новостей, но она чувствовала себя сосредоточеннее и заметно лучше спала.",
+            "de-DE": "Am Ende fehlten ihr manche Nachrichten, doch sie fühlte sich konzentrierter und schlief deutlich besser."
+          }
+        },
+        {
+          "id": 115006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Теперь Мила снова пользуется приложениями, но установила определённое время и отключила все ненужные уведомления.",
+            "de-DE": "Nun nutzt Mila die Apps wieder, hat jedoch feste Zeiten und alle unnötigen Mitteilungen ausgeschaltet."
+          }
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "key": "difficult_decision",
+      "titles": {
+        "ru-RU": "Трудное решение",
+        "de-DE": "Eine schwierige Entscheidung"
+      },
+      "kind": "Everyday",
+      "level": "B1",
+      "topic": "choices",
+      "segments": [
+        {
+          "id": 116001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Антон неожиданно получил интересное предложение работы в городе, который находится в нескольких часах от его дома.",
+            "de-DE": "Anton erhielt unerwartet ein interessantes Stellenangebot in einer Stadt, die mehrere Stunden von seinem Zuhause entfernt liegt."
+          }
+        },
+        {
+          "id": 116002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Новая работа оплачивалась бы лучше, кроме того, там он мог бы работать в желаемой сфере.",
+            "de-DE": "Die neue Aufgabe würde besser bezahlt, außerdem könnte er dort in seinem Wunschbereich arbeiten."
+          }
+        },
+        {
+          "id": 116003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "В то же время он не хотел оставлять друзей и регулярно заботился о дедушке.",
+            "de-DE": "Gleichzeitig wollte er seine Freunde nicht verlassen und kümmerte sich regelmäßig um seinen Großvater."
+          }
+        },
+        {
+          "id": 116004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Он записал все преимущества и недостатки и открыто поговорил с семьёй о своих переживаниях.",
+            "de-DE": "Er schrieb alle Vor- und Nachteile auf und sprach offen mit seiner Familie über seine Sorgen."
+          }
+        },
+        {
+          "id": 116005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Дедушка поддержал его решение воспользоваться шансом и пообещал чаще звонить по видео.",
+            "de-DE": "Sein Großvater ermutigte ihn, die Chance zu nutzen, und versprach, häufiger per Video anzurufen."
+          }
+        },
+        {
+          "id": 116006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "В конце концов Антон принял предложение, но сначала договорился об общем испытательном сроке в три месяца.",
+            "de-DE": "Anton nahm das Angebot schließlich an, vereinbarte aber zunächst eine gemeinsame Probezeit von drei Monaten."
+          }
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "key": "car_free_city",
+      "titles": {
+        "ru-RU": "Город без машин",
+        "de-DE": "Eine Stadt ohne Autos"
+      },
+      "kind": "Everyday",
+      "level": "B2",
+      "topic": "city",
+      "segments": [
+        {
+          "id": 117001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Городская администрация планирует по будням в основном закрыть исторический центр для частных автомобилей.",
+            "de-DE": "Die Stadtverwaltung plant, das historische Zentrum an Werktagen weitgehend für private Autos zu sperren."
+          }
+        },
+        {
+          "id": 117002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Сторонники ожидают более чистый воздух, меньше шума и больше места для пешеходов и велосипедистов.",
+            "de-DE": "Befürworter erwarten sauberere Luft, weniger Lärm und mehr Platz für Menschen, die zu Fuß oder mit dem Fahrrad unterwegs sind."
+          }
+        },
+        {
+          "id": 117003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Многие предприниматели, напротив, опасаются, что клиенты с окраин предпочтут крупные торговые центры.",
+            "de-DE": "Viele Geschäftsleute fürchten dagegen, dass Kunden aus den Außenbezirken künftig lieber in großen Einkaufszentren einkaufen werden."
+          }
+        },
+        {
+          "id": 117004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Транспортная концепция предусматривает дополнительные трамваи, безопасные велодорожки и небольшие машины доставки в установленное время.",
+            "de-DE": "Das Verkehrskonzept sieht zusätzliche Straßenbahnen, sichere Radwege und kleine Lieferfahrzeuge für festgelegte Zeiten vor."
+          }
+        },
+        {
+          "id": 117005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Чтобы пожилые люди и люди с инвалидностью сохранили мобильность, специальные разрешения на въезд можно будет легко оформить.",
+            "de-DE": "Damit ältere Menschen und Personen mit Behinderung mobil bleiben, sollen besondere Zufahrtsgenehmigungen unkompliziert beantragt werden können."
+          }
+        },
+        {
+          "id": 117006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "До окончательного решения модель шесть месяцев опробуют в двух районах под научным наблюдением.",
+            "de-DE": "Vor der endgültigen Entscheidung wird das Modell sechs Monate lang in zwei Vierteln erprobt und wissenschaftlich begleitet."
+          }
+        },
+        {
+          "id": 117007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Только после этого городской совет проверит, действительно ли долгосрочные преимущества в повседневной жизни для всех участников перевешивают новые сложности.",
+            "de-DE": "Erst danach will der Stadtrat prüfen, ob die langfristigen Vorteile im täglichen Leben für alle Beteiligten tatsächlich größer sind als die neuen Belastungen."
+          }
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "key": "remote_work",
+      "titles": {
+        "ru-RU": "Удалённая работа",
+        "de-DE": "Arbeiten auf Distanz"
+      },
+      "kind": "Everyday",
+      "level": "B2",
+      "topic": "work",
+      "segments": [
+        {
+          "id": 118001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "После пандемии компания сохранила гибкую модель, при которой сотрудники сами выбирают место работы.",
+            "de-DE": "Nach der Pandemie behielt das Unternehmen ein flexibles Modell bei, bei dem die Beschäftigten ihren Arbeitsort selbst wählen können."
+          }
+        },
+        {
+          "id": 118002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Многие ценят сэкономленное время на дорогу и возможность выполнять требующие концентрации задачи без перерывов.",
+            "de-DE": "Viele schätzen die eingesparte Fahrzeit und die Möglichkeit, konzentrierte Aufgaben ohne Unterbrechungen zu erledigen."
+          }
+        },
+        {
+          "id": 118003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Другим не хватает спонтанных разговоров, потому что запланированные видеовстречи редко создают такую же открытость, как общий перерыв на кофе.",
+            "de-DE": "Andere vermissen spontane Gespräche, weil geplante Videokonferenzen selten dieselbe Offenheit wie eine gemeinsame Kaffeepause erzeugen."
+          }
+        },
+        {
+          "id": 118004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Новым сотрудникам также труднее понять неформальные правила и наладить полезные контакты в компании.",
+            "de-DE": "Auch neue Mitarbeiter finden es schwieriger, informelle Regeln zu verstehen und hilfreiche Kontakte im Betrieb aufzubauen."
+          }
+        },
+        {
+          "id": 118005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Поэтому все команды встречаются в офисе два фиксированных дня, а остальную неделю организуют свободно.",
+            "de-DE": "Deshalb treffen sich alle Teams an zwei festen Tagen im Büro, während die übrige Woche frei organisiert wird."
+          }
+        },
+        {
+          "id": 118006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Руководителей обучают оценивать результаты, а не видимое присутствие, и заранее обсуждать нагрузку.",
+            "de-DE": "Führungskräfte werden darin geschult, Ergebnisse statt sichtbarer Anwesenheit zu beurteilen und Belastungen frühzeitig anzusprechen."
+          }
+        },
+        {
+          "id": 118007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Эта модель подходит не для каждой работы, но показывает, что в современном рабочем мире доверие всё чаще становится практическим ресурсом.",
+            "de-DE": "Das Modell funktioniert nicht für jede Tätigkeit, macht aber deutlich, dass Vertrauen in der modernen Arbeitswelt immer häufiger zu einer praktischen Arbeitsressource geworden ist."
+          }
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "key": "cultural_misunderstanding",
+      "titles": {
+        "ru-RU": "Культурное недоразумение",
+        "de-DE": "Ein kulturelles Missverständnis"
+      },
+      "kind": "Everyday",
+      "level": "B2",
+      "topic": "culture",
+      "segments": [
+        {
+          "id": 119001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Во время первого проекта в Германии Рафаэль удивился тому, насколько прямо коллега раскритиковала его черновик.",
+            "de-DE": "Bei seinem ersten Projekt in Deutschland wunderte sich Rafael darüber, wie direkt seine Kollegin einen Entwurf kritisierte."
+          }
+        },
+        {
+          "id": 119002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "В его прежней рабочей среде возражения формулировали осторожнее, чтобы никто не потерял лицо перед группой.",
+            "de-DE": "In seinem bisherigen Arbeitsumfeld wurden Einwände vorsichtiger formuliert, damit niemand vor der Gruppe das Gesicht verlor."
+          }
+        },
+        {
+          "id": 119003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Рафаэль воспринял короткие фразы как личное неприятие и на следующей встрече отвечал необычно сдержанно.",
+            "de-DE": "Rafael deutete die kurzen Sätze als persönliche Ablehnung und antwortete in der nächsten Besprechung ungewöhnlich zurückhaltend."
+          }
+        },
+        {
+          "id": 119004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Коллега заметила дистанцию и после встречи спросила его с глазу на глаз, всё ли в порядке.",
+            "de-DE": "Die Kollegin bemerkte die Distanz und fragte ihn anschließend unter vier Augen, ob etwas nicht stimme."
+          }
+        },
+        {
+          "id": 119005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "В разговоре оба поняли, что выражали одно и то же уважение по-разному: ясностью с одной стороны и деликатностью с другой.",
+            "de-DE": "Im Gespräch erkannten beide, dass sie denselben Respekt unterschiedlich ausdrückten: durch Klarheit auf der einen, durch Schonung auf der anderen Seite."
+          }
+        },
+        {
+          "id": 119006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Они договорились впредь сопровождать критику конкретными предложениями и сразу обсуждать неясности.",
+            "de-DE": "Sie vereinbarten, Kritik künftig mit konkreten Verbesserungsvorschlägen zu verbinden und Unsicherheiten sofort anzusprechen."
+          }
+        },
+        {
+          "id": 119007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Недоразумение исчезло не благодаря общему правилу, а благодаря готовности открыто объяснять друг другу намерение, стоящее за стилем общения.",
+            "de-DE": "Das Missverständnis verschwand nicht durch eine allgemeine Regel, sondern durch die Bereitschaft, einander offen die Absicht hinter dem Stil zu erklären."
+          }
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "key": "urban_trees",
+      "titles": {
+        "ru-RU": "Городские деревья",
+        "de-DE": "Bäume in der Stadt"
+      },
+      "kind": "Everyday",
+      "level": "B2",
+      "topic": "environment",
+      "segments": [
+        {
+          "id": 120001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Жарким летом плотно застроенные районы могут быть на несколько градусов теплее парков на окраине.",
+            "de-DE": "In heißen Sommern können dicht bebaute Viertel mehrere Grad wärmer sein als Parks am Stadtrand."
+          }
+        },
+        {
+          "id": 120002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Деревья там не только дают тень, но и охлаждают окружение, испаряя воду через листья.",
+            "de-DE": "Bäume spenden dort nicht nur Schatten, sondern kühlen ihre Umgebung auch, indem sie Wasser über die Blätter abgeben."
+          }
+        },
+        {
+          "id": 120003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Однако недостаточно посадить как можно больше молодых растений на узких участках между дорогами и коммуникациями.",
+            "de-DE": "Allerdings reicht es nicht, möglichst viele junge Pflanzen in schmale Flächen zwischen Straßen und Leitungen zu setzen."
+          }
+        },
+        {
+          "id": 120004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Без достаточного объёма почвы, воды и многолетнего ухода многие саженцы не переживают первые засушливые периоды.",
+            "de-DE": "Ohne genügend Boden, Wasser und jahrelange Pflege überleben viele Setzlinge die ersten trockenen Perioden nicht."
+          }
+        },
+        {
+          "id": 120005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Поэтому специалисты рекомендуют разнообразные виды, больше места для корней и обязательные планы ухода с заранее предусмотренным финансированием.",
+            "de-DE": "Fachleute empfehlen deshalb vielfältige Arten, größere Wurzelräume und verbindliche Pflegepläne, die bereits im Haushalt finanziert sind."
+          }
+        },
+        {
+          "id": 120006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Жители тоже могут помочь, если ответственность ясна и добровольный полив дополняет, а не заменяет общественный уход.",
+            "de-DE": "Auch Anwohner können helfen, wenn Zuständigkeiten klar sind und freiwilliges Gießen die öffentliche Pflege ergänzt statt ersetzt."
+          }
+        },
+        {
+          "id": 120007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Здоровое городское дерево — это не быстрая декорация, а долгосрочная инфраструктура для климата, здоровья и устойчивого качества жизни в плотно застроенных районах.",
+            "de-DE": "Ein gesunder Stadtbaum ist somit keine schnelle Dekoration, sondern eine langfristige Infrastruktur für Klima, Gesundheit und dauerhafte Lebensqualität in dicht bebauten Vierteln."
+          }
+        }
+      ]
+    },
+    {
+      "id": 121,
+      "key": "language_and_belonging",
+      "titles": {
+        "ru-RU": "Язык и принадлежность",
+        "de-DE": "Sprache und Zugehörigkeit"
+      },
+      "kind": "Classic",
+      "level": "C1",
+      "topic": "identity",
+      "segments": [
+        {
+          "id": 121001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Тот, кто живёт в новом языке, узнаёт не только другие слова для знакомых вещей, но и новые способы выстраивать отношения.",
+            "de-DE": "Wer in einer neuen Sprache lebt, lernt nicht bloß andere Wörter für bereits bekannte Dinge, sondern neue Arten, Beziehungen zu ordnen."
+          }
+        },
+        {
+          "id": 121002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Форма обращения может создать близость, защитить дистанцию или обозначить общественную роль ещё до начала самого предложения.",
+            "de-DE": "Eine Anrede kann Nähe herstellen, Distanz schützen oder eine gesellschaftliche Rolle markieren, noch bevor der eigentliche Satz beginnt."
+          }
+        },
+        {
+          "id": 121003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "По мере роста уверенности часто меняется и манера поведения: одни мысли выражаются прямее, другие осторожнее или неожиданно шутливо.",
+            "de-DE": "Mit wachsender Sicherheit verändert sich daher oft auch das Auftreten: Manche Gedanken werden direkter, andere vorsichtiger oder überraschend humorvoll formuliert."
+          }
+        },
+        {
+          "id": 121004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Одновременно первый язык остаётся архивом жестов, голосов и переживаний, который невозможно полностью перенести.",
+            "de-DE": "Gleichzeitig bleibt die Erstsprache ein Archiv von Gesten, Stimmen und Erfahrungen, das sich nicht vollständig übertragen lässt."
+          }
+        },
+        {
+          "id": 121005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Принадлежность возникает тогда скорее не из безошибочного произношения, а из опыта быть понятым и самому брать ответственность в разговоре.",
+            "de-DE": "Zugehörigkeit entsteht dann weniger durch eine fehlerlose Aussprache als durch die Erfahrung, verstanden zu werden und selbst Verantwortung im Gespräch zu übernehmen."
+          }
+        },
+        {
+          "id": 121006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Она может быть множественной, не становясь произвольной, ведь каждое языковое сообщество требует внимания к невысказанным ожиданиям.",
+            "de-DE": "Sie kann mehrfach sein, ohne beliebig zu werden, denn jede sprachliche Gemeinschaft verlangt Aufmerksamkeit für ihre unausgesprochenen Erwartungen."
+          }
+        },
+        {
+          "id": 121007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Именно ошибки перевода порой особенно ясно показывают, какие само собой разумеющиеся представления скрыты в каждом языке.",
+            "de-DE": "Gerade Übersetzungsfehler zeigen manchmal besonders deutlich, welche Selbstverständlichkeiten in den jeweiligen Sprachen verborgen liegen."
+          }
+        },
+        {
+          "id": 121008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Тот, кто посредничает между ними, не обязательно теряет родину, а может научиться гораздо осознаннее видеть границы каждого из языковых миров.",
+            "de-DE": "Wer zwischen ihnen vermittelt, verliert deshalb nicht notwendig eine Heimat, sondern kann lernen, ihre jeweiligen Grenzen sehr viel bewusster wahrzunehmen."
+          }
+        }
+      ]
+    },
+    {
+      "id": 122,
+      "key": "ownership_of_data",
+      "titles": {
+        "ru-RU": "Владение данными",
+        "de-DE": "Wem gehören unsere Daten?"
+      },
+      "kind": "Everyday",
+      "level": "C1",
+      "topic": "digital-society",
+      "segments": [
+        {
+          "id": 122001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "В цифровой повседневности даже незаметные действия оставляют полезные для анализа следы: местоположение, поисковый запрос или длительность взгляда.",
+            "de-DE": "Im digitalen Alltag erzeugen selbst unscheinbare Handlungen verwertbare Spuren: ein Standort, eine Suchanfrage oder die Dauer eines Blicks."
+          }
+        },
+        {
+          "id": 122002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Пользователи часто говорят, что владеют своими данными, хотя юридически и технически информацию редко можно рассматривать как обычную вещь.",
+            "de-DE": "Nutzer sprechen häufig davon, ihre Daten zu besitzen, obwohl Informationen rechtlich und technisch selten wie ein gewöhnlicher Gegenstand behandelt werden können."
+          }
+        },
+        {
+          "id": 122003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Копию можно размножать без ограничений, а её ценность возникает именно из связи с другими наборами данных.",
+            "de-DE": "Eine Kopie lässt sich unbegrenzt vervielfältigen, während ihr Wert gerade aus der Verbindung mit anderen Datensätzen entsteht."
+          }
+        },
+        {
+          "id": 122004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Поэтому метафора собственности слишком узка, если спрашивает лишь о том, кто вправе что-либо продавать.",
+            "de-DE": "Deshalb greift die Eigentumsmetapher zu kurz, wenn sie nur fragt, wer etwas verkaufen darf."
+          }
+        },
+        {
+          "id": 122005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Не менее важно, кто может понять решения, исправить неверные записи и действенно отозвать прежнее согласие.",
+            "de-DE": "Ebenso wichtig ist, wer Entscheidungen nachvollziehen, fehlerhafte Einträge berichtigen und eine frühere Zustimmung wirksam zurücknehmen kann."
+          }
+        },
+        {
+          "id": 122006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Компаниям нужны ясные правила законной обработки, но им не следует скрывать сложность за многостраничными объяснениями.",
+            "de-DE": "Unternehmen benötigen klare Regeln für legitime Verarbeitung, dürfen Komplexität jedoch nicht hinter seitenlangen Erklärungen verbergen."
+          }
+        },
+        {
+          "id": 122007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Ответственное регулирование данных распределяет не только права, но и обязанности по ограничению, безопасности и понятной отчётности.",
+            "de-DE": "Eine verantwortliche Datenordnung verteilt daher nicht nur Rechte, sondern auch Pflichten zur Begrenzung, Sicherheit und verständlichen Rechenschaft."
+          }
+        },
+        {
+          "id": 122008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Только когда у затронутых людей появляются реальные возможности действовать, формальное согласие становится надёжной основой цифрового доверия.",
+            "de-DE": "Erst wenn Betroffene reale Handlungsmöglichkeiten erhalten, wird aus formaler Zustimmung eine belastbare Grundlage für digitales Vertrauen."
+          }
+        },
+        {
+          "id": 122009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Контроль при этом остаётся многоуровневым отношением, соединяющим личный выбор, институциональный надзор и технические меры защиты.",
+            "de-DE": "Kontrolle bleibt dabei ein abgestuftes Verhältnis, das individuelle Wahl, institutionelle Aufsicht und technische Schutzvorkehrungen miteinander verbindet."
+          }
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "key": "shapes_of_memory",
+      "titles": {
+        "ru-RU": "Память",
+        "de-DE": "Die Formen der Erinnerung"
+      },
+      "kind": "Classic",
+      "level": "C1",
+      "topic": "memory",
+      "segments": [
+        {
+          "id": 123001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Воспоминания часто кажутся нам образами во внутреннем архиве, однако при каждом обращении они собираются заново.",
+            "de-DE": "Erinnerungen erscheinen uns oft wie Bilder in einem inneren Archiv, doch sie werden bei jedem Aufruf neu zusammengesetzt."
+          }
+        },
+        {
+          "id": 123002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Более поздний опыт меняет вес и связь прежних событий, а мы не всегда замечаем этот сдвиг.",
+            "de-DE": "Spätere Erfahrungen verändern dabei Gewicht und Zusammenhang früherer Ereignisse, ohne dass wir diese Verschiebung zuverlässig bemerken."
+          }
+        },
+        {
+          "id": 123003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Знакомый запах может с удивительной ясностью вернуть целую сцену, тогда как точная дата полностью исчезает.",
+            "de-DE": "Ein vertrauter Geruch kann eine Szene mit erstaunlicher Deutlichkeit zurückbringen, während ein genaues Datum vollständig verloren gegangen ist."
+          }
+        },
+        {
+          "id": 123004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Совместный рассказ тоже формирует память, поскольку семьи и общества повторяют одни эпизоды и постепенно заставляют замолчать другие.",
+            "de-DE": "Auch gemeinsames Erzählen prägt das Gedächtnis, weil Familien und Gesellschaften bestimmte Episoden wiederholen und andere allmählich verstummen lassen."
+          }
+        },
+        {
+          "id": 123005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Это не делает память бесполезной, но показывает её зависимость от точки зрения, языка и нынешних потребностей.",
+            "de-DE": "Das macht Erinnerung nicht wertlos, wohl aber abhängig von Perspektive, Sprache und gegenwärtigen Bedürfnissen."
+          }
+        },
+        {
+          "id": 123006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Поэтому исторические источники следует рассматривать с учётом обстоятельств их появления и отсутствующих в них голосов.",
+            "de-DE": "Historische Quellen müssen deshalb danach befragt werden, unter welchen Umständen sie entstanden und welche Stimmen in ihnen fehlen."
+          }
+        },
+        {
+          "id": 123007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Личная искренность, в свою очередь, означает не безошибочное сохранение каждой детали, а честное обозначение неуверенности.",
+            "de-DE": "Persönliche Aufrichtigkeit bedeutet wiederum nicht, jede Einzelheit fehlerfrei zu bewahren, sondern Unsicherheit kenntlich zu machen."
+          }
+        },
+        {
+          "id": 123008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Именно такая открытость защищает прошлое лучше, чем утверждение, будто его можно вернуть неизменным.",
+            "de-DE": "Gerade diese Offenheit schützt die Vergangenheit besser als die Behauptung, sie ließe sich unverändert zurückholen."
+          }
+        },
+        {
+          "id": 123009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Память — не неподвижная собственность, а нынешняя деятельность, изменчивость которой означает и уязвимость, и творческую возможность.",
+            "de-DE": "Sie ist kein stiller Besitz, sondern eine gegenwärtige Tätigkeit, deren Wandel sowohl Verletzlichkeit als auch schöpferische Möglichkeit bedeutet."
+          }
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "key": "why_literature",
+      "titles": {
+        "ru-RU": "Литература",
+        "de-DE": "Warum wir Literatur lesen"
+      },
+      "kind": "Classic",
+      "level": "C1",
+      "topic": "literature",
+      "segments": [
+        {
+          "id": 124001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Литература редко даёт однозначные указания, и именно этим отличается от справочника или технической документации.",
+            "de-DE": "Literatur liefert selten eindeutige Anweisungen, und gerade darin unterscheidet sie sich von einem Ratgeber oder einer technischen Dokumentation."
+          }
+        },
+        {
+          "id": 124002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Она предлагает на ограниченное время всерьёз принять чужое восприятие, не требуя полного согласия с ним.",
+            "de-DE": "Sie lädt dazu ein, eine fremde Wahrnehmung für eine begrenzte Zeit ernst zu nehmen, ohne ihr vollständig zustimmen zu müssen."
+          }
+        },
+        {
+          "id": 124003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Персонажи могут действовать противоречиво, рассказчики — ошибаться, а молчание бывает многозначнее подробного объяснения.",
+            "de-DE": "Figuren können widersprüchlich handeln, Erzähler können irren, und ein Schweigen kann mehrdeutiger sein als jede ausführliche Erklärung."
+          }
+        },
+        {
+          "id": 124004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Так читатели учатся проверять мотивы, различать точки зрения и откладывать поспешные моральные суждения.",
+            "de-DE": "Lesende üben dadurch, Motive zu prüfen, Perspektiven auseinanderzuhalten und schnelle moralische Urteile aufzuschieben."
+          }
+        },
+        {
+          "id": 124005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Эти способности не переносятся в повседневность автоматически, но создают пространство для гибкости мышления.",
+            "de-DE": "Diese Fähigkeiten lassen sich nicht automatisch auf den Alltag übertragen, doch sie schaffen einen Raum für gedankliche Beweglichkeit."
+          }
+        },
+        {
+          "id": 124006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Одновременно литература сохраняет языковые формы, в которых общества прошлого проявляли надежды, конфликты и слепые зоны.",
+            "de-DE": "Zugleich bewahrt Literatur sprachliche Formen, in denen vergangene Gesellschaften ihre Hoffnungen, Konflikte und blinden Flecken sichtbar machten."
+          }
+        },
+        {
+          "id": 124007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Классический текст остаётся актуальным не потому, что содержит вечные ответы, а потому, что новые поколения задают ему другие вопросы.",
+            "de-DE": "Ein klassischer Text bleibt deshalb nicht aktuell, weil er zeitlose Antworten enthält, sondern weil neue Generationen andere Fragen an ihn richten."
+          }
+        },
+        {
+          "id": 124008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Чтение становится встречей, результат которой не контролирует в одиночку ни текст, ни его аудитория.",
+            "de-DE": "Lesen wird so zu einer Begegnung, deren Ergebnis weder der Text noch sein Publikum allein kontrolliert."
+          }
+        },
+        {
+          "id": 124009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Его воздействие начинается там, где на эту открытость отвечают творчески.",
+            "de-DE": "Seine Wirkung beginnt dort, wo diese Offenheit produktiv beantwortet wird."
+          }
+        }
+      ]
+    },
+    {
+      "id": 125,
+      "key": "the_unspoken",
+      "titles": {
+        "ru-RU": "Невысказанное",
+        "de-DE": "Das Ungesagte"
+      },
+      "kind": "Classic",
+      "level": "C2",
+      "topic": "communication",
+      "segments": [
+        {
+          "id": 125001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "В разговорах действует не только сказанное, но и то, что опущено, отложено или заменено мимолётным жестом.",
+            "de-DE": "In Gesprächen wirkt nicht nur das Gesagte, sondern ebenso das, was ausgelassen, verschoben oder durch eine beiläufige Geste ersetzt wird."
+          }
+        },
+        {
+          "id": 125002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Молчание может намекать на согласие, скрывать возражение, проявлять такт или просто показывать, что мысль ещё не обрела устойчивую форму.",
+            "de-DE": "Schweigen kann Zustimmung andeuten, Widerspruch verbergen, Rücksicht nehmen oder schlicht anzeigen, dass ein Gedanke noch keine tragfähige Form gefunden hat."
+          }
+        },
+        {
+          "id": 125003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Его значение возникает не в пустоте, а из ролей, предыстории, ожиданий и возможных последствий открытого высказывания.",
+            "de-DE": "Seine Bedeutung entsteht daher nicht im leeren Raum, sondern aus Rollen, Vorgeschichte, Erwartungen und den möglichen Folgen einer offenen Äußerung."
+          }
+        },
+        {
+          "id": 125004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Тот, кто сразу толкует каждое колебание, рискует принять собственное предположение за сообщение собеседника.",
+            "de-DE": "Wer jedes Zögern sofort deutet, riskiert, die eigene Vermutung für eine Botschaft des Gegenübers zu halten."
+          }
+        },
+        {
+          "id": 125005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "С другой стороны, требование полной однозначности может скрывать отношения власти, в которых открытость для одной стороны была бы значительно опаснее.",
+            "de-DE": "Umgekehrt kann die Forderung nach völliger Eindeutigkeit Machtverhältnisse verdecken, in denen Offenheit für eine Seite erheblich gefährlicher wäre."
+          }
+        },
+        {
+          "id": 125006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Внимательное слушание означает не чтение мыслей и не ожидание признания, а осторожное открытие возможностей для толкования.",
+            "de-DE": "Aufmerksames Zuhören bedeutet deshalb weder Gedankenlesen noch geduldiges Warten auf ein Geständnis, sondern das vorsichtige Öffnen von Deutungsmöglichkeiten."
+          }
+        },
+        {
+          "id": 125007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Уточняющий вопрос может создать пространство, если не подсказывает заранее ответ и признаёт право пока ничего не объяснять.",
+            "de-DE": "Eine Nachfrage kann Raum schaffen, sofern sie eine Antwort nicht bereits vorgibt und auch das Recht anerkennt, vorläufig nichts zu erklären."
+          }
+        },
+        {
+          "id": 125008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Невысказанное от этого не становится автоматически правдивее произнесённых слов; оно остаётся частью ситуации, требующей особой скромности.",
+            "de-DE": "Das Ungesagte wird damit nicht automatisch wahrer als die ausgesprochenen Worte; es bleibt ein Teil der Situation, der besondere Bescheidenheit verlangt."
+          }
+        },
+        {
+          "id": 125009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Коммуникативная зрелость, возможно, проявляется именно в способности выдерживать неоднозначность, не снимая с себя ответственности за воздействие собственных слов.",
+            "de-DE": "Kommunikative Reife zeigt sich womöglich gerade darin, Mehrdeutigkeit auszuhalten, ohne Verantwortung für die Wirkung des eigenen Sprechens abzugeben."
+          }
+        },
+        {
+          "id": 125010,
+          "order": 10,
+          "translations": {
+            "ru-RU": "Она сохраняет близость, не заявляя поспешно о полной уверенности.",
+            "de-DE": "Sie bewahrt Nähe, ohne vorschnell Gewissheit zu behaupten."
+          }
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "key": "writing_history",
+      "titles": {
+        "ru-RU": "Историография",
+        "de-DE": "Geschichte schreiben"
+      },
+      "kind": "Classic",
+      "level": "C2",
+      "topic": "history",
+      "segments": [
+        {
+          "id": 126001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Историография начинается не с формулировки толкования, а уже с решения, какие следы считать источниками.",
+            "de-DE": "Geschichtsschreibung beginnt nicht erst mit der Formulierung einer Deutung, sondern bereits mit der Entscheidung, welche Spuren als Quelle gelten sollen."
+          }
+        },
+        {
+          "id": 126002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Архивы никогда не сохраняют само прошлое; они содержат остатки, отобранные администрацией, случайностью, насилием и позднейшими системами упорядочивания.",
+            "de-DE": "Archive bewahren niemals die Vergangenheit selbst; sie enthalten Überreste, die durch Verwaltung, Zufall, Gewalt und spätere Ordnungssysteme ausgewählt wurden."
+          }
+        },
+        {
+          "id": 126003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Тот, кто создаёт из этого связный рассказ, должен преодолевать пробелы, но не вправе путать необходимое конструирование со свободным вымыслом.",
+            "de-DE": "Wer daraus eine zusammenhängende Erzählung bildet, muss Lücken überbrücken, darf jedoch die notwendige Konstruktion nicht mit freier Erfindung verwechseln."
+          }
+        },
+        {
+          "id": 126004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Современные понятия могут сделать прошлый опыт видимым, но также навязать ему категории, чуждые самим участникам.",
+            "de-DE": "Begriffe aus der Gegenwart können vergangene Erfahrungen sichtbar machen, ihnen aber ebenso Kategorien aufzwingen, die den Handelnden selbst fremd waren."
+          }
+        },
+        {
+          "id": 126005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Кроме того, якобы нейтральные критерии часто исходят из перспективы тех учреждений, чьи документы сохранились особенно полно.",
+            "de-DE": "Hinzu kommt, dass vermeintlich neutrale Maßstäbe häufig aus der Perspektive jener Institutionen stammen, deren Dokumente besonders vollständig erhalten blieben."
+          }
+        },
+        {
+          "id": 126006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Критическая историография проверяет и отдельные утверждения, и условия, при которых одни голоса записывались, а другие систематически игнорировались.",
+            "de-DE": "Kritische Historiografie prüft deshalb sowohl einzelne Aussagen als auch die Bedingungen, unter denen manche Stimmen aufgezeichnet und andere systematisch übergangen wurden."
+          }
+        },
+        {
+          "id": 126007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Она заменяет уверенность не произволом, а максимально точно обозначает область действия, вероятность и пределы своих выводов.",
+            "de-DE": "Sie ersetzt Gewissheit nicht durch Beliebigkeit, sondern kennzeichnet Reichweite, Wahrscheinlichkeit und Grenzen ihrer Schlussfolgerungen möglichst präzise."
+          }
+        },
+        {
+          "id": 126008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Новые источники могут изменить устоявшуюся картину, не обесценивая все прежние знания; пересмотр относится к методу, а не к его провалу.",
+            "de-DE": "Neue Quellen können ein etabliertes Bild verändern, ohne sämtliche bisherigen Erkenntnisse wertlos zu machen; Revision gehört zum Verfahren, nicht zu seinem Scheitern."
+          }
+        },
+        {
+          "id": 126009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Ответственное историческое повествование соединяет обоснованность и предварительность: утверждает достаточно для публичного обсуждения и сомневается достаточно, чтобы всегда допускать исправление.",
+            "de-DE": "Verantwortliches historisches Erzählen verbindet somit Begründung und Vorläufigkeit: Es behauptet genug, um öffentlich diskutierbar zu sein, und zweifelt genug, um dauerhaft korrigierbar zu bleiben."
+          }
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "key": "theory_of_translation",
+      "titles": {
+        "ru-RU": "Теория перевода",
+        "de-DE": "Theorie der Übersetzung"
+      },
+      "kind": "Classic",
+      "level": "C2",
+      "topic": "translation",
+      "segments": [
+        {
+          "id": 127001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Перевод не переносит неизменное содержание из одного нейтрального сосуда в другой, потому что форма и значение возникают в каждом языке совместно.",
+            "de-DE": "Eine Übersetzung überträgt keinen unveränderlichen Inhalt von einem neutralen Behälter in einen anderen, denn Form und Bedeutung entstehen in jeder Sprache gemeinsam."
+          }
+        },
+        {
+          "id": 127002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Уже выбор между неформальным и официальным обращением может закрепить отношения, которые исходный текст намеренно оставлял открытыми или организовывал грамматически иначе.",
+            "de-DE": "Schon die Wahl zwischen vertraulicher und förmlicher Anrede kann Beziehungen festlegen, die der Ausgangstext bewusst offenließ oder grammatisch anders organisierte."
+          }
+        },
+        {
+          "id": 127003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "Переводчикам приходится постоянно решать, какое воздействие сохранить, какую чуждость сделать видимой и какую потерю компенсировать в другом месте.",
+            "de-DE": "Übersetzende müssen daher fortwährend entscheiden, welche Wirkung bewahrt, welche Fremdheit sichtbar und welcher Verlust an anderer Stelle ausgeglichen werden soll."
+          }
+        },
+        {
+          "id": 127004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Полная эквивалентность остаётся недостижимым идеалом, но отсюда не следует ни равное качество всех версий, ни сведение критики к вкусу.",
+            "de-DE": "Vollständige Gleichwertigkeit bleibt ein unerreichbares Ideal, doch daraus folgt weder, dass alle Fassungen gleich gut, noch dass Kritik bloß Geschmackssache wäre."
+          }
+        },
+        {
+          "id": 127005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Обоснованные решения ориентируются на цель, жанр, аудиторию и историческую ситуацию и по возможности открыто показывают свои приоритеты.",
+            "de-DE": "Begründbare Entscheidungen orientieren sich an Zweck, Gattung, Publikum und historischer Situation und legen ihre Prioritäten möglichst nachvollziehbar offen."
+          }
+        },
+        {
+          "id": 127006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "В литературном тексте необычный ритм может быть важнее лексической близости, тогда как профессиональный текст требует терминологической последовательности и проверяемой однозначности.",
+            "de-DE": "Bei literarischen Texten kann ein ungewöhnlicher Rhythmus bedeutsamer sein als lexikalische Nähe, während Fachtexte terminologische Konsistenz und überprüfbare Eindeutigkeit verlangen."
+          }
+        },
+        {
+          "id": 127007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Машинные системы расширяют набор инструментов, но не устраняют ответственность за контекст, скрытые оценки и возможные последствия формулировки.",
+            "de-DE": "Maschinelle Systeme erweitern die verfügbaren Werkzeuge, beseitigen aber nicht die Verantwortung für Kontext, implizite Wertungen und mögliche Folgen einer Formulierung."
+          }
+        },
+        {
+          "id": 127008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Именно потому, что перевод всегда выбирает, прозрачность альтернатив способна укрепить доверие сильнее, чем утверждение о единственно верном решении.",
+            "de-DE": "Gerade weil Übersetzen immer auswählt, kann Transparenz über Alternativen das Vertrauen stärker fördern als die Behauptung einer einzig richtigen Lösung."
+          }
+        },
+        {
+          "id": 127009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "Удачная версия не стирает факт посредничества; она делает встречу возможной и одновременно позволяет понять, что эта встреча была сконструирована.",
+            "de-DE": "Die gelungene Fassung löscht ihre Vermittlung also nicht aus; sie ermöglicht eine Begegnung und lässt zugleich erkennen, dass diese Begegnung gestaltet wurde."
+          }
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "key": "progress_and_responsibility",
+      "titles": {
+        "ru-RU": "Прогресс и ответственность",
+        "de-DE": "Fortschritt und Verantwortung"
+      },
+      "kind": "Classic",
+      "level": "C2",
+      "topic": "ethics",
+      "segments": [
+        {
+          "id": 128001,
+          "order": 1,
+          "translations": {
+            "ru-RU": "Технический прогресс часто описывают как движение с уже заданным направлением, скорость которого политика может лишь корректировать.",
+            "de-DE": "Technischer Fortschritt wird gern als Bewegung beschrieben, deren Richtung bereits feststeht und deren Geschwindigkeit höchstens politisch angepasst werden könne."
+          }
+        },
+        {
+          "id": 128002,
+          "order": 2,
+          "translations": {
+            "ru-RU": "Эта метафора снимает ответственность с решений, представляя спроектированные изменения как природные процессы, за которыми общества лишь следуют или отстают.",
+            "de-DE": "Diese Metapher entlastet Entscheidungen, weil sie gestaltete Entwicklungen als naturähnliche Prozesse erscheinen lässt, denen Gesellschaften lediglich folgen oder hinterherhinken."
+          }
+        },
+        {
+          "id": 128003,
+          "order": 3,
+          "translations": {
+            "ru-RU": "На деле инновации опираются на инвестиции, правила и приоритеты, поддерживающие одни возможности и делающие другие невидимыми или экономически непривлекательными.",
+            "de-DE": "Tatsächlich beruhen Innovationen auf Investitionen, Regeln und Prioritäten, die bestimmte Möglichkeiten fördern, während andere unsichtbar oder wirtschaftlich unattraktiv bleiben."
+          }
+        },
+        {
+          "id": 128004,
+          "order": 4,
+          "translations": {
+            "ru-RU": "Поэтому вопрос состоит не только в том, работает ли технология, но и для кого, при каких условиях и с каким распределением рисков.",
+            "de-DE": "Die Frage lautet deshalb nicht nur, ob eine Technik funktioniert, sondern für wen, unter welchen Bedingungen und mit welchen verteilten Risiken."
+          }
+        },
+        {
+          "id": 128005,
+          "order": 5,
+          "translations": {
+            "ru-RU": "Краткосрочная польза может создать долгосрочные зависимости, стоимость которых проявится, когда альтернативы уже исчезли или инфраструктуру трудно изменить.",
+            "de-DE": "Ein kurzfristiger Nutzen kann langfristige Abhängigkeiten erzeugen, deren Kosten erst sichtbar werden, wenn Alternativen bereits verschwunden oder Infrastrukturen schwer veränderbar sind."
+          }
+        },
+        {
+          "id": 128006,
+          "order": 6,
+          "translations": {
+            "ru-RU": "Ответственность всё же не требует полного предвидения, которое принципиально недостижимо при открытом развитии.",
+            "de-DE": "Verantwortung verlangt dennoch keine vollständige Voraussicht, die bei offenen Entwicklungen prinzipiell nicht erreichbar wäre."
+          }
+        },
+        {
+          "id": 128007,
+          "order": 7,
+          "translations": {
+            "ru-RU": "Она требует проверяемых предположений, раннего участия затронутых людей и процедур, позволяющих выявлять ущерб, пересматривать решения и ограничивать власть.",
+            "de-DE": "Sie verlangt vielmehr überprüfbare Annahmen, frühzeitige Beteiligung Betroffener und Verfahren, mit denen Schäden erkannt, Entscheidungen revidiert und Macht begrenzt werden können."
+          }
+        },
+        {
+          "id": 128008,
+          "order": 8,
+          "translations": {
+            "ru-RU": "Отказ от нововведения тоже имеет последствия, поэтому предосторожность следует понимать не как общее отрицание, а как сравнительную проверку реальных вариантов.",
+            "de-DE": "Auch der Verzicht auf eine Neuerung hat Folgen, weshalb Vorsorge nicht als pauschale Ablehnung, sondern als vergleichende Prüfung realer Optionen verstanden werden sollte."
+          }
+        },
+        {
+          "id": 128009,
+          "order": 9,
+          "translations": {
+            "ru-RU": "В конечном счёте прогресс заслуживает своего имени не одной новизной, а публичным обоснованием целей и действительно действенной ответственностью за побочные последствия.",
+            "de-DE": "Fortschritt verdient seinen Namen schließlich nicht durch Neuheit allein, sondern dadurch, dass seine Ziele öffentlich begründet und seine Nebenwirkungen tatsächlich wirksam verantwortet werden."
           }
         }
       ]

@@ -38,8 +38,10 @@ public sealed class TrainerViewModel : ObservableObject
     private bool _isComplete;
     private bool _isSourceStep;
     private int _correctCount;
+    private AnswerMatchKind _answerMatchKind = AnswerMatchKind.Incorrect;
+    private string? _matchedAnswer;
+    private GermanLevel? _returnLevel;
     private string? _resolvedImagePath;
-    private int _passageFrequency = 8;
     private string _selectionMessage = string.Empty;
     private Guid _sessionId;
     private DateTimeOffset _attemptStartedAtUtc;
@@ -60,6 +62,8 @@ public sealed class TrainerViewModel : ObservableObject
         AdvanceLanguageCommand = new RelayCommand(AdvanceToTargetLanguage, () => IsLevelThree && IsSourceStep && !string.IsNullOrWhiteSpace(SourceAnswer));
         NextCommand = new RelayCommand(Next, () => ShowFeedback);
         RestartCommand = new RelayCommand(ResetSelection);
+        RepeatSessionCommand = new AsyncRelayCommand(StartSessionAsync, () => IsComplete && !IsTextUnit);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
 
         PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Word, "Ступень 1 · Слова", "Образ и базовая лексика"));
@@ -86,6 +90,8 @@ public sealed class TrainerViewModel : ObservableObject
         AdvanceLanguageCommand = new RelayCommand(AdvanceToTargetLanguage, () => IsLevelThree && IsSourceStep && !string.IsNullOrWhiteSpace(SourceAnswer));
         NextCommand = new RelayCommand(Next, () => ShowFeedback);
         RestartCommand = new RelayCommand(ResetSelection);
+        RepeatSessionCommand = new AsyncRelayCommand(StartSessionAsync, () => IsComplete && !IsTextUnit);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
 
         PracticeUnits.Add(new PracticeUnitOption(PracticeUnit.Word, "Ступень 1 · Слова", "Образ и базовая лексика"));
@@ -103,9 +109,11 @@ public sealed class TrainerViewModel : ObservableObject
     public RelayCommand AdvanceLanguageCommand { get; }
     public RelayCommand NextCommand { get; }
     public RelayCommand RestartCommand { get; }
+    public AsyncRelayCommand RepeatSessionCommand { get; }
+    public RelayCommand ReturnToLevelCommand { get; }
     public ParameterizedRelayCommand InsertGermanCharacterCommand { get; }
-    public event EventHandler? PassageExerciseRequested;
     public event Action<string?>? TextPracticeRequested;
+    public event Action<GermanLevel>? ReturnToLevelRequested;
 
     public ThemeOption? SelectedTheme
     {
@@ -234,6 +242,7 @@ public sealed class TrainerViewModel : ObservableObject
             if (SetProperty(ref _isComplete, value))
             {
                 OnPropertyChanged(nameof(IsSelectionVisible));
+                RepeatSessionCommand.RaiseCanExecuteChanged();
             }
         }
     }
@@ -300,13 +309,28 @@ public sealed class TrainerViewModel : ObservableObject
     public string LevelLabel => $"{SelectedCefr?.Label ?? "Все уровни"} · {SelectedDifficulty?.Title ?? SelectedPracticeUnit?.Title}";
     public string ProgressText => SessionCount == 0 ? "0 / 0" : $"{Math.Min(_currentIndex + 1, SessionCount)} / {SessionCount}";
     public double ProgressValue => SessionCount == 0 ? 0 : (double)Math.Min(_currentIndex + 1, SessionCount) / SessionCount * 100;
-    public string FeedbackTitle => IsCorrect ? "Верно" : "Проверьте ответ";
+    public string FeedbackTitle => !IsCorrect
+        ? "Проверьте ответ"
+        : _answerMatchKind switch
+        {
+            AnswerMatchKind.AcceptedVariant => "Верно — допустимый вариант",
+            AnswerMatchKind.RussianTypo => "Зачтено — проверьте написание",
+            _ => "Верно"
+        };
     public string FeedbackDetail
     {
         get
         {
             if (IsCorrect)
             {
+                if (_answerMatchKind == AnswerMatchKind.RussianTypo)
+                {
+                    return $"Нормативная форма: {CurrentTranslations?.For(_pair.Source.CultureCode)}";
+                }
+                if (_answerMatchKind == AnswerMatchKind.AcceptedVariant)
+                {
+                    return $"Принят вариант «{_matchedAnswer}». Учебный эталон: {CurrentTranslations?.For(_pair.Source.CultureCode)}";
+                }
                 return "Ответ совпадает с учебным эталоном.";
             }
             if (CurrentTranslations is null)
@@ -325,6 +349,10 @@ public sealed class TrainerViewModel : ObservableObject
     public string CompletionDetail => _correctCount == SessionCount
         ? "Все ответы точные. Можно перейти к следующей ступени."
         : "Результаты сохранены локально. Повторите эту сложность или попробуйте другое направление.";
+    public bool HasLevelContext => _returnLevel is not null;
+    public string ReturnToLevelText => _returnLevel is null
+        ? "Вернуться к уровню"
+        : $"Вернуться к уровню {(_returnLevel == GermanLevel.A0 ? "Pre-A1" : _returnLevel)}";
     public string SelectionDescription => IsTextUnit
         ? "Связные упражнения развивают понимание контекста: от первого текста A0 до стилистически сложного C2."
         : IsSentenceUnit
@@ -348,7 +376,38 @@ public sealed class TrainerViewModel : ObservableObject
         SelectedTheme = Themes[0];
     }
 
-    public void ApplySettings(AppSettings settings) => _passageFrequency = Math.Clamp(settings.PassageFrequency, 1, 20);
+    public void Prepare(PracticeLaunchRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ResetSelection();
+        _returnLevel = request.Level;
+        OnPropertyChanged(nameof(HasLevelContext));
+        OnPropertyChanged(nameof(ReturnToLevelText));
+        ReturnToLevelCommand.RaiseCanExecuteChanged();
+        SelectedPracticeUnit = PracticeUnits.First(option => option.Unit == request.Unit);
+        SelectedTheme = Themes.FirstOrDefault(option => option.Id is null) ?? Themes.FirstOrDefault();
+        var level = request.Level == GermanLevel.A0 ? "A0" : request.Level.ToString();
+        SelectedCefr = CefrLevels.FirstOrDefault(option =>
+            string.Equals(option.Level, level, StringComparison.OrdinalIgnoreCase));
+        SelectedDifficulty = request.Direction == TranslationDirection.TargetToSource
+            ? Difficulties.FirstOrDefault(option => option.Level == 1)
+            : Difficulties.FirstOrDefault(option => option.Level == 2);
+        SelectionMessage = string.Empty;
+        StartSessionCommand.RaiseCanExecuteChanged();
+    }
+
+    public void ClearLevelContext()
+    {
+        ResetSelection();
+        _returnLevel = null;
+        SelectedTheme = Themes.FirstOrDefault(option => option.Id is null) ?? Themes.FirstOrDefault();
+        SelectedCefr = CefrLevels.FirstOrDefault(option => option.Level is null) ?? CefrLevels.FirstOrDefault();
+        SelectionMessage = string.Empty;
+        OnPropertyChanged(nameof(HasLevelContext));
+        OnPropertyChanged(nameof(ReturnToLevelText));
+        ReturnToLevelCommand.RaiseCanExecuteChanged();
+        StartSessionCommand.RaiseCanExecuteChanged();
+    }
 
     private void RefreshSelectionOptions()
     {
@@ -460,19 +519,25 @@ public sealed class TrainerViewModel : ObservableObject
         }
         if (IsLevelThree)
         {
-            var sourceCorrect = AnswerEvaluator.Evaluate(SourceAnswer, CurrentTranslations.For(_pair.Source.CultureCode), _pair.Source.CultureCode).IsCorrect;
-            var targetCorrect = AnswerEvaluator.Evaluate(TargetAnswer, CurrentTranslations.For(_pair.Target.CultureCode), _pair.Target.CultureCode).IsCorrect;
-            IsCorrect = sourceCorrect && targetCorrect;
+            var sourceEvaluation = EvaluateCurrentAnswer(SourceAnswer, _pair.Source.CultureCode, allowRussianLeniency: IsWordUnit);
+            var targetEvaluation = EvaluateCurrentAnswer(TargetAnswer, _pair.Target.CultureCode, allowRussianLeniency: false);
+            IsCorrect = sourceEvaluation.IsCorrect && targetEvaluation.IsCorrect;
+            CaptureEvaluation(IsCorrect ? sourceEvaluation : IncorrectEvaluation(CurrentTranslations.For(_pair.Source.CultureCode)));
         }
         else
         {
             var expectedCulture = SelectedDifficulty?.Level == 1 ? _pair.Source.CultureCode : _pair.Target.CultureCode;
-            IsCorrect = AnswerEvaluator.Evaluate(Answer, CurrentTranslations.For(expectedCulture), expectedCulture).IsCorrect;
+            var evaluation = EvaluateCurrentAnswer(Answer, expectedCulture,
+                allowRussianLeniency: IsWordUnit && expectedCulture.StartsWith("ru", StringComparison.OrdinalIgnoreCase));
+            IsCorrect = evaluation.IsCorrect;
+            CaptureEvaluation(evaluation);
         }
         if (IsCorrect)
         {
             _correctCount++;
         }
+        OnPropertyChanged(nameof(FeedbackTitle));
+        OnPropertyChanged(nameof(FeedbackDetail));
         ShowFeedback = true;
         var direction = SelectedDifficulty?.Level switch
         {
@@ -496,13 +561,14 @@ public sealed class TrainerViewModel : ObservableObject
             direction,
             IsCorrect,
             _sessionId,
-            _attemptStartedAtUtc);
+            _attemptStartedAtUtc,
+            rubricVersion: IsWordUnit && (direction is AttemptDirection.GermanToRussian or AttemptDirection.Bidirectional)
+                ? LearningEvidenceFactory.RussianVocabularyLeniencyRubric
+                : LearningEvidenceFactory.ExactAnswerRubric);
         await _attemptSink.RecordAsync(
             attempt,
             IsSentenceUnit ? ContentType.Sentence : ContentType.Word,
             CurrentContentId);
-        OnPropertyChanged(nameof(FeedbackTitle));
-        OnPropertyChanged(nameof(FeedbackDetail));
     }
 
     private void AdvanceToTargetLanguage()
@@ -528,10 +594,6 @@ public sealed class TrainerViewModel : ObservableObject
             return;
         }
         LoadCurrentItem();
-        if (IsWordUnit && _currentIndex > 0 && _currentIndex % _passageFrequency == 0)
-        {
-            PassageExerciseRequested?.Invoke(this, EventArgs.Empty);
-        }
     }
 
     private void LoadCurrentItem()
@@ -543,6 +605,8 @@ public sealed class TrainerViewModel : ObservableObject
         Answer = string.Empty;
         SourceAnswer = string.Empty;
         TargetAnswer = string.Empty;
+        _answerMatchKind = AnswerMatchKind.Incorrect;
+        _matchedAnswer = null;
         ShowFeedback = false;
 
         var inputCulture = SelectedDifficulty?.Level == 1 || IsLevelThree ? _pair.Source.CultureCode : _pair.Target.CultureCode;
@@ -563,7 +627,42 @@ public sealed class TrainerViewModel : ObservableObject
         Answer = string.Empty;
         SourceAnswer = string.Empty;
         TargetAnswer = string.Empty;
+        _answerMatchKind = AnswerMatchKind.Incorrect;
+        _matchedAnswer = null;
     }
+
+    private void ReturnToLevel()
+    {
+        if (_returnLevel is { } level)
+        {
+            ReturnToLevelRequested?.Invoke(level);
+        }
+    }
+
+    private AnswerEvaluation EvaluateCurrentAnswer(string? actual, string cultureCode, bool allowRussianLeniency)
+    {
+        var expected = CurrentTranslations?.For(cultureCode) ?? string.Empty;
+        if (!allowRussianLeniency || _currentWord is null)
+        {
+            return AnswerEvaluator.Evaluate(actual, expected, cultureCode);
+        }
+
+        return AnswerEvaluator.Evaluate(
+            actual,
+            expected,
+            _currentWord.AcceptedAnswers.For(cultureCode),
+            cultureCode,
+            AnswerEvaluationMode.RussianVocabularyLenient);
+    }
+
+    private void CaptureEvaluation(AnswerEvaluation evaluation)
+    {
+        _answerMatchKind = evaluation.MatchKind;
+        _matchedAnswer = evaluation.MatchedAnswer;
+    }
+
+    private static AnswerEvaluation IncorrectEvaluation(string expected) =>
+        new(false, expected, string.Empty, AnswerMatchKind.Incorrect, null);
 
     private bool CanCheckAnswer() => IsSessionActive && !ShowFeedback &&
         (IsLevelThree

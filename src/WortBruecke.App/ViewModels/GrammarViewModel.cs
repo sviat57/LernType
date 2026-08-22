@@ -16,6 +16,8 @@ public sealed class GrammarViewModel : ObservableObject
     private readonly IGrammarHeuristicService _heuristicService;
     private readonly ILanguageAnalysisService _analysisService;
     private readonly LanguagePair _pair = LanguagePair.RussianToGerman;
+    private readonly List<GrammarTask> _allTasks = [];
+    private GermanLevel? _returnLevel;
     private GrammarTask? _selectedTask;
     private string _answer = string.Empty;
     private bool _hasFeedback;
@@ -42,6 +44,7 @@ public sealed class GrammarViewModel : ObservableObject
         CheckCommand = new AsyncRelayCommand(CheckAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
         OnlineCheckCommand = new AsyncRelayCommand(CheckOnlineAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
     }
 
     public GrammarViewModel(
@@ -59,6 +62,7 @@ public sealed class GrammarViewModel : ObservableObject
         CheckCommand = new AsyncRelayCommand(CheckAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
         OnlineCheckCommand = new AsyncRelayCommand(CheckOnlineAsync, () => SelectedTask is not null && !string.IsNullOrWhiteSpace(Answer));
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
     }
 
     public ObservableCollection<GrammarTask> Tasks { get; } = [];
@@ -67,6 +71,12 @@ public sealed class GrammarViewModel : ObservableObject
     public AsyncRelayCommand CheckCommand { get; }
     public AsyncRelayCommand OnlineCheckCommand { get; }
     public ParameterizedRelayCommand InsertGermanCharacterCommand { get; }
+    public RelayCommand ReturnToLevelCommand { get; }
+    public event Action<GermanLevel>? ReturnToLevelRequested;
+    public bool HasLevelContext => _returnLevel is not null;
+    public string ReturnToLevelText => _returnLevel is null
+        ? "Вернуться к уровню"
+        : $"Вернуться к уровню {(_returnLevel == GermanLevel.A0 ? "Pre-A1" : _returnLevel)}";
 
     public GrammarTask? SelectedTask
     {
@@ -129,12 +139,33 @@ public sealed class GrammarViewModel : ObservableObject
 
     public async Task InitializeAsync()
     {
+        _allTasks.Clear();
+        _allTasks.AddRange(await _contentRepository.GetGrammarTasksAsync());
+        ApplyLevelFilter(null);
+    }
+
+    public void ApplyLevelFilter(string? level)
+    {
+        CancelOnlineAnalysis();
+        _returnLevel = GermanLevelExtensions.TryParse(level ?? string.Empty, out var parsed) ? parsed : null;
+        OnPropertyChanged(nameof(HasLevelContext));
+        OnPropertyChanged(nameof(ReturnToLevelText));
+        ReturnToLevelCommand.RaiseCanExecuteChanged();
         Tasks.Clear();
-        foreach (var task in await _contentRepository.GetGrammarTasksAsync())
+        foreach (var task in _allTasks.Where(task => string.IsNullOrWhiteSpace(level) ||
+                     string.Equals(task.Level, level, StringComparison.OrdinalIgnoreCase)))
         {
             Tasks.Add(task);
         }
         SelectedTask = Tasks.FirstOrDefault();
+    }
+
+    private void ReturnToLevel()
+    {
+        if (_returnLevel is { } level)
+        {
+            ReturnToLevelRequested?.Invoke(level);
+        }
     }
 
     public void Activate() => _keyboardLayoutService.SwitchTo(_pair.Target.CultureCode);

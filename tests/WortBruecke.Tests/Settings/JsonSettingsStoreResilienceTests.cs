@@ -30,11 +30,14 @@ public sealed class JsonSettingsStoreResilienceTests : IDisposable
 
         var loaded = await new JsonSettingsStore(paths).LoadAsync();
 
-        Assert.Equal(13, loaded.PassageFrequency);
         Assert.Equal(PassagePracticeMode.GermanTyping, loaded.PassageMode);
         Assert.True(loaded.UseDarkTheme);
         Assert.Empty(loaded.ApiKey);
         Assert.False(loaded.AllowOnlineLanguageAnalysis);
+
+        await new JsonSettingsStore(paths).SaveAsync(loaded);
+        var rewritten = await File.ReadAllTextAsync(paths.LocalSettingsPath);
+        Assert.DoesNotContain("PassageFrequency", rewritten, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -46,8 +49,7 @@ public sealed class JsonSettingsStoreResilienceTests : IDisposable
             .Select(index => store.SaveAsync(new AppSettings
             {
                 ApiKey = $"sk-concurrent-{index}",
-                ApiModel = $"model-{index}",
-                PassageFrequency = index
+                ApiModel = $"model-{index}"
             }))
             .ToArray();
 

@@ -198,6 +198,36 @@
                                        Text="Все ответы верны — повторять пока нечего." />
                         </Border>
 
+                        <StackPanel Margin="0,24,0,0" Visibility="{Binding HasLenientAcceptances, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="21" Text="Засчитано с замечанием" />
+                            <TextBlock Margin="0,6,0,0" Style="{StaticResource BodySecondary}" FontSize="13"
+                                       Text="Эти ответы дали полный балл; нормативная форма показана для закрепления написания." />
+                            <ItemsControl Margin="0,12,0,0" ItemsSource="{Binding LenientAcceptances}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,0,8" Padding="16" Background="{DynamicResource Brush.WarningSoft}"
+                                                BorderBrush="{DynamicResource Brush.Warning}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="76" /><ColumnDefinition Width="*" /><ColumnDefinition Width="20" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Padding="9,4" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="{DynamicResource Radius.Pill}">
+                                                    <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding Direction}" />
+                                                </Border>
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock FontWeight="SemiBold" Text="{Binding Prompt}" />
+                                                    <TextBlock Margin="0,4,0,0" FontSize="12" Foreground="{DynamicResource Brush.Warning}" Text="{Binding Message}" />
+                                                    <TextBlock Margin="0,3,0,0" FontSize="12" Text="{Binding SubmittedAnswer, StringFormat=Ваш ответ: {0}}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="3">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Brush.TextTertiary}" Text="УЧЕБНЫЙ ЭТАЛОН" />
+                                                    <TextBlock Margin="0,4,0,0" FontWeight="SemiBold" Text="{Binding ExpectedAnswer}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
                         <StackPanel Margin="0,24,0,0" Visibility="{Binding HasMistakes, Converter={StaticResource BoolToVisibility}}">
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="21" Text="{Binding MistakesTitle}" />
                             <TextBlock Margin="0,6,0,0" Style="{StaticResource BodySecondary}" FontSize="13"

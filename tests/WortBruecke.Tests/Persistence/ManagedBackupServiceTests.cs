@@ -74,6 +74,7 @@ public sealed class ManagedBackupServiceTests : IDisposable
     {
         var (paths, database) = await CreateDatabaseAsync();
         await SeedBooksAsync(database, includeSecondBook: false);
+        await SeedOrphanQuarantineMetadataAsync(database, legacyWordId: 91, missingBookId: 9);
         var service = new ManagedBackupService(paths);
         var rolling = await service.CreateRollingBackupAsync();
         Directory.CreateDirectory(Path.Combine(paths.BackupRoot, "schema"));
@@ -91,6 +92,7 @@ public sealed class ManagedBackupServiceTests : IDisposable
         {
             Assert.Equal(0, await CountAsync(backup, "user_books"));
             Assert.Equal(0, await CountAsync(backup, "user_book_words"));
+            Assert.Equal(0, await CountAsync(backup, "orphan_book_word_quarantine"));
             Assert.Equal(0, await CountAsync(backup, "user_progress", "content_type='BookWord'"));
             Assert.False(ContainsBytes(await File.ReadAllBytesAsync(backup), Encoding.UTF8.GetBytes(DeletedSecret)));
             Assert.False(File.Exists(backup + "-wal"));
@@ -103,6 +105,7 @@ public sealed class ManagedBackupServiceTests : IDisposable
     {
         var (paths, database) = await CreateDatabaseAsync();
         await SeedBooksAsync(database, includeSecondBook: true);
+        await SeedOrphanQuarantineMetadataAsync(database, legacyWordId: 11, missingBookId: 1);
         var service = new ManagedBackupService(paths);
         var backup = await service.CreateRollingBackupAsync();
 
@@ -112,6 +115,7 @@ public sealed class ManagedBackupServiceTests : IDisposable
         Assert.Equal(0, await CountAsync(backup, "user_books", "id=1"));
         Assert.Equal(1, await CountAsync(backup, "user_books", "id=2"));
         Assert.Equal(0, await CountAsync(backup, "user_progress", "content_type='BookWord' AND content_id=11"));
+        Assert.Equal(0, await CountAsync(backup, "orphan_book_word_quarantine", "missing_book_id=1"));
         Assert.Equal(1, await CountAsync(backup, "user_progress", "content_type='BookWord' AND content_id=22"));
         Assert.False(ContainsBytes(await File.ReadAllBytesAsync(backup), Encoding.UTF8.GetBytes(DeletedSecret)));
         Assert.True(ContainsBytes(await File.ReadAllBytesAsync(backup), Encoding.UTF8.GetBytes("KEEP-SECOND-BOOK")));
@@ -127,12 +131,15 @@ public sealed class ManagedBackupServiceTests : IDisposable
         [
             new ExtractedVocabularyItem("privat", ["частный"], 1, DeletedSecret, "adjective")
         ]);
+        await SeedOrphanQuarantineMetadataAsync(database, legacyWordId: 91, missingBookId: 9);
         var backup = await service.CreateRollingBackupAsync();
 
         Assert.Equal(1, await books.DeleteAllAsync());
 
         Assert.Equal(0, await CountAsync(paths.DatabasePath, "user_books"));
+        Assert.Equal(0, await CountAsync(paths.DatabasePath, "orphan_book_word_quarantine"));
         Assert.Equal(0, await CountAsync(backup, "user_books"));
+        Assert.Equal(0, await CountAsync(backup, "orphan_book_word_quarantine"));
         Assert.False(ContainsBytes(await File.ReadAllBytesAsync(paths.DatabasePath), Encoding.UTF8.GetBytes(DeletedSecret)));
         Assert.False(ContainsBytes(await File.ReadAllBytesAsync(backup), Encoding.UTF8.GetBytes(DeletedSecret)));
     }
@@ -179,6 +186,24 @@ public sealed class ManagedBackupServiceTests : IDisposable
                 """;
         }
         command.Parameters.AddWithValue("$secret", DeletedSecret);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private static async Task SeedOrphanQuarantineMetadataAsync(
+        SqliteDatabase database,
+        long legacyWordId,
+        long missingBookId)
+    {
+        await using var connection = new SqliteConnection(database.ConnectionString);
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO orphan_book_word_quarantine(
+                legacy_word_id, missing_book_id, backup_path, reason, quarantined_at_utc)
+            VALUES($word, $book, 'C:\recovery\schema.db', 'test metadata', '2026-08-20T00:00:00Z');
+            """;
+        command.Parameters.AddWithValue("$word", legacyWordId);
+        command.Parameters.AddWithValue("$book", missingBookId);
         await command.ExecuteNonQueryAsync();
     }
 

@@ -27,12 +27,6 @@
                                 <TextBlock VerticalAlignment="Center" Text="Русский → Deutsch (ru-RU → de-DE)" />
                             </Border>
 
-                            <Grid Margin="0,20,0,0">
-                                <TextBlock FontWeight="SemiBold" Text="Текст после каждых N слов" />
-                                <TextBlock HorizontalAlignment="Right" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding PassageFrequency}" />
-                            </Grid>
-                            <Slider Margin="0,8,0,0" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding PassageFrequency}" AutomationProperties.Name="Частота текстовых упражнений" />
-
                             <TextBlock Margin="0,20,0,8" FontWeight="SemiBold" Text="Режим текста по умолчанию" />
                             <ListBox Style="{StaticResource DifficultyList}" ItemsSource="{Binding PassageModes}" SelectedItem="{Binding SelectedPassageMode}" AutomationProperties.Name="Режим текста по умолчанию">
                                 <ListBox.ItemTemplate>
