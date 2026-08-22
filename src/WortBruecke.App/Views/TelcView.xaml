@@ -3,20 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Loaded="OnLoaded"
              AutomationProperties.Name="TELC-чекер">
-    <Grid Margin="48,36,48,48">
+    <Grid Margin="44,32,44,44">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="24" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="TELC / CEFR" />
-            <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Как звучит ваш немецкий текст?" />
-            <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="14" Text="Оценка лексики, грамматики и связности с конкретными исправлениями." />
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Border Width="48" Height="48" Style="{StaticResource IconTile}"><Path Width="22" Height="22" Data="{StaticResource Icon.Analyze}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" /></Border>
+            <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="TELC / CEFR" />
+                <TextBlock Margin="0,5,0,0" Style="{StaticResource PageTitle}" Text="Как звучит ваш немецкий текст?" />
+                <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" FontSize="14" Text="Оценка лексики, грамматики и связности с конкретными исправлениями." />
+            </StackPanel>
+        </Grid>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Border MaxWidth="900" Padding="36" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
+            <Border MaxWidth="940" Padding="36" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
                 <StackPanel>
                     <Grid>
                         <Label Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="Немецкий текст" Target="{Binding ElementName=TelcInputBox}" />
-                        <Border HorizontalAlignment="Right" Padding="10,5" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Pill}">
+                        <Border HorizontalAlignment="Right" Style="{StaticResource StatusPill}">
                             <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding CharacterHint}" />
                         </Border>
                     </Grid>
@@ -28,10 +32,10 @@
                                    Text="Текст отправляется в OpenAI только после нажатия кнопки." />
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12" Text="Немецкие знаки" />
-                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ä" Content="ä" />
-                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ö" Content="ö" />
-                            <Button Width="44" Height="44" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ü" Content="ü" />
-                            <Button Width="44" Height="44" Padding="0" Style="{StaticResource SecondaryButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ß" Content="ß" />
+                            <Button Width="44" Height="44" Margin="0,0,6,0" Style="{StaticResource CharacterButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ä" Content="ä" />
+                            <Button Width="44" Height="44" Margin="0,0,6,0" Style="{StaticResource CharacterButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ö" Content="ö" />
+                            <Button Width="44" Height="44" Margin="0,0,6,0" Style="{StaticResource CharacterButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ü" Content="ü" />
+                            <Button Width="44" Height="44" Style="{StaticResource CharacterButton}" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ß" Content="ß" />
                         </StackPanel>
                     </Grid>
 
@@ -44,11 +48,11 @@
                     </Border>
 
                     <Button Margin="0,18,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding AnalyzeCommand}" AutomationProperties.Name="Определить уровень текста">
-                        <TextBlock Style="{StaticResource ButtonContentText}" Text="{Binding AnalyzeButtonText}" />
+                        <StackPanel Orientation="Horizontal"><Path Width="17" Height="17" Margin="0,0,9,0" Data="{StaticResource Icon.Spark}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="{Binding AnalyzeButtonText}" /></StackPanel>
                     </Button>
 
                     <StackPanel Margin="0,28,0,0" Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
-                        <Border Padding="28" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Card}">
+                        <Border Padding="28" Style="{StaticResource StatCard}" CornerRadius="{DynamicResource Radius.Card}">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                                 <StackPanel>
@@ -71,7 +75,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Margin="0,0,0,8" Padding="12" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="{DynamicResource Radius.Input}">
-                                                <TextBlock Foreground="{DynamicResource Brush.Success}" Text="{Binding}" />
+                                                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Path Width="15" Height="15" Margin="0,1,9,0" Data="{StaticResource Icon.Check}" Stroke="{DynamicResource Brush.Success}" StrokeThickness="2" Stretch="Uniform" /><TextBlock Grid.Column="1" Foreground="{DynamicResource Brush.Success}" Text="{Binding}" TextWrapping="Wrap" /></Grid>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -83,7 +87,7 @@
                                 <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding Errors}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="0,0,0,10" Padding="14" Background="{DynamicResource Brush.Raised}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Card}">
+                                            <Border Margin="0,0,0,10" Padding="14" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
                                                 <StackPanel>
                                                     <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource Brush.Error}" Text="{Binding Excerpt}" />
                                                     <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource Brush.TextSecondary}" TextWrapping="Wrap" Text="{Binding Issue}" />

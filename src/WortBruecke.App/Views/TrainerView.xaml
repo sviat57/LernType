@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              PreviewKeyDown="OnPreviewKeyDown"
              AutomationProperties.Name="Тренажёр по ступеням сложности">
-    <Grid Margin="48,36,48,48">
+    <Grid Margin="40,32,40,44">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="26" />
@@ -11,22 +11,32 @@
         </Grid.RowDefinitions>
 
         <Grid>
-            <StackPanel>
-                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ТРЕНАЖЁР ПО СТУПЕНЯМ" />
-                <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="От слова к связному тексту" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal"
-                        Visibility="{Binding IsSessionActive, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock Margin="0,0,16,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding ProgressText}" />
-                <ProgressBar Width="170" VerticalAlignment="Center" Minimum="0" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" />
-            </StackPanel>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Border Width="52" Height="52" Margin="0,0,16,0" Style="{StaticResource IconTile}" VerticalAlignment="Center">
+                    <Path Width="25" Height="25" Data="{StaticResource Icon.Spark}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.8" Stretch="Uniform" />
+                </Border>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ТРЕНАЖЁР ПО СТУПЕНЯМ" />
+                    <TextBlock Margin="0,6,0,0" Style="{StaticResource PageTitle}" Text="От слова к связному тексту" />
+                </StackPanel>
+            </Grid>
+            <Border Grid.Column="1" Margin="20,0,0,0" Padding="16,11" VerticalAlignment="Center" Style="{StaticResource StatusPill}"
+                    Visibility="{Binding IsSessionActive, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource MetaText}" Text="{Binding ProgressText}" />
+                    <ProgressBar Width="176" Margin="0,8,0,0" Minimum="0" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" />
+                </StackPanel>
+            </Border>
         </Grid>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid Margin="0,4,0,8">
-                <Border MaxWidth="980" HorizontalAlignment="Stretch" Padding="28,24" Style="{StaticResource Panel}"
+                <Border MaxWidth="1040" HorizontalAlignment="Stretch" Padding="32,28" Style="{StaticResource Panel}"
                         Visibility="{Binding IsSelectionVisible, Converter={StaticResource BoolToVisibility}}">
                     <Grid>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1.35*" />
                             <ColumnDefinition Width="30" />
@@ -34,7 +44,23 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel>
-                            <TextBlock Style="{StaticResource SectionTitle}" FontSize="28" Text="Настройте практику" />
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Grid.Row" Value="0" />
+                                    <Setter Property="Grid.Column" Value="0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;980}" Value="Visible">
+                                            <Setter Property="Grid.ColumnSpan" Value="3" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="42" Height="42" Margin="0,0,13,0" Style="{StaticResource IconTile}">
+                                    <Path Width="20" Height="20" Data="{StaticResource Icon.Spark}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.8" Stretch="Uniform" />
+                                </Border>
+                                <TextBlock VerticalAlignment="Center" Style="{StaticResource SectionTitle}" FontSize="28" Text="Настройте практику" />
+                            </StackPanel>
                             <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" Text="{Binding SelectionDescription}" TextWrapping="Wrap" />
 
                             <Label Margin="0,12,0,4" Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13"
@@ -42,6 +68,11 @@
                             <ListBox x:Name="UnitSelector" Style="{StaticResource DifficultyList}" ItemsSource="{Binding PracticeUnits}"
                                      SelectedItem="{Binding SelectedPracticeUnit}" AutomationProperties.Name="Ступень материала"
                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource ChoiceListItem}">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
@@ -85,6 +116,11 @@
                                 <ListBox x:Name="DifficultySelector" Style="{StaticResource DifficultyList}" ItemsSource="{Binding Difficulties}"
                                          SelectedItem="{Binding SelectedDifficulty}" AutomationProperties.Name="Направление перевода"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource ChoiceListItem}">
+                                            <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
@@ -102,36 +138,57 @@
                             <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource Brush.Error}" FontSize="13"
                                        Text="{Binding SelectionMessage}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"
                                        Visibility="{Binding HasSelectionMessage, Converter={StaticResource BoolToVisibility}}" />
-                            <Button Margin="0,9,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding StartSessionCommand}"
+                            <Button Margin="0,14,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding StartSessionCommand}"
                                     AutomationProperties.Name="Начать выбранную практику">
-                                <TextBlock Style="{StaticResource ButtonContentText}" Text="{Binding StartButtonText}" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock VerticalAlignment="Center" Style="{StaticResource ButtonContentText}" Text="{Binding StartButtonText}" />
+                                    <Path Width="16" Height="16" Margin="10,0,0,0" Data="{StaticResource Icon.ChevronRight}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" />
+                                </StackPanel>
                             </Button>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2">
-                            <Border Padding="24" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Grid.Row" Value="0" />
+                                    <Setter Property="Grid.Column" Value="2" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;980}" Value="Visible">
+                                            <Setter Property="Grid.Row" Value="1" />
+                                            <Setter Property="Grid.Column" Value="0" />
+                                            <Setter Property="Grid.ColumnSpan" Value="3" />
+                                            <Setter Property="Margin" Value="0,24,0,0" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Border Padding="22" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="МАРШРУТ" />
-                                    <TextBlock Margin="0,9,0,0" Style="{StaticResource SectionTitle}" FontSize="22" Text="Три ступени языка" />
+                                    <Grid>
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="МАРШРУТ" />
+                                            <TextBlock Margin="0,8,0,0" Style="{StaticResource SectionTitle}" FontSize="22" Text="Три ступени языка" />
+                                        </StackPanel>
+                                        <Border Width="42" Height="42" HorizontalAlignment="Right" Style="{StaticResource IconTile}">
+                                            <Path Width="20" Height="20" Data="{StaticResource Icon.Route}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" Stretch="Uniform" />
+                                        </Border>
+                                    </Grid>
 
-                                    <Border Margin="0,20,0,0" Padding="14" Background="{DynamicResource Brush.GlassStandard}"
-                                            BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
-                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                            <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="24" Foreground="{DynamicResource Brush.Accent}" Text="1" />
+                                    <Border Margin="0,20,0,0" Padding="13" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
+                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" Style="{StaticResource IconTile}"><Path Width="17" Height="17" Data="{StaticResource Icon.Word}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" Stretch="Uniform" /></Border>
                                             <StackPanel Grid.Column="1"><TextBlock FontWeight="SemiBold" Text="Слова" /><TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="A0–B1 · образ и значение" /></StackPanel>
                                         </Grid>
                                     </Border>
-                                    <Border Margin="0,9,0,0" Padding="14" Background="{DynamicResource Brush.GlassStandard}"
-                                            BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
-                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                            <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="24" Foreground="{DynamicResource Brush.Accent}" Text="2" />
+                                    <Border Margin="0,9,0,0" Padding="13" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
+                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" Style="{StaticResource IconTile}"><Path Width="17" Height="17" Data="{StaticResource Icon.Sentence}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" Stretch="Uniform" /></Border>
                                             <StackPanel Grid.Column="1"><TextBlock FontWeight="SemiBold" Text="Предложения" /><TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="A0–C2 · порядок и стиль" /></StackPanel>
                                         </Grid>
                                     </Border>
-                                    <Border Margin="0,9,0,0" Padding="14" Background="{DynamicResource Brush.GlassStandard}"
-                                            BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
-                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                            <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="24" Foreground="{DynamicResource Brush.Accent}" Text="3" />
+                                    <Border Margin="0,9,0,0" Padding="13" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
+                                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                            <Border Width="34" Height="34" Style="{StaticResource IconTile}"><Path Width="17" Height="17" Data="{StaticResource Icon.Document}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" Stretch="Uniform" /></Border>
                                             <StackPanel Grid.Column="1"><TextBlock FontWeight="SemiBold" Text="Тексты" /><TextBlock Margin="0,3,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="A0–C2 · связный контекст" /></StackPanel>
                                         </Grid>
                                     </Border>
@@ -145,30 +202,29 @@
                     </Grid>
                 </Border>
 
-                <Border MaxWidth="820" HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="38" Style="{StaticResource Panel}"
+                <Border MaxWidth="860" HorizontalAlignment="Stretch" VerticalAlignment="Center" Padding="36" Style="{StaticResource Panel}"
                         Visibility="{Binding IsSessionActive, Converter={StaticResource BoolToVisibility}}">
                     <StackPanel>
                         <Grid>
                             <StackPanel Orientation="Horizontal">
-                                <Border Padding="10,5" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="{DynamicResource Radius.Pill}">
+                                <Border Padding="11,6" Style="{StaticResource StatusPill}">
                                     <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding ThemeLabel}" />
                                 </Border>
-                                <Border Margin="8,0,0,0" Padding="10,5" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Pill}">
+                                <Border Margin="8,0,0,0" Padding="11,6" Style="{StaticResource StatusPill}">
                                     <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding LevelLabel}" />
                                 </Border>
                             </StackPanel>
                             <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource MetaText}" Text="{Binding ProgressText}" />
                         </Grid>
 
-                        <Border Margin="0,26,0,0" MinHeight="190" Padding="24" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
+                        <Border Margin="0,24,0,0" MinHeight="196" Padding="26" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="132" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                                 <Grid>
                                     <Image MaxWidth="116" MaxHeight="116" Source="{Binding ResolvedImagePath}" Stretch="Uniform"
                                            Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibility}}" />
-                                    <Border Width="92" Height="92" Background="{DynamicResource Brush.GlassStandard}" BorderBrush="{DynamicResource Brush.GlassStroke}"
-                                            BorderThickness="1" CornerRadius="24" Visibility="{Binding HasImage, Converter={StaticResource InverseBoolToVisibility}}">
-                                        <Path Width="40" Height="40" Data="{StaticResource Icon.Cards}" Fill="{DynamicResource Brush.TextTertiary}" Stretch="Uniform" />
+                                    <Border Width="96" Height="96" Style="{StaticResource IconTile}" CornerRadius="24" Visibility="{Binding HasImage, Converter={StaticResource InverseBoolToVisibility}}">
+                                        <Path Width="40" Height="40" Data="{StaticResource Icon.Word}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.6" Stretch="Uniform" />
                                     </Border>
                                 </Grid>
                                 <StackPanel Grid.Column="1" Margin="22,0,0,0" VerticalAlignment="Center">
@@ -204,34 +260,40 @@
                         <StackPanel Margin="0,9,0,0" Orientation="Horizontal" HorizontalAlignment="Right"
                                     Visibility="{Binding ShowGermanCharacterPanel, Converter={StaticResource BoolToVisibility}}">
                             <TextBlock Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextTertiary}" FontSize="12" Text="Немецкие знаки" />
-                            <Button Width="42" Height="42" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ä" Content="ä" Click="OnGermanCharacterClicked" />
-                            <Button Width="42" Height="42" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ö" Content="ö" Click="OnGermanCharacterClicked" />
-                            <Button Width="42" Height="42" Padding="0" Margin="0,0,6,0" Style="{StaticResource SecondaryButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ü" Content="ü" Click="OnGermanCharacterClicked" />
-                            <Button Width="42" Height="42" Padding="0" Style="{StaticResource SecondaryButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ß" Content="ß" Click="OnGermanCharacterClicked" />
+                            <Button Margin="0,0,6,0" Style="{StaticResource CharacterButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ä" Content="ä" Click="OnGermanCharacterClicked" />
+                            <Button Margin="0,0,6,0" Style="{StaticResource CharacterButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ö" Content="ö" Click="OnGermanCharacterClicked" />
+                            <Button Margin="0,0,6,0" Style="{StaticResource CharacterButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ü" Content="ü" Click="OnGermanCharacterClicked" />
+                            <Button Style="{StaticResource CharacterButton}" FontSize="17" Command="{Binding InsertGermanCharacterCommand}" CommandParameter="ß" Content="ß" Click="OnGermanCharacterClicked" />
                         </StackPanel>
 
-                        <Border Margin="0,13,0,0" Padding="14" Background="{DynamicResource Brush.GlassStandard}"
+                        <Border Margin="0,14,0,0" Padding="16" Background="{DynamicResource Brush.GlassStandard}"
                                 BorderBrush="{Binding IsCorrect, Converter={StaticResource StatusBrushConverter}}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}"
                                 Visibility="{Binding ShowFeedback, Converter={StaticResource BoolToVisibility}}" AutomationProperties.LiveSetting="Polite">
-                            <StackPanel>
-                                <TextBlock FontWeight="SemiBold" Foreground="{Binding IsCorrect, Converter={StaticResource StatusBrushConverter}}" Text="{Binding FeedbackTitle}" />
-                                <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Text="{Binding FeedbackDetail}" TextWrapping="Wrap" />
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="36" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" VerticalAlignment="Top" Style="{StaticResource IconTile}" CornerRadius="8">
+                                    <Path Width="14" Height="14" Data="{StaticResource Icon.Info}" Stroke="{Binding IsCorrect, Converter={StaticResource StatusBrushConverter}}" StrokeThickness="1.9" Stretch="Uniform" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock FontWeight="SemiBold" Foreground="{Binding IsCorrect, Converter={StaticResource StatusBrushConverter}}" Text="{Binding FeedbackTitle}" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Text="{Binding FeedbackDetail}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
                         </Border>
 
                         <Button Margin="0,17,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding AdvanceLanguageCommand}"
                                 Visibility="{Binding IsSourceStep, Converter={StaticResource BoolToVisibility}}">
-                            <TextBlock Style="{StaticResource ButtonContentText}" Text="Перейти к немецкому · Enter" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><TextBlock Style="{StaticResource ButtonContentText}" Text="Перейти к немецкому · Enter" /><Path Width="16" Height="16" Margin="9,0,0,0" Data="{StaticResource Icon.ChevronRight}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" /></StackPanel>
                         </Button>
                         <Grid Visibility="{Binding IsCheckStage, Converter={StaticResource BoolToVisibility}}">
                             <Button Margin="0,17,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding CheckAnswerCommand}"
                                     Visibility="{Binding ShowFeedback, Converter={StaticResource InverseBoolToVisibility}}">
-                                <TextBlock Style="{StaticResource ButtonContentText}" Text="Проверить · Enter" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Check}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Проверить · Enter" /></StackPanel>
                             </Button>
                         </Grid>
                         <Button Margin="0,17,0,0" Style="{StaticResource PrimaryButton}" Command="{Binding NextCommand}"
                                 Visibility="{Binding ShowFeedback, Converter={StaticResource BoolToVisibility}}">
-                            <TextBlock Style="{StaticResource ButtonContentText}" Text="Дальше · Enter" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><TextBlock Style="{StaticResource ButtonContentText}" Text="Дальше · Enter" /><Path Width="16" Height="16" Margin="9,0,0,0" Data="{StaticResource Icon.ChevronRight}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" /></StackPanel>
                         </Button>
                     </StackPanel>
                 </Border>
@@ -239,18 +301,20 @@
                 <Border MaxWidth="660" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="48" Style="{StaticResource Panel}"
                         Visibility="{Binding IsComplete, Converter={StaticResource BoolToVisibility}}">
                     <StackPanel HorizontalAlignment="Center">
-                        <Border Width="64" Height="64" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="20">
+                        <Border Width="72" Height="72" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="22">
                             <Path Width="30" Height="30" Data="{StaticResource Icon.Check}" Stroke="{DynamicResource Brush.Success}" StrokeThickness="2.2" Stretch="Uniform" />
                         </Border>
                         <TextBlock Margin="0,22,0,0" HorizontalAlignment="Center" Style="{StaticResource PageTitle}" Text="Ступень завершена" />
                         <TextBlock Margin="0,10,0,0" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold" Text="{Binding CompletionTitle}" />
                         <TextBlock Margin="0,8,0,0" MaxWidth="480" TextAlignment="Center" Style="{StaticResource BodySecondary}" Text="{Binding CompletionDetail}" TextWrapping="Wrap" />
                         <StackPanel Margin="0,26,0,0" HorizontalAlignment="Center">
-                            <Button Width="230" Style="{StaticResource PrimaryButton}" Command="{Binding RepeatSessionCommand}" Content="Ещё 10 заданий" />
-                            <Button Width="230" Margin="0,8,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding ReturnToLevelCommand}"
-                                    Content="{Binding ReturnToLevelText}" Visibility="{Binding HasLevelContext, Converter={StaticResource BoolToVisibility}}" />
-                            <Button Width="230" Margin="0,8,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RestartCommand}" Content="Настроить новую сессию"
-                                    Visibility="{Binding HasLevelContext, Converter={StaticResource InverseBoolToVisibility}}" />
+                            <Button Width="240" Style="{StaticResource PrimaryButton}" Command="{Binding RepeatSessionCommand}">
+                                <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Refresh}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.9" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Ещё 10 заданий" /></StackPanel>
+                            </Button>
+                            <Button Width="240" Margin="0,8,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding ReturnToLevelCommand}"
+                                    Visibility="{Binding HasLevelContext, Converter={StaticResource BoolToVisibility}}"><StackPanel Orientation="Horizontal"><Path Width="15" Height="15" Margin="0,0,8,0" Data="{StaticResource Icon.ChevronLeft}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" /><TextBlock Text="{Binding ReturnToLevelText}" /></StackPanel></Button>
+                            <Button Width="240" Margin="0,8,0,0" Style="{StaticResource SecondaryButton}" Command="{Binding RestartCommand}"
+                                    Visibility="{Binding HasLevelContext, Converter={StaticResource InverseBoolToVisibility}}"><StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,8,0" Data="{StaticResource Icon.Refresh}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.9" Stretch="Uniform" /><TextBlock Text="Настроить новую сессию" /></StackPanel></Button>
                         </StackPanel>
                     </StackPanel>
                 </Border>

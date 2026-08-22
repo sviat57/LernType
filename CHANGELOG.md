@@ -2,6 +2,20 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.2.0] — 2026-08-22
+
+### Added
+
+- A cohesive 45-icon vector family and a reproducible multi-resolution LernType bridge mark.
+- Purposeful 80/120 ms button and switch feedback that follows Windows motion and High Contrast settings.
+
+### Changed
+
+- Rebuilt every application surface around a warm premium glass design system with intentional light and dark themes.
+- Improved responsive layouts at 1180×760, 820×600 and the supported minimum of 720×520.
+- Standardized buttons, toggles, choices, fields, progress, focus rings, status pills and scroll treatments.
+- Restored concise UI Automation names for visual list choices while preserving all practice behavior.
+
 ## [1.1.0] — 2026-08-22
 
 ### Added

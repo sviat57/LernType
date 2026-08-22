@@ -6,22 +6,37 @@
              KeyboardNavigation.TabNavigation="Continue">
     <UserControl.Resources>
         <Style x:Key="HomeActionButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
-            <Setter Property="MinHeight" Value="76" />
-            <Setter Property="Padding" Value="16,13" />
+            <Setter Property="MinHeight" Value="72" />
+            <Setter Property="Padding" Value="12,11" />
+            <Setter Property="Background" Value="{DynamicResource Brush.GlassInset}" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
         <Style x:Key="HomeCompactButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
-            <Setter Property="MinHeight" Value="64" />
-            <Setter Property="Padding" Value="14,11" />
+            <Setter Property="MinHeight" Value="62" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="Background" Value="{DynamicResource Brush.GlassInset}" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
         <Style x:Key="HomeIconFrame" TargetType="Border">
-            <Setter Property="Width" Value="42" />
-            <Setter Property="Height" Value="42" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
             <Setter Property="Background" Value="{DynamicResource Brush.GlassInset}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Brush.GlassStroke}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="12" />
+        </Style>
+        <Style x:Key="HomeToolIconFrame" TargetType="Border" BasedOn="{StaticResource HomeIconFrame}">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style x:Key="HomeLevelDot" TargetType="Border">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Background" Value="{DynamicResource Brush.GlassStrong}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.GlassStroke}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
         </Style>
     </UserControl.Resources>
 
@@ -53,7 +68,7 @@
                         Padding="14,10"
                         VerticalAlignment="Top"
                         Style="{StaticResource Card}"
-                        Visibility="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=980}"
+                        Visibility="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=900}"
                         AutomationProperties.Name="Основная практика доступна без сети">
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="7" Height="7" Margin="0,0,9,0" VerticalAlignment="Center" Fill="{DynamicResource Brush.Success}" />
@@ -86,7 +101,7 @@
                             <Setter Property="Grid.Row" Value="0" />
                             <Setter Property="Grid.Column" Value="0" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;980}" Value="Visible">
+                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;850}" Value="Visible">
                                     <Setter Property="Grid.ColumnSpan" Value="3" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -105,21 +120,37 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ВАШ МАРШРУТ" />
-                            <Border Grid.Column="1" Padding="10,5" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="999">
-                                <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="7 ЭТАПОВ" />
+                            <Border Grid.Column="1" Padding="10,5" Background="{DynamicResource Brush.AccentSoft}"
+                                    BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="999">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="6" Height="6" Margin="0,0,6,0" VerticalAlignment="Center" Fill="{DynamicResource Brush.Accent}" />
+                                    <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="7 ЭТАПОВ" />
+                                </StackPanel>
                             </Border>
                         </Grid>
 
-                        <StackPanel Grid.Row="1" Margin="0,30,0,30" VerticalAlignment="Center">
-                            <Border Width="58" Height="58" HorizontalAlignment="Left" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="17">
-                                <Path Width="28" Height="28" Data="{StaticResource Icon.Route}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.8" Stretch="Uniform" />
+                        <StackPanel Grid.Row="1" Margin="0,28,0,27" VerticalAlignment="Center">
+                            <Border Width="58" Height="58" HorizontalAlignment="Left" Background="{DynamicResource Brush.AccentSoft}"
+                                    BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="17">
+                                <Path Width="28" Height="28" Data="{StaticResource Icon.Route}" Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.8"
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
                             </Border>
                             <TextBlock Margin="0,24,0,0" Style="{StaticResource SectionTitle}" FontSize="30" LineHeight="37"
                                        TextWrapping="Wrap" Text="От первого слова — к свободной речи" />
                             <TextBlock Margin="0,10,0,0" MaxWidth="560" Style="{StaticResource BodySecondary}"
                                        Text="Маршрут разделяет слова, фразы и связные задания. Следующий шаг открывается по вашим попыткам, а не по искусственной серии дней." />
-                            <TextBlock Margin="0,22,0,0" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Brush.TextSecondary}"
-                                       Text="Pre-A1   ·   A1   ·   A2   ·   B1   ·   B2   ·   C1   ·   C2" />
+                            <Grid Margin="0,22,0,0" Width="380" HorizontalAlignment="Left">
+                                <Border Height="1" Margin="16,0" VerticalAlignment="Center" Background="{DynamicResource Brush.Border}" />
+                                <UniformGrid Columns="7">
+                                    <Border Style="{StaticResource HomeLevelDot}" Background="{DynamicResource Brush.Accent}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource Brush.OnAccent}" Text="Pre-A1" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="A1" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="A2" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="B1" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="B2" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="C1" /></Border>
+                                    <Border Style="{StaticResource HomeLevelDot}"><TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Text="C2" /></Border>
+                                </UniformGrid>
+                            </Grid>
                         </StackPanel>
 
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
@@ -133,7 +164,7 @@
                                     <AccessText Text="_Открыть маршрут" />
                                     <Path Width="17" Height="17" Margin="10,0,0,0" Data="{StaticResource Icon.ArrowRight}"
                                           Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
-                                          StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                          StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
                                 </StackPanel>
                             </Button>
                             <Button Margin="10,0,0,0"
@@ -154,7 +185,7 @@
                             <Setter Property="Grid.Row" Value="0" />
                             <Setter Property="Grid.Column" Value="2" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;980}" Value="Visible">
+                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;850}" Value="Visible">
                                     <Setter Property="Grid.Row" Value="2" />
                                     <Setter Property="Grid.Column" Value="0" />
                                     <Setter Property="Grid.ColumnSpan" Value="3" />
@@ -164,7 +195,8 @@
                     </Border.Style>
                     <StackPanel>
                         <TextBlock Style="{StaticResource MetaText}" Text="СЕГОДНЯ" />
-                        <TextBlock Margin="0,6,0,4" Style="{StaticResource SectionTitle}" Text="Практика без лишних настроек" />
+                        <TextBlock Margin="0,6,0,4" Style="{StaticResource SectionTitle}" FontSize="20" LineHeight="26"
+                                   TextWrapping="Wrap" Text="Практика без лишних настроек" />
                         <TextBlock Margin="0,0,0,17" Style="{StaticResource BodySecondary}" FontSize="13"
                                    Text="Ничего не загружаем: выберите навык и начинайте." />
 
@@ -181,14 +213,14 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Border Style="{StaticResource HomeIconFrame}" Background="{DynamicResource Brush.AccentSoft}">
-                                    <Path Width="21" Height="21" Data="M5,9 L9,9 L14,4 L14,20 L9,15 L5,15 Z M17,8 C19,10 19,14 17,16 M19.5,5.5 C23,9 23,15 19.5,18.5"
-                                          Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                                    <Path Width="21" Height="21" Data="{StaticResource Icon.Audio}"
+                                          Stroke="{DynamicResource Brush.Accent}" StrokeThickness="1.7" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
                                 </Border>
                                 <StackPanel Grid.Column="1" Margin="13,0,12,0" VerticalAlignment="Center">
                                     <AccessText FontWeight="SemiBold" Text="_Слушать и говорить" />
                                     <TextBlock Margin="0,3,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="Диктант, микрофон и локальная озвучка" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="16" Height="16" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="16" Height="16" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
 
@@ -211,7 +243,7 @@
                                     <AccessText FontWeight="SemiBold" Text="_Прогресс по навыкам" />
                                     <TextBlock Margin="0,3,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="Срез появится после первой попытки" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="16" Height="16" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="16" Height="16" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
 
@@ -252,15 +284,22 @@
                             <Setter Property="Grid.Row" Value="0" />
                             <Setter Property="Grid.Column" Value="0" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;900}" Value="Visible">
+                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;820}" Value="Visible">
                                     <Setter Property="Grid.ColumnSpan" Value="3" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
                     <StackPanel>
-                        <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ЛИЧНАЯ КОЛЛЕКЦИЯ" />
-                        <TextBlock Margin="0,9,0,0" Style="{StaticResource SectionTitle}" FontSize="25" Text="Учитесь на своём тексте" />
+                        <Grid>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ЛИЧНАЯ КОЛЛЕКЦИЯ" />
+                            <Border Width="38" Height="38" HorizontalAlignment="Right" Background="{DynamicResource Brush.AccentSoft}"
+                                    BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="11">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Book}" Stroke="{DynamicResource Brush.AccentText}"
+                                      StrokeThickness="1.55" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
+                            </Border>
+                        </Grid>
+                        <TextBlock Margin="0,14,0,0" Style="{StaticResource SectionTitle}" FontSize="25" Text="Учитесь на своём тексте" />
                         <TextBlock Margin="0,9,0,18" Style="{StaticResource BodySecondary}" FontSize="13"
                                    Text="Вставьте отрывок книги: LernType выделит лексику и проведёт по словам без отправки текста в интернет." />
                         <Button TabIndex="4"
@@ -271,7 +310,7 @@
                                 AutomationProperties.HelpText="Импортирует выбранный вами текст локально">
                             <StackPanel Orientation="Horizontal">
                                 <AccessText Text="_Моя книга" />
-                                <Path Width="16" Height="16" Margin="9,0,0,0" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" />
+                                <Path Width="16" Height="16" Margin="9,0,0,0" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -283,7 +322,7 @@
                             <Setter Property="Grid.Row" Value="0" />
                             <Setter Property="Grid.Column" Value="2" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;900}" Value="Visible">
+                                <DataTrigger Binding="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=&lt;820}" Value="Visible">
                                     <Setter Property="Grid.Row" Value="2" />
                                     <Setter Property="Grid.Column" Value="0" />
                                     <Setter Property="Grid.ColumnSpan" Value="3" />
@@ -300,12 +339,12 @@
                                 AutomationProperties.Name="Открыть тексты для набора">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                <Path Width="19" Height="19" Data="{StaticResource Icon.Document}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" />
+                                <Border Style="{StaticResource HomeToolIconFrame}"><Path Width="18" Height="18" Data="{StaticResource Icon.Document}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.6" Stretch="Uniform" /></Border>
                                 <StackPanel Grid.Column="1" Margin="12,0,10,0">
                                     <AccessText FontWeight="SemiBold" Text="_Тексты" />
                                     <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="Перевод и чистый набор" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
 
@@ -314,12 +353,12 @@
                                 AutomationProperties.Name="Открыть грамматический пересказ">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                <Path Width="19" Height="19" Data="{StaticResource Icon.Edit}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" />
+                                <Border Style="{StaticResource HomeToolIconFrame}"><Path Width="18" Height="18" Data="{StaticResource Icon.Grammar}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.6" Stretch="Uniform" /></Border>
                                 <StackPanel Grid.Column="1" Margin="12,0,10,0">
                                     <AccessText FontWeight="SemiBold" Text="_Грамматика" />
                                     <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="Пересказ с локальной проверкой" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
 
@@ -328,12 +367,12 @@
                                 AutomationProperties.Name="Открыть двусторонний словарный тест">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                <Path Width="19" Height="19" Data="{StaticResource Icon.Cards}" Fill="{DynamicResource Brush.TextSecondary}" Stretch="Uniform" />
+                                <Border Style="{StaticResource HomeToolIconFrame}"><Path Width="18" Height="18" Data="{StaticResource Icon.Word}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.6" Stretch="Uniform" /></Border>
                                 <StackPanel Grid.Column="1" Margin="12,0,10,0">
                                     <AccessText FontWeight="SemiBold" Text="Тест _слов" />
                                     <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="RU→DE и DE→RU без подсказок" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
 
@@ -343,12 +382,12 @@
                                 AutomationProperties.HelpText="Даёт ориентировочную обратную связь, а не официальный результат экзамена">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                <Path Width="19" Height="19" Data="{StaticResource Icon.Certificate}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.7" />
+                                <Border Style="{StaticResource HomeToolIconFrame}"><Path Width="18" Height="18" Data="{StaticResource Icon.Exam}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.6" Stretch="Uniform" /></Border>
                                 <StackPanel Grid.Column="1" Margin="12,0,10,0">
                                     <AccessText FontWeight="SemiBold" Text="_TELC-чекер" />
                                     <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextSecondary}" Text="Ориентировочная обратная связь по тексту" />
                                 </StackPanel>
-                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" />
+                                <Path Grid.Column="2" Width="15" Height="15" Data="{StaticResource Icon.ArrowRight}" Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
                             </Grid>
                         </Button>
                     </StackPanel>
