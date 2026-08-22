@@ -188,6 +188,34 @@ public sealed class AppCompositionRegressionTests
             StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void LevelRoutes_PreserveTypedLevelContextForEveryModuleDestination()
+    {
+        var shellSource = Compact(ReadRepositoryFile(
+            "src",
+            "WortBruecke.App",
+            "ViewModels",
+            "MainViewModel.cs"));
+
+        var openLevel = Slice(
+            shellSource,
+            "private async Task OpenLevelAsync(LevelStudyRequest request)",
+            "private async Task OpenLevelModuleAsync(LevelModuleLaunch launch)");
+        Assert.Contains("await _levelStudy.PrepareAsync(request, _lifetime.Token);", openLevel, StringComparison.Ordinal);
+        Assert.Contains("CurrentTitle = $\"Уровень {LevelLabel(request.Level)}\";", openLevel, StringComparison.Ordinal);
+
+        var openModule = Slice(
+            shellSource,
+            "private async Task OpenLevelModuleAsync(LevelModuleLaunch launch)",
+            "private async Task OpenTextPracticeAsync(string? level)");
+        Assert.Contains("launch.TryGetPracticeRequest(out var practiceRequest)", openModule, StringComparison.Ordinal);
+        Assert.Contains("_trainer.Prepare(practiceRequest);", openModule, StringComparison.Ordinal);
+        Assert.Contains("_texts.ApplyLevelFilter(levelText);", openModule, StringComparison.Ordinal);
+        Assert.Contains("_grammar.ApplyLevelFilter(levelText);", openModule, StringComparison.Ordinal);
+        Assert.Contains("_audio.ApplyLevelFilter(launch.Level);", openModule, StringComparison.Ordinal);
+        Assert.DoesNotContain("StartSuggested", openModule, StringComparison.Ordinal);
+    }
+
     private static string ReadRepositoryFile(params string[] pathSegments) =>
         File.ReadAllText(Path.Combine([FindRepositoryRoot(), .. pathSegments]));
 

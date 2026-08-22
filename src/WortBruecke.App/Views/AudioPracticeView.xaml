@@ -12,12 +12,18 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel>
-                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ОФЛАЙН · ГОЛОС WINDOWS · ЗАПИСИ ВРЕМЕННЫЕ" />
-                <TextBlock Margin="0,8,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Слушайте. Говорите. Сравнивайте." />
-                <TextBlock Margin="0,10,0,0" MaxWidth="760" HorizontalAlignment="Left" Style="{StaticResource BodySecondary}"
-                           Text="Диктант даёт объективную проверку текста. Устный ответ сохраняется только на время этой сессии и оценивается вами по записи." />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ОФЛАЙН · ГОЛОС WINDOWS · ЗАПИСИ ВРЕМЕННЫЕ" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Слушайте. Говорите. Сравнивайте." />
+                    <TextBlock Margin="0,10,0,0" MaxWidth="760" HorizontalAlignment="Left" Style="{StaticResource BodySecondary}"
+                               Text="Диктант даёт объективную проверку текста. Устный ответ сохраняется только на время этой сессии и оценивается вами по записи." />
+                </StackPanel>
+                <Button Grid.Column="1" Margin="16,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource SecondaryButton}"
+                        Command="{Binding ReturnToLevelCommand}" Content="{Binding ReturnToLevelText}"
+                        Visibility="{Binding HasLevelContext, Converter={StaticResource BoolToVisibility}}" />
+            </Grid>
 
             <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="24">
                 <Grid>

@@ -37,34 +37,69 @@ public sealed class SqliteContentRepository(SqliteDatabase database) : IContentR
         var words = new Dictionary<int, WordBuilder>();
         await using var connection = new SqliteConnection(database.ConnectionString);
         await connection.OpenAsync(cancellationToken);
-        await using var command = connection.CreateCommand();
-        command.CommandText = """
-            SELECT w.id, w.theme_id, t.key, w.image_path, w.level, w.part_of_speech,
-                   wt.lang_code, wt.text, wt.example_text
-            FROM word_groups w
-            JOIN themes t ON t.id = w.theme_id
-            JOIN word_translations wt ON wt.word_group_id = w.id
-            WHERE ($theme IS NULL OR w.theme_id = $theme)
-            ORDER BY w.id, wt.lang_code;
-            """;
-        command.Parameters.AddWithValue("$theme", themeId is null ? DBNull.Value : themeId.Value);
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
+        await using (var command = connection.CreateCommand())
         {
-            var id = reader.GetInt32(0);
-            if (!words.TryGetValue(id, out var builder))
+            command.CommandText = """
+                SELECT w.id, w.theme_id, t.key, w.image_path, w.level, w.part_of_speech,
+                       wt.lang_code, wt.text, wt.example_text
+                FROM word_groups w
+                JOIN themes t ON t.id = w.theme_id
+                JOIN word_translations wt ON wt.word_group_id = w.id
+                WHERE ($theme IS NULL OR w.theme_id = $theme)
+                ORDER BY w.id, wt.lang_code;
+                """;
+            command.Parameters.AddWithValue("$theme", themeId is null ? DBNull.Value : themeId.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
             {
-                builder = new WordBuilder(id, reader.GetInt32(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5));
-                words.Add(id, builder);
-            }
-            var culture = reader.GetString(6);
-            builder.Translations[culture] = reader.GetString(7);
-            if (!reader.IsDBNull(8))
-            {
-                builder.Examples[culture] = reader.GetString(8);
+                var id = reader.GetInt32(0);
+                if (!words.TryGetValue(id, out var builder))
+                {
+                    builder = new WordBuilder(id, reader.GetInt32(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5));
+                    words.Add(id, builder);
+                }
+                var culture = reader.GetString(6);
+                builder.Translations[culture] = reader.GetString(7);
+                if (!reader.IsDBNull(8))
+                {
+                    builder.Examples[culture] = reader.GetString(8);
+                }
             }
         }
-        return words.Values.Select(x => new WordEntry(x.Id, x.ThemeId, x.ThemeKey, x.ImagePath, x.Level, x.PartOfSpeech, x.Translations, x.Examples)).ToList();
+
+        await using (var command = connection.CreateCommand())
+        {
+            command.CommandText = """
+                SELECT waa.word_group_id, waa.lang_code, waa.text
+                FROM word_accepted_answers waa
+                JOIN word_groups w ON w.id = waa.word_group_id
+                WHERE ($theme IS NULL OR w.theme_id = $theme)
+                ORDER BY waa.word_group_id, waa.lang_code, waa.sort_order;
+                """;
+            command.Parameters.AddWithValue("$theme", themeId is null ? DBNull.Value : themeId.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                if (!words.TryGetValue(reader.GetInt32(0), out var builder))
+                {
+                    continue;
+                }
+
+                var culture = reader.GetString(1);
+                if (!builder.AcceptedAnswers.TryGetValue(culture, out var answers))
+                {
+                    answers = [];
+                    builder.AcceptedAnswers[culture] = answers;
+                }
+                answers.Add(reader.GetString(2));
+            }
+        }
+
+        return words.Values
+            .Select(x => new WordEntry(
+                x.Id, x.ThemeId, x.ThemeKey, x.ImagePath, x.Level, x.PartOfSpeech,
+                x.Translations, x.Examples, x.AcceptedAnswers))
+            .ToList();
     }
 
     public async Task<IReadOnlyList<SentenceEntry>> GetSentencesAsync(int? themeId = null, CancellationToken cancellationToken = default)
@@ -190,6 +225,7 @@ public sealed class SqliteContentRepository(SqliteDatabase database) : IContentR
     {
         public LocalizedText Translations { get; } = [];
         public LocalizedText Examples { get; } = [];
+        public LocalizedAnswerSet AcceptedAnswers { get; } = [];
     }
 
     private sealed record SentenceBuilder(int Id, int ThemeId, string ThemeKey, string Level)

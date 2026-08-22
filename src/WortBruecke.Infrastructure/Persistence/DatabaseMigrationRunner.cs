@@ -4,7 +4,7 @@ namespace WortBruecke.Infrastructure.Persistence;
 
 internal sealed class DatabaseMigrationRunner(string backupRoot)
 {
-    public const int LatestVersion = 2;
+    public const int LatestVersion = 3;
 
     public async Task MigrateAsync(SqliteConnection connection, CancellationToken cancellationToken)
     {
@@ -15,9 +15,13 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
                 $"Версия базы данных {currentVersion} новее поддерживаемой {LatestVersion}.");
         }
 
+        string? preMigrationBackupPath = null;
         if (currentVersion < LatestVersion && await HasApplicationTablesAsync(connection, cancellationToken))
         {
-            await CreatePreMigrationBackupAsync(connection, currentVersion, cancellationToken);
+            preMigrationBackupPath = await CreatePreMigrationBackupAsync(
+                connection,
+                currentVersion,
+                cancellationToken);
         }
 
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
@@ -58,6 +62,14 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
                         await ApplyDataSafetySchemaAsync(connection, transaction, cancellationToken);
                         await RecordMigrationAsync(connection, transaction, version, "data-safety-and-attempt-events", cancellationToken);
                         break;
+                    case 3:
+                        await ApplyAcceptedAnswersSchemaAsync(
+                            connection,
+                            transaction,
+                            preMigrationBackupPath,
+                            cancellationToken);
+                        await RecordMigrationAsync(connection, transaction, version, "localized-word-accepted-answers", cancellationToken);
+                        break;
                 }
 
                 await ExecuteAsync(connection, transaction, $"PRAGMA user_version = {version};", cancellationToken);
@@ -66,6 +78,10 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
             if (!await SqliteDataSafety.QuickCheckAsync(connection, cancellationToken, transaction))
             {
                 throw new InvalidDataException("База данных не прошла quick_check внутри миграционной транзакции.");
+            }
+            if (!await SqliteDataSafety.ForeignKeyCheckAsync(connection, cancellationToken, transaction))
+            {
+                throw new InvalidDataException("База данных не прошла foreign_key_check внутри миграционной транзакции.");
             }
             await transaction.CommitAsync(cancellationToken);
         }
@@ -78,6 +94,10 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
         if (!await SqliteDataSafety.QuickCheckAsync(connection, cancellationToken))
         {
             throw new InvalidDataException("База данных не прошла quick_check после миграции схемы.");
+        }
+        if (!await SqliteDataSafety.ForeignKeyCheckAsync(connection, cancellationToken))
+        {
+            throw new InvalidDataException("База данных не прошла foreign_key_check после миграции схемы.");
         }
     }
 
@@ -196,7 +216,91 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
         }
     }
 
-    private async Task CreatePreMigrationBackupAsync(
+    private static async Task ApplyAcceptedAnswersSchemaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        string? preMigrationBackupPath,
+        CancellationToken cancellationToken)
+    {
+        await ExecuteAsync(connection, transaction, """
+            CREATE TABLE IF NOT EXISTS word_accepted_answers (
+                word_group_id INTEGER NOT NULL REFERENCES word_groups(id) ON DELETE CASCADE,
+                lang_code TEXT NOT NULL,
+                text TEXT NOT NULL,
+                sort_order INTEGER NOT NULL CHECK(sort_order >= 0),
+                PRIMARY KEY(word_group_id, lang_code, sort_order),
+                UNIQUE(word_group_id, lang_code, text)
+            );
+            CREATE TABLE IF NOT EXISTS orphan_book_word_quarantine (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                legacy_word_id INTEGER NOT NULL,
+                missing_book_id INTEGER NOT NULL,
+                backup_path TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                quarantined_at_utc TEXT NOT NULL,
+                UNIQUE(legacy_word_id, missing_book_id, backup_path)
+            );
+            """, cancellationToken);
+
+        var orphanCount = await CountOrphanBookWordsAsync(connection, transaction, cancellationToken);
+        if (orphanCount == 0)
+        {
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(preMigrationBackupPath) || !File.Exists(preMigrationBackupPath))
+        {
+            throw new InvalidDataException(
+                "Обнаружены слова без родительской книги, но проверенная резервная копия до миграции отсутствует.");
+        }
+
+        var backupInspection = await SqliteDataSafety.InspectAsync(preMigrationBackupPath, cancellationToken);
+        if (!backupInspection.IsValid)
+        {
+            throw new DataMigrationValidationException(
+                "Резервная копия со словами без родительской книги не прошла quick_check.",
+                preMigrationBackupPath);
+        }
+
+        await ExecuteAsync(connection, transaction, """
+            INSERT OR IGNORE INTO orphan_book_word_quarantine(
+                legacy_word_id, missing_book_id, backup_path, reason, quarantined_at_utc)
+            SELECT orphan.id, orphan.book_id, $backup_path, $reason, $quarantined_at_utc
+            FROM user_book_words orphan
+            LEFT JOIN user_books parent ON parent.id = orphan.book_id
+            WHERE parent.id IS NULL;
+
+            DELETE FROM user_book_words
+            WHERE NOT EXISTS (
+                SELECT 1 FROM user_books parent WHERE parent.id = user_book_words.book_id);
+            """, cancellationToken,
+            ("$backup_path", Path.GetFullPath(preMigrationBackupPath)),
+            ("$reason", "Missing parent user_books row before schema-v3 migration."),
+            ("$quarantined_at_utc", DateTimeOffset.UtcNow.ToString("O")));
+    }
+
+    private static async Task<long> CountOrphanBookWordsAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        if (!await TableExistsAsync(connection, transaction, "user_book_words", cancellationToken) ||
+            !await TableExistsAsync(connection, transaction, "user_books", cancellationToken))
+        {
+            return 0;
+        }
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = """
+            SELECT COUNT(*)
+            FROM user_book_words orphan
+            LEFT JOIN user_books parent ON parent.id = orphan.book_id
+            WHERE parent.id IS NULL;
+            """;
+        return Convert.ToInt64(await command.ExecuteScalarAsync(cancellationToken));
+    }
+
+    private async Task<string> CreatePreMigrationBackupAsync(
         SqliteConnection connection,
         int currentVersion,
         CancellationToken cancellationToken)
@@ -211,6 +315,7 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
         {
             throw new DataMigrationValidationException("Резервная копия перед миграцией схемы повреждена.", path);
         }
+        return path;
     }
 
     private static async Task<bool> HasApplicationTablesAsync(
@@ -262,6 +367,19 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
         }
 
         return false;
+    }
+
+    private static async Task<bool> TableExistsAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        string table,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name=$table);";
+        command.Parameters.AddWithValue("$table", table);
+        return Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken)) == 1;
     }
 
     private static Task RecordMigrationAsync(

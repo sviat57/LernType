@@ -171,6 +171,71 @@ public sealed class BookViewModelPrivacyTests
         Assert.Equal(1, attempt.Score);
     }
 
+    [Fact]
+    public async Task SavedBookPractice_RussianTypoGetsFullCreditFeedbackAndLenientRubric()
+    {
+        var repository = new MemoryBookRepository();
+        repository.Books.Add(new UserBook(43, "Berufe", "de-DE", "Der Beruf.", DateTimeOffset.UtcNow,
+        [
+            new ExtractedVocabularyItem("Beruf", ["профессия"], 1, "Der Beruf.", "noun", 4301)
+        ]));
+        var attempts = new RecordingAttemptRepository();
+        var viewModel = new BookViewModel(
+            repository,
+            new ImmediateExtractor(),
+            attempts,
+            new NoOpKeyboardLayoutService(),
+            new AttributionOnlyDictionary());
+        await viewModel.InitializeAsync();
+        await viewModel.SelectRecentCommand.ExecuteAsync(Assert.Single(viewModel.RecentBooks));
+        viewModel.StartPracticeCommand.Execute(null);
+        viewModel.Answer = "професия";
+
+        await viewModel.CheckCommand.ExecuteAsync();
+
+        Assert.True(viewModel.IsCorrect);
+        Assert.True(viewModel.ShowFeedback);
+        Assert.Equal("Зачтено — проверьте написание", viewModel.FeedbackTitle);
+        Assert.Equal("Нормативная форма: профессия", viewModel.FeedbackDetail);
+        var attempt = Assert.Single(attempts.Events);
+        Assert.Equal(1, attempt.Score);
+        Assert.Equal(AttemptDirection.GermanToRussian, attempt.Direction);
+        Assert.Equal(LearningEvidenceFactory.RussianVocabularyLeniencyRubric, attempt.RubricVersion);
+    }
+
+    [Theory]
+    [InlineData("Beruf")]
+    [InlineData("der Beruff")]
+    public async Task SavedBookPractice_GermanMissingArticleOrTypoIsRejectedStrictly(string answer)
+    {
+        var repository = new MemoryBookRepository();
+        repository.Books.Add(new UserBook(44, "Профессия", "ru-RU", "Профессия важна.", DateTimeOffset.UtcNow,
+        [
+            new ExtractedVocabularyItem("профессия", ["der Beruf"], 1, "Профессия важна.", "noun", 4401)
+        ]));
+        var attempts = new RecordingAttemptRepository();
+        var viewModel = new BookViewModel(
+            repository,
+            new ImmediateExtractor(),
+            attempts,
+            new NoOpKeyboardLayoutService(),
+            new AttributionOnlyDictionary());
+        await viewModel.InitializeAsync();
+        await viewModel.SelectRecentCommand.ExecuteAsync(Assert.Single(viewModel.RecentBooks));
+        viewModel.StartPracticeCommand.Execute(null);
+        viewModel.Answer = answer;
+
+        await viewModel.CheckCommand.ExecuteAsync();
+
+        Assert.False(viewModel.IsCorrect);
+        Assert.True(viewModel.ShowFeedback);
+        Assert.Equal("Другой вариант", viewModel.FeedbackTitle);
+        var attempt = Assert.Single(attempts.Events);
+        Assert.Equal(0, attempt.Score);
+        Assert.Equal(AttemptDirection.RussianToGerman, attempt.Direction);
+        Assert.Equal(LearningEvidenceFactory.ExactAnswerRubric, attempt.RubricVersion);
+    }
+
     private static BookViewModel CreateViewModel(IBookRepository repository, IBookVocabularyExtractor extractor) => new(
         repository,
         extractor,

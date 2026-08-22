@@ -302,6 +302,7 @@ public sealed class ManagedBackupService : IManagedBackupService
     {
         await DeleteIfTableExistsAsync(connection, transaction, "user_book_words", null, cancellationToken);
         await DeleteIfTableExistsAsync(connection, transaction, "user_books", null, cancellationToken);
+        await DeleteIfTableExistsAsync(connection, transaction, "orphan_book_word_quarantine", null, cancellationToken);
         await DeleteIfTableExistsAsync(connection, transaction, "user_progress", "content_type='BookWord'", cancellationToken);
         await DeleteIfTableExistsAsync(connection, transaction, "legacy_progress_quarantine", "content_type='BookWord'", cancellationToken);
         await DeleteIfTableExistsAsync(connection, transaction, "attempt_events", "content_key LIKE 'user.book.%' OR content_key LIKE 'user.book-word.%'", cancellationToken);
@@ -368,6 +369,14 @@ public sealed class ManagedBackupService : IManagedBackupService
             await ExecuteAsync(connection, transaction,
                 "DELETE FROM user_books WHERE id=$bookId;", cancellationToken, ("$bookId", bookId));
         }
+        if (await TableExistsAsync(connection, transaction, "orphan_book_word_quarantine", cancellationToken))
+        {
+            await ExecuteAsync(connection, transaction, """
+                DELETE FROM orphan_book_word_quarantine
+                WHERE missing_book_id=$bookId
+                   OR legacy_word_id IN (SELECT id FROM purge_book_word_ids);
+                """, cancellationToken, ("$bookId", bookId));
+        }
     }
 
     private static async Task VerifyPurgeAsync(
@@ -381,6 +390,7 @@ public sealed class ManagedBackupService : IManagedBackupService
                      {
                          ("user_books", "1=1"),
                          ("user_book_words", "1=1"),
+                         ("orphan_book_word_quarantine", "1=1"),
                          ("user_progress", "content_type='BookWord'"),
                          ("legacy_progress_quarantine", "content_type='BookWord'"),
                          ("attempt_events", "content_key LIKE 'user.book.%' OR content_key LIKE 'user.book-word.%'"),
@@ -400,7 +410,10 @@ public sealed class ManagedBackupService : IManagedBackupService
             await CountAsync(connection, "user_progress",
                 "content_type='BookWord' AND content_id IN (SELECT id FROM purge_book_word_ids)", [], cancellationToken) != 0 ||
             await CountAsync(connection, "legacy_progress_quarantine",
-                "content_type='BookWord' AND legacy_numeric_id IN (SELECT id FROM purge_book_word_ids)", [], cancellationToken) != 0)
+                "content_type='BookWord' AND legacy_numeric_id IN (SELECT id FROM purge_book_word_ids)", [], cancellationToken) != 0 ||
+            await CountAsync(connection, "orphan_book_word_quarantine",
+                "missing_book_id=$bookId OR legacy_word_id IN (SELECT id FROM purge_book_word_ids)",
+                [("$bookId", bookId.Value)], cancellationToken) != 0)
         {
             throw new InvalidDataException("В резервной копии остались строки или прогресс удалённой книги.");
         }

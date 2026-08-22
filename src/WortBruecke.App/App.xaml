@@ -24,6 +24,9 @@
             <DataTemplate DataType="{x:Type vm:LearningPathViewModel}">
                 <views:LearningPathView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LevelStudyViewModel}">
+                <views:LevelStudyView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ExamCenterViewModel}">
                 <views:ExamCenterView />
             </DataTemplate>

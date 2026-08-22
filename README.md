@@ -7,6 +7,8 @@
 ## Что реализовано
 
 - **Раздельная сложность:** слова, предложения и тексты; отдельно выбираются уровень и направление RU→DE, DE→RU или смешанное.
+- **Центр каждого уровня:** Pre-A1–C2 открываются для свободного обучения и запускают только материал выбранного уровня без скрытой подмены режима.
+- **Честная проверка лексики:** русские словарные ответы принимают проверенные варианты и одну безопасную опечатку с показом нормативной формы; немецкие ответы остаются строгими.
 - **Путь Pre-A1–C2:** цели по навыкам, канонические события попыток, пересчитываемое освоение и версионированное интервальное повторение `fsrs-like-v1`.
 - **Двусторонняя диагностика словаря:** уникальные вопросы в обе стороны, точность по направлениям и разбор ошибок.
 - **Личная библиотека:** вставка русского или немецкого текста до 500 000 символов, частотная лексика и тренировка выбранных слов. Текст остаётся временным, пока пользователь явно не сохранит проект.
@@ -17,7 +19,7 @@
 - **Опциональный онлайн-разбор:** OpenAI Responses API включается только явным действием и ограничивает объём запроса/ответа. Основные режимы работают без сети и API-ключа.
 - **Интерфейс:** адаптивная тёплая glass-тема, полупрозрачные плитки, светлый/тёмный режим, Mica в Windows 11 и резервное оформление для Windows 10.
 
-Встроенный каталог сейчас содержит 150 слов, 70 двуязычных предложений, 7 текстов и 8 грамматических заданий. Границы покрытия описаны ниже и не скрываются за общей меткой уровня.
+Встроенный каталог сейчас содержит 150 слов, 70 двуязычных предложений, 35 текстов (по пять для каждого уровня Pre-A1–C2) и 8 грамматических заданий. Перед текстовой практикой доступно полное немецкое чтение и раскрываемый русский перевод; этот просмотр не создаёт попытку и не меняет прогресс. Границы покрытия описаны ниже и не скрываются за общей меткой уровня.
 
 ## Скачать и запустить
 
@@ -95,8 +97,11 @@ App Installer создаётся только для уже подписанно
 ## Контент и словарь
 
 - каталог: `src/WortBruecke.App/Content/catalog.json`;
+- происхождение и лицензии текстов: `src/WortBruecke.App/Content/passage-provenance.json`;
 - экзаменационные схемы: `src/WortBruecke.App/Content/exams.json`;
 - словарь и лицензии: `src/WortBruecke.App/Assets/Dictionary/FreeDict`.
+
+Уровни встроенных текстов являются редакционной оценкой для последовательности практики, а не официальной CEFR-сертификацией. Все 35 записей имеют происхождение, лицензию MIT и честный статус `pending-independent-review`; литературные мотивы используются только в новых пересказах произведений общественного достояния.
 
 Конвертер FreeDict TEI P5:
 
@@ -116,51 +121,21 @@ dotnet run --project tools/WortBruecke.DictionaryBuilder -- `
 
 CI выполняет locked restore, форматирование, Debug/Release build с warnings-as-errors, тесты и порог покрытия, транзитивный vulnerability audit, CycloneDX SBOM, CodeQL и self-contained publish для x64/arm64. Все сторонние Actions закреплены полными commit SHA.
 
-## Проверенная матрица релиза
+## Проверка конкретного релиза
 
-Ниже зафиксирована локальная инженерная проверка промежуточного кандидата от **21 августа 2026 года**. Среда: Windows 11 Pro 25H2, build `26200.9168`, x64; .NET SDK `10.0.302`. Это не подмена итогового release record: после изменения исходников команды повторяются на точном публикуемом commit и его артефактах по [регламенту](docs/RELEASING.md).
+Каждый GitHub Release сопровождается файлом `LernType-<version>-verification.md`, SBOM и
+`SHA256SUMS`. В записи указываются точный commit, буквальные команды и коды выхода, число тестов,
+покрытие, результат аудита зависимостей, хэши обеих архитектур, миграционный inventory, UI-smoke и
+проверенный rollback. Это исключает смешивание результатов разных исходных состояний.
 
-Проверки зависимостей и состава выполнялись так:
+Локальная runtime-матрица выполняется на Windows 11 x64 при `1180×760`, `820×600` и `720×520`;
+успех требует ожидаемый UI Automation landmark, отсутствие shell error/технического кода и штатное
+закрытие с exit `0`. Arm64 cross-publish дополнительно проверяется по PE machine `0xAA64`, но его
+native runtime-статус всегда указывается отдельно в verification record.
 
-```powershell
-./.tools/dotnet10/dotnet.exe tool restore
-./.tools/dotnet10/dotnet.exe restore LernType.sln --locked-mode
-./.tools/dotnet10/dotnet.exe list LernType.sln package `
-  --vulnerable --include-transitive --format json
-./.tools/dotnet10/dotnet.exe CycloneDX src/WortBruecke.App/WortBruecke.App.csproj `
-  --exclude-dev --disable-package-restore `
-  --output artifacts/sbom --filename LernType.cdx.json --output-format Json `
-  --set-name LernType --set-version 1.0.0 --set-type Application
-```
+Полная воспроизводимая процедура находится в [регламенте выпуска](docs/RELEASING.md).
 
-Литеральный результат: все четыре команды завершились с кодом `0`; locked restore обработал 5 проектов; vulnerability audit обнаружил `0` уязвимых пакетов; CycloneDX `1.7` содержит 43 компонента и `0` компонентов без license metadata.
-
-Runtime-smoke выполнялся только для x64-кандидата на указанной Windows 11 машине:
-
-```powershell
-$publish = 'artifacts/release-candidate-1.0.0/win-x64-r2r'
-./tools/Invoke-ReleaseSmoke.ps1 -PublishDirectory $publish `
-  -OutputDirectory artifacts/verification/release-evidence-wide `
-  -WindowWidth 1180 -WindowHeight 760
-./tools/Invoke-ReleaseSmoke.ps1 -PublishDirectory $publish `
-  -OutputDirectory artifacts/verification/release-evidence-compact `
-  -WindowWidth 820 -WindowHeight 600
-./tools/Invoke-ReleaseSmoke.ps1 -PublishDirectory $publish `
-  -OutputDirectory artifacts/verification/release-evidence-minimum `
-  -WindowWidth 720 -WindowHeight 520
-```
-
-| Размер окна | Определённый layout | Метка `Путь Pre-A1–C2` | Главный landmark | Shell error / technical code | Screenshot | Закрытие |
-|---|---|---:|---:|---:|---:|---:|
-| `1180×760` | `Wide` | видима | да | нет / нет | да | exit `0` |
-| `820×600` | `Compact` | скрыта | да | нет / нет | да | exit `0` |
-| `720×520` | `Compact` | скрыта | да | нет / нет | да | exit `0` |
-
-Все три JSON-записи имеют `schemaVersion: 2`, `layoutVerificationPassed: true` и `uiVerificationPassed: true`. Негативный contract self-test также проверен: видимый `Код: …` и заведомо отсутствующий landmark дали process exit `1`, `uiVerificationPassed: false`, сохранили screenshot и точную причину отказа. Для проверки перехода скрипт принимает `-InvokeAutomationName` вместе с обязательным для такого перехода `-ExpectedAutomationName`; успех требует ожидаемый видимый landmark и отсутствие `Ошибка приложения` либо видимого технического кода.
-
-x64 был опубликован как self-contained/R2R-кандидат, Arm64 — как self-contained кандидат; release-конфигурация и CI теперь требуют R2R без trimming для обеих архитектур. PE-заголовки `LernType.exe` проверены: x64 — `0x8664`, Arm64 — `0xAA64`. **Arm64 в этой записи проверен только сборкой, PE-валидацией и MSIX `-WhatIf`; native runtime-smoke на Arm64-устройстве не выполнялся. Windows 10 22H2 остаётся best-effort целью и в этой записи runtime не проверялась.** Стабильный Arm64-релиз требует отдельной нативной проверки, а итоговый release record должен ссылаться на результаты, полученные уже из неизменённого релизного commit.
-
-## Границы версии 1.0
+## Границы текущей версии
 
 - Встроенная словарная плотность выше на Pre-A1–A2; B1–C2 сильнее опираются на предложения, тексты и грамматику.
 - Локальная устная практика записывает и воспроизводит речь, но не выполняет фонетическое распознавание; результат такой попытки помечается как самооценка.

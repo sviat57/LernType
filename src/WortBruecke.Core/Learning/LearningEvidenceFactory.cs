@@ -95,8 +95,9 @@ public static class LearningContentKey
 
 public static class LearningEvidenceFactory
 {
-    public const int BundledCatalogRevision = 4;
+    public const int BundledCatalogRevision = 5;
     public const string ExactAnswerRubric = "exact-answer-v2";
+    public const string RussianVocabularyLeniencyRubric = "russian-vocabulary-leniency-v1";
     public const string HeuristicGrammarRubric = "grammar-markers-v1";
     private static readonly IReadOnlyDictionary<(GermanLevel Level, LanguageSkill Skill), LearningObjective> Objectives =
         GermanCurriculum.CreateDefault().Levels

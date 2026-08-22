@@ -5,10 +5,12 @@ using System.Windows.Input;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
 using WortBruecke.Core.Learning;
+using WortBruecke.Core.Models;
 
 namespace WortBruecke.App.ViewModels;
 
 public sealed record LearningLevelCardViewModel(
+    GermanLevel LevelKey,
     string Level,
     string Title,
     string Outcome,
@@ -22,6 +24,8 @@ public sealed record LearningLevelCardViewModel(
     bool IsUnlocked,
     bool IsCurrent,
     bool IsCompleted,
+    string PracticeAutomationName,
+    string ExamAutomationName,
     ICommand OpenPracticeCommand,
     ICommand OpenExamCommand);
 
@@ -33,6 +37,7 @@ public sealed class LearningPathViewModel : ObservableObject
     private readonly IExamBlueprintRepository _examBlueprintRepository;
     private readonly IPlacementResultProvider? _placementProvider;
     private readonly Action<string> _navigate;
+    private readonly Action<LevelStudyRequest> _openLevel;
     private readonly LearningPathDefinition _definition = GermanCurriculum.CreateDefault();
     private readonly LearningProgressService _progressService = new();
     private string _currentLevelText = "A0";
@@ -46,12 +51,30 @@ public sealed class LearningPathViewModel : ObservableObject
         ILearningProgressRepository learningProgressRepository,
         IExamBlueprintRepository examBlueprintRepository,
         Action<string> navigate)
+        : this(
+            contentRepository,
+            legacyProgressRepository,
+            learningProgressRepository,
+            examBlueprintRepository,
+            navigate,
+            _ => navigate("trainer"))
+    {
+    }
+
+    public LearningPathViewModel(
+        IContentRepository contentRepository,
+        IProgressRepository legacyProgressRepository,
+        ILearningProgressRepository learningProgressRepository,
+        IExamBlueprintRepository examBlueprintRepository,
+        Action<string> navigate,
+        Action<LevelStudyRequest> openLevel)
     {
         _contentRepository = contentRepository;
         _ = legacyProgressRepository;
         _compatibilityRepository = learningProgressRepository;
         _examBlueprintRepository = examBlueprintRepository;
         _navigate = navigate;
+        _openLevel = openLevel;
         RefreshCommand = new AsyncRelayCommand(InitializeAsync);
     }
 
@@ -61,12 +84,30 @@ public sealed class LearningPathViewModel : ObservableObject
         IExamBlueprintRepository examBlueprintRepository,
         Action<string> navigate,
         IPlacementResultProvider? placementProvider = null)
+        : this(
+            contentRepository,
+            attemptRepository,
+            examBlueprintRepository,
+            navigate,
+            _ => navigate("trainer"),
+            placementProvider)
+    {
+    }
+
+    public LearningPathViewModel(
+        IContentRepository contentRepository,
+        IAttemptRepository attemptRepository,
+        IExamBlueprintRepository examBlueprintRepository,
+        Action<string> navigate,
+        Action<LevelStudyRequest> openLevel,
+        IPlacementResultProvider? placementProvider = null)
     {
         _contentRepository = contentRepository;
         _attemptRepository = attemptRepository;
         _examBlueprintRepository = examBlueprintRepository;
         _placementProvider = placementProvider;
         _navigate = navigate;
+        _openLevel = openLevel;
         RefreshCommand = new AsyncRelayCommand(InitializeAsync);
     }
 
@@ -124,6 +165,7 @@ public sealed class LearningPathViewModel : ObservableObject
                     : levelProgress.IsUnlocked ? "Доступен" : "Следующий этап";
 
             Levels.Add(new LearningLevelCardViewModel(
+                level,
                 LevelLabel(level),
                 levelProgress.Definition.Title,
                 levelProgress.Definition.Outcome,
@@ -137,7 +179,9 @@ public sealed class LearningPathViewModel : ObservableObject
                 levelProgress.IsUnlocked,
                 levelProgress.Definition.Level == path.CurrentLevel,
                 levelProgress.IsCompleted,
-                new RelayCommand(() => _navigate("trainer"), () => contentCount > 0),
+                $"Открыть практику уровня {LevelLabel(level)}",
+                $"Открыть экзамены уровня {LevelLabel(level)}",
+                new RelayCommand(() => _openLevel(new LevelStudyRequest(level))),
                 new RelayCommand(() => _navigate("exams"), () => examCount > 0)));
         }
 

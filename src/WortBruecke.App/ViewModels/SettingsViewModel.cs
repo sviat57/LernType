@@ -17,7 +17,6 @@ public sealed class SettingsViewModel : ObservableObject
     private readonly ISettingsStore _settingsStore;
     private readonly IKeyboardLayoutService _keyboardLayoutService;
     private readonly Action<AppSettings> _applySettings;
-    private int _passageFrequency = 8;
     private PassageModeOption? _selectedPassageMode;
     private string _apiModel = "gpt-5-mini";
     private string _apiKey = string.Empty;
@@ -52,12 +51,6 @@ public sealed class SettingsViewModel : ObservableObject
     public AsyncRelayCommand SaveCommand { get; }
     public RelayCommand RefreshLayoutsCommand { get; }
     public RelayCommand OpenWindowsSettingsCommand { get; }
-
-    public int PassageFrequency
-    {
-        get => _passageFrequency;
-        set => SetProperty(ref _passageFrequency, Math.Clamp(value, 1, 20));
-    }
 
     public PassageModeOption? SelectedPassageMode
     {
@@ -107,12 +100,11 @@ public sealed class SettingsViewModel : ObservableObject
         private set => SetProperty(ref _saveStatus, value);
     }
 
-    public string VersionText => $"LernType {Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.0.0"}";
+    public string VersionText => $"LernType {Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.1.0"}";
 
     public async Task InitializeAsync()
     {
         var settings = await _settingsStore.LoadAsync();
-        PassageFrequency = settings.PassageFrequency;
         SelectedPassageMode = PassageModes.First(mode => mode.Mode == settings.PassageMode);
         ApiModel = settings.ApiModel;
         ApiKey = settings.ApiKey;
@@ -129,7 +121,6 @@ public sealed class SettingsViewModel : ObservableObject
         {
             SourceCulture = LanguagePair.RussianToGerman.Source.CultureCode,
             TargetCulture = LanguagePair.RussianToGerman.Target.CultureCode,
-            PassageFrequency = PassageFrequency,
             PassageMode = SelectedPassageMode?.Mode ?? PassagePracticeMode.Translation,
             ApiModel = ApiModel.Trim(),
             ApiKey = ApiKey.Trim(),

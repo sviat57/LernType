@@ -1,11 +1,78 @@
 using WortBruecke.App.ViewModels;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 
 namespace WortBruecke.Tests.ViewModels;
 
 public sealed class TextPracticeViewModelTests
 {
+    [Fact]
+    public async Task Preview_ShowsCompleteOrderedGermanAndToggledRussianWithoutRecordingAttempt()
+    {
+        var passage = new Passage(
+            42,
+            "preview",
+            Text(("ru-RU", "Предпросмотр"), ("de-DE", "Vorschau")),
+            PassageKind.Everyday,
+            "A1",
+            "audit",
+            [
+                new PassageSegment(422, 2, Text(("ru-RU", "Второй фрагмент."), ("de-DE", "Der zweite Abschnitt."))),
+                new PassageSegment(421, 1, Text(("ru-RU", "Первый фрагмент."), ("de-DE", "Der erste Abschnitt.")))
+            ]);
+        var progress = new RecordingProgressRepository();
+        var viewModel = new TextPracticeViewModel(
+            new PassageContentRepository(passage),
+            progress,
+            new NoOpKeyboardLayoutService());
+        await viewModel.InitializeAsync();
+
+        Assert.Equal($"Der erste Abschnitt.{Environment.NewLine}{Environment.NewLine}Der zweite Abschnitt.", viewModel.FullGermanText);
+        Assert.Equal($"Первый фрагмент.{Environment.NewLine}{Environment.NewLine}Второй фрагмент.", viewModel.FullRussianText);
+        Assert.False(viewModel.IsRussianPreviewVisible);
+        Assert.Equal("Показать русский перевод", viewModel.RussianPreviewToggleText);
+
+        viewModel.ToggleRussianPreviewCommand.Execute(null);
+
+        Assert.True(viewModel.IsRussianPreviewVisible);
+        Assert.Equal("Скрыть русский перевод", viewModel.RussianPreviewToggleText);
+        Assert.Empty(progress.Attempts);
+    }
+
+    [Fact]
+    public async Task LevelFilter_ProvidesReturnCommandOnlyForExplicitLevelContext()
+    {
+        var passage = new Passage(
+            43,
+            "level-return",
+            Text(("ru-RU", "Уровень"), ("de-DE", "Niveau")),
+            PassageKind.Everyday,
+            "A1",
+            "audit",
+            [new PassageSegment(431, 1, Text(("ru-RU", "Привет"), ("de-DE", "Hallo")))]);
+        var viewModel = new TextPracticeViewModel(
+            new PassageContentRepository(passage),
+            new RecordingProgressRepository(),
+            new NoOpKeyboardLayoutService());
+        await viewModel.InitializeAsync();
+        GermanLevel? returnedLevel = null;
+        viewModel.ReturnToLevelRequested += level => returnedLevel = level;
+
+        viewModel.ApplyLevelFilter("A1");
+
+        Assert.True(viewModel.HasLevelContext);
+        Assert.Equal("Вернуться к уровню A1", viewModel.ReturnToLevelText);
+        Assert.True(viewModel.ReturnToLevelCommand.CanExecute(null));
+        viewModel.ReturnToLevelCommand.Execute(null);
+        Assert.Equal(GermanLevel.A1, returnedLevel);
+
+        viewModel.ApplyLevelFilter(null);
+
+        Assert.False(viewModel.HasLevelContext);
+        Assert.False(viewModel.ReturnToLevelCommand.CanExecute(null));
+    }
+
     [Fact]
     public async Task RevisitingAndResubmittingSegment_DoesNotInflateCompletionScore()
     {

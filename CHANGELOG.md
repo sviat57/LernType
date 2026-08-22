@@ -2,6 +2,21 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.1.0] — 2026-08-22
+
+### Added
+
+- Dedicated study centre for every level from Pre-A1 through C2 with independent, level-scoped modules.
+- Safe Russian vocabulary aliases and one-edit typo tolerance with explicit learner feedback.
+- Twenty-eight original bilingual passages, bringing the offline catalog to five texts per level.
+
+### Changed
+
+- Word and sentence sessions remain in their selected practice unit until completion.
+- SQLite schema v3 stores localized accepted answers while preserving existing progress and books.
+- Schema upgrades now require a clean foreign-key check; legacy orphan book-word rows are retained
+  in the verified pre-upgrade backup and represented by metadata-only quarantine records.
+
 ## [1.0.0] — 2026-08-21
 
 ### Added

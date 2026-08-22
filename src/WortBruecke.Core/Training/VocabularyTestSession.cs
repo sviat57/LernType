@@ -91,7 +91,10 @@ public sealed class VocabularyTestSession
                 word.Translations[answerCulture],
                 promptCulture,
                 answerCulture,
-                word.Level));
+                word.Level)
+            {
+                AcceptedAnswers = word.AcceptedAnswers.For(answerCulture).ToArray()
+            });
         }
 
         return new VocabularyTestSession(
@@ -116,11 +119,20 @@ public sealed class VocabularyTestSession
         }
 
         var submittedAnswer = answer ?? string.Empty;
-        var evaluation = AnswerEvaluator.Evaluate(
-            submittedAnswer,
-            question.ExpectedAnswer,
-            question.AnswerCultureCode);
-        var result = new VocabularyTestQuestionResult(question, submittedAnswer, evaluation.IsCorrect);
+        var russianAnswer = question.AnswerCultureCode.StartsWith("ru", StringComparison.OrdinalIgnoreCase);
+        var evaluation = russianAnswer
+            ? AnswerEvaluator.Evaluate(
+                submittedAnswer,
+                question.ExpectedAnswer,
+                question.AcceptedAnswers,
+                question.AnswerCultureCode,
+                AnswerEvaluationMode.RussianVocabularyLenient)
+            : AnswerEvaluator.Evaluate(submittedAnswer, question.ExpectedAnswer, question.AnswerCultureCode);
+        var result = new VocabularyTestQuestionResult(question, submittedAnswer, evaluation.IsCorrect)
+        {
+            MatchKind = evaluation.MatchKind,
+            MatchedAnswer = evaluation.MatchedAnswer
+        };
         _answers.Add(questionNumber, result);
         return result;
     }

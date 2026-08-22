@@ -6,10 +6,16 @@
              AutomationProperties.Name="Грамматический пересказ">
     <Grid Margin="48,36,48,48">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="24" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ГРАММАТИЧЕСКИЙ ПЕРЕСКАЗ" />
-            <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Меняйте форму, сохраняя смысл" />
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ГРАММАТИЧЕСКИЙ ПЕРЕСКАЗ" />
+                <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Меняйте форму, сохраняя смысл" />
+            </StackPanel>
+            <Button Grid.Column="1" Margin="16,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource SecondaryButton}"
+                    Command="{Binding ReturnToLevelCommand}" Content="{Binding ReturnToLevelText}"
+                    Visibility="{Binding HasLevelContext, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Border MaxWidth="900" Padding="36" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">

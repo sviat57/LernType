@@ -18,7 +18,7 @@ public sealed class ContentImportTests : IDisposable
             {
               "revision": 1,
               "themes": [{ "id": 1, "key": "food", "iconKey": "food", "names": { "ru-RU": "Еда", "de-DE": "Essen" } }],
-              "words": [{ "id": 1, "themeId": 1, "imagePath": "Assets/Images/food/1.png", "level": "A1", "partOfSpeech": "noun", "translations": { "ru-RU": "яблоко", "de-DE": "der Apfel" }, "examples": {} }],
+              "words": [{ "id": 1, "themeId": 1, "imagePath": "Assets/Images/food/1.png", "level": "A1", "partOfSpeech": "noun", "translations": { "ru-RU": "яблоко", "de-DE": "der Apfel" }, "examples": {}, "acceptedAnswers": { "ru-RU": ["фрукт", "яблочко"] } }],
               "passages": [],
               "grammarTasks": []
             }
@@ -34,6 +34,8 @@ public sealed class ContentImportTests : IDisposable
         var word = Assert.Single(words);
         Assert.Equal("яблоко", word.Translations.For("ru-RU"));
         Assert.Equal("der Apfel", word.Translations.For("de-DE"));
+        Assert.Equal(["фрукт", "яблочко"], word.AcceptedAnswers.For("ru-RU"));
+        Assert.Empty(word.AcceptedAnswers.For("de-DE"));
     }
 
     [Fact]

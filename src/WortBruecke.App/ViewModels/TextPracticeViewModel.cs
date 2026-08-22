@@ -26,8 +26,9 @@ public sealed class TextPracticeViewModel : ObservableObject
     private bool _isCorrect;
     private bool _isComplete;
     private int _correctCount;
-    private bool _isSuggestedPractice;
+    private bool _isRussianPreviewVisible;
     private string? _activeLevel;
+    private GermanLevel? _returnLevel;
     private Guid _sessionId;
     private DateTimeOffset _attemptStartedAtUtc;
 
@@ -50,6 +51,8 @@ public sealed class TextPracticeViewModel : ObservableObject
         NextCommand = new RelayCommand(Next, () => ShowFeedback);
         PreviousCommand = new RelayCommand(Previous, () => IsPractising && _segmentIndex > 0 && !ShowFeedback);
         RestartCommand = new RelayCommand(Reset);
+        ToggleRussianPreviewCommand = new RelayCommand(ToggleRussianPreview, () => SelectedPassage is not null);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
     }
 
@@ -72,6 +75,8 @@ public sealed class TextPracticeViewModel : ObservableObject
         NextCommand = new RelayCommand(Next, () => ShowFeedback);
         PreviousCommand = new RelayCommand(Previous, () => IsPractising && _segmentIndex > 0 && !ShowFeedback);
         RestartCommand = new RelayCommand(Reset);
+        ToggleRussianPreviewCommand = new RelayCommand(ToggleRussianPreview, () => SelectedPassage is not null);
+        ReturnToLevelCommand = new RelayCommand(ReturnToLevel, () => _returnLevel is not null);
         InsertGermanCharacterCommand = new ParameterizedRelayCommand(InsertGermanCharacter, parameter => parameter is string);
     }
 
@@ -82,8 +87,10 @@ public sealed class TextPracticeViewModel : ObservableObject
     public RelayCommand NextCommand { get; }
     public RelayCommand PreviousCommand { get; }
     public RelayCommand RestartCommand { get; }
+    public RelayCommand ToggleRussianPreviewCommand { get; }
+    public RelayCommand ReturnToLevelCommand { get; }
     public ParameterizedRelayCommand InsertGermanCharacterCommand { get; }
-    public event EventHandler? SuggestedPracticeCompleted;
+    public event Action<GermanLevel>? ReturnToLevelRequested;
 
     public Passage? SelectedPassage
     {
@@ -92,9 +99,13 @@ public sealed class TextPracticeViewModel : ObservableObject
         {
             if (SetProperty(ref _selectedPassage, value))
             {
+                IsRussianPreviewVisible = false;
                 StartCommand.RaiseCanExecuteChanged();
+                ToggleRussianPreviewCommand.RaiseCanExecuteChanged();
                 OnPropertyChanged(nameof(SelectedPassageTitle));
                 OnPropertyChanged(nameof(SelectedPassageMeta));
+                OnPropertyChanged(nameof(FullGermanText));
+                OnPropertyChanged(nameof(FullRussianText));
             }
         }
     }
@@ -170,9 +181,27 @@ public sealed class TextPracticeViewModel : ObservableObject
     public bool IsSelectionVisible => !IsPractising && !IsComplete;
     public bool HasPassages => Passages.Count > 0;
     public bool HasNoPassages => !HasPassages;
-    public string FilterLabel => string.IsNullOrWhiteSpace(_activeLevel) ? "Все уровни" : $"Уровень {_activeLevel}";
+    public bool HasLevelContext => _returnLevel is not null;
+    public string ReturnToLevelText => _returnLevel is null
+        ? "Вернуться к уровню"
+        : $"Вернуться к уровню {LevelLabel(_returnLevel.Value)}";
+    public string FilterLabel => string.IsNullOrWhiteSpace(_activeLevel) ? "Все уровни" : $"Уровень {LevelLabel(_returnLevel)}";
     public string SelectedPassageTitle => SelectedPassage?.Titles.For(_pair.Source.CultureCode) ?? string.Empty;
-    public string SelectedPassageMeta => SelectedPassage is null ? string.Empty : $"{SelectedPassage.Level} · {KindLabel(SelectedPassage.Kind)} · {SelectedPassage.Segments.Count} фрагм.";
+    public string SelectedPassageMeta => SelectedPassage is null ? string.Empty : $"{LevelLabel(SelectedPassage.Level)} · {KindLabel(SelectedPassage.Kind)} · {SelectedPassage.Segments.Count} фрагм.";
+    public string FullGermanText => JoinPassageText(SelectedPassage, _pair.Target.CultureCode);
+    public string FullRussianText => JoinPassageText(SelectedPassage, _pair.Source.CultureCode);
+    public bool IsRussianPreviewVisible
+    {
+        get => _isRussianPreviewVisible;
+        private set
+        {
+            if (SetProperty(ref _isRussianPreviewVisible, value))
+            {
+                OnPropertyChanged(nameof(RussianPreviewToggleText));
+            }
+        }
+    }
+    public string RussianPreviewToggleText => IsRussianPreviewVisible ? "Скрыть русский перевод" : "Показать русский перевод";
     public string SourceLabel => SelectedMode?.Mode == PassagePracticeMode.Translation ? "РУССКИЙ ОРИГИНАЛ" : "НЕМЕЦКИЙ ОРИГИНАЛ";
     public string SourceText
     {
@@ -208,6 +237,7 @@ public sealed class TextPracticeViewModel : ObservableObject
     {
         Reset();
         _activeLevel = level;
+        _returnLevel = GermanLevelExtensions.TryParse(level ?? string.Empty, out var parsed) ? parsed : null;
         Passages.Clear();
         foreach (var passage in _allPassages.Where(passage => string.IsNullOrWhiteSpace(level) ||
                      string.Equals(passage.Level, level, StringComparison.OrdinalIgnoreCase)))
@@ -218,6 +248,9 @@ public sealed class TextPracticeViewModel : ObservableObject
         OnPropertyChanged(nameof(HasPassages));
         OnPropertyChanged(nameof(HasNoPassages));
         OnPropertyChanged(nameof(FilterLabel));
+        OnPropertyChanged(nameof(HasLevelContext));
+        OnPropertyChanged(nameof(ReturnToLevelText));
+        ReturnToLevelCommand.RaiseCanExecuteChanged();
     }
 
     public void ApplySettings(AppSettings settings)
@@ -225,29 +258,12 @@ public sealed class TextPracticeViewModel : ObservableObject
         SelectedMode = Modes.First(mode => mode.Mode == settings.PassageMode);
     }
 
-    public void StartSuggested()
-    {
-        ApplyLevelFilter(null);
-        if (Passages.Count == 0)
-        {
-            return;
-        }
-        SelectedPassage = Passages[Random.Shared.Next(Passages.Count)];
-        StartCore(true);
-    }
-
     private void Start()
-    {
-        StartCore(false);
-    }
-
-    private void StartCore(bool isSuggestedPractice)
     {
         if (SelectedPassage is null)
         {
             return;
         }
-        _isSuggestedPractice = isSuggestedPractice;
         _segmentIndex = 0;
         _correctCount = 0;
         _sessionId = Guid.NewGuid();
@@ -298,11 +314,6 @@ public sealed class TextPracticeViewModel : ObservableObject
             IsComplete = true;
             ShowFeedback = false;
             OnPropertyChanged(nameof(CompletionTitle));
-            if (_isSuggestedPractice)
-            {
-                _isSuggestedPractice = false;
-                SuggestedPracticeCompleted?.Invoke(this, EventArgs.Empty);
-            }
             return;
         }
         LoadSegment();
@@ -334,10 +345,10 @@ public sealed class TextPracticeViewModel : ObservableObject
 
     private void Reset()
     {
-        _isSuggestedPractice = false;
         IsComplete = false;
         IsPractising = false;
         ShowFeedback = false;
+        IsRussianPreviewVisible = false;
         Answer = string.Empty;
         _segmentResults.Clear();
         _correctCount = 0;
@@ -351,6 +362,34 @@ public sealed class TextPracticeViewModel : ObservableObject
             OnPropertyChanged(nameof(Answer));
         }
     }
+
+    private void ToggleRussianPreview()
+    {
+        if (SelectedPassage is not null)
+        {
+            IsRussianPreviewVisible = !IsRussianPreviewVisible;
+        }
+    }
+
+    private void ReturnToLevel()
+    {
+        if (_returnLevel is { } level)
+        {
+            ReturnToLevelRequested?.Invoke(level);
+        }
+    }
+
+    private static string JoinPassageText(Passage? passage, string cultureCode) => passage is null
+        ? string.Empty
+        : string.Join(Environment.NewLine + Environment.NewLine,
+            passage.Segments.OrderBy(segment => segment.Order).Select(segment => segment.Translations.For(cultureCode)));
+
+    private static string LevelLabel(GermanLevel? level) => level is null
+        ? string.Empty
+        : level == GermanLevel.A0 ? "Pre-A1" : level.ToString()!;
+
+    private static string LevelLabel(string level) =>
+        GermanLevelExtensions.TryParse(level, out var parsed) ? LevelLabel(parsed) : level;
 
     private static string KindLabel(PassageKind kind) => kind switch
     {
