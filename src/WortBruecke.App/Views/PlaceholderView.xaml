@@ -3,13 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid Margin="48">
         <Border MaxWidth="720" Padding="48" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource Panel}">
-            <StackPanel>
+        <StackPanel>
+            <Border Width="58" Height="58" Margin="0,0,0,20" HorizontalAlignment="Left" Style="{StaticResource IconTile}">
+                <Path Width="26" Height="26" Data="{StaticResource Icon.Spark}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.7" Stretch="Uniform" />
+            </Border>
                 <TextBlock HorizontalAlignment="Left" Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding StageLabel}" />
                 <TextBlock Margin="0,14,0,0" Style="{StaticResource PageTitle}" Text="{Binding Title}" />
                 <TextBlock Margin="0,14,0,0" Style="{StaticResource BodySecondary}" Text="{Binding Description}" />
-                <Border Margin="0,28,0,0" Padding="16" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Input}">
-                    <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" Text="Экран подключается следующим изолированным этапом сборки." />
-                </Border>
+            <Border Margin="0,28,0,0" Padding="16" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
+                <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Path Width="17" Height="17" Data="{StaticResource Icon.Info}" Stroke="{DynamicResource Brush.TextSecondary}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Grid.Column="1" Margin="10,0,0,0" Foreground="{DynamicResource Brush.TextSecondary}" Text="Экран подключается следующим изолированным этапом сборки." TextWrapping="Wrap" /></Grid>
+            </Border>
             </StackPanel>
         </Border>
     </Grid>

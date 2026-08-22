@@ -1,45 +1,58 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Warm-neutral light semantics. -->
-    <Color x:Key="Color.Canvas">#F1EDE6</Color>
-    <Color x:Key="Color.Surface">#A8FFFEFB</Color>
-    <Color x:Key="Color.Raised">#E6FFFEFB</Color>
-    <Color x:Key="Color.Sunken">#D9EAE4DA</Color>
-    <Color x:Key="Color.Inverse">#292822</Color>
-    <Color x:Key="Color.TextPrimary">#2C2A25</Color>
-    <Color x:Key="Color.TextSecondary">#6D685F</Color>
-    <Color x:Key="Color.TextTertiary">#918A7E</Color>
-    <Color x:Key="Color.BorderSubtle">#E6E0D6</Color>
-    <Color x:Key="Color.Border">#D8D1C6</Color>
-    <Color x:Key="Color.Accent">#B94E36</Color>
-    <Color x:Key="Color.AccentHover">#A43F2A</Color>
-    <Color x:Key="Color.AccentPressed">#8F3523</Color>
-    <Color x:Key="Color.AccentSoft">#F5DED7</Color>
-    <Color x:Key="Color.AccentText">#9C3826</Color>
-    <Color x:Key="Color.OnAccent">#FFF9F4</Color>
-    <Color x:Key="Color.Success">#2F7254</Color>
-    <Color x:Key="Color.SuccessSoft">#DDEEE5</Color>
-    <Color x:Key="Color.Warning">#9A641C</Color>
-    <Color x:Key="Color.WarningSoft">#F6E9CD</Color>
-    <Color x:Key="Color.Error">#A83A3A</Color>
-    <Color x:Key="Color.ErrorSoft">#F6DFDD</Color>
-    <Color x:Key="Color.Info">#516778</Color>
-    <Color x:Key="Color.InfoSoft">#E1E9EE</Color>
-    <Color x:Key="Color.BackdropStart">#EAF7F2EB</Color>
-    <Color x:Key="Color.BackdropMiddle">#EAF2EEE8</Color>
-    <Color x:Key="Color.BackdropEnd">#EAE8EEF0</Color>
-    <Color x:Key="Color.GlassSubtle">#80FFFEFB</Color>
-    <Color x:Key="Color.GlassStandardTop">#CCFFFFFF</Color>
-    <Color x:Key="Color.GlassStandardBottom">#A8F8F4ED</Color>
-    <Color x:Key="Color.GlassStrongTop">#F2FFFFFF</Color>
-    <Color x:Key="Color.GlassStrongBottom">#DDFBF8F2</Color>
-    <Color x:Key="Color.GlassInset">#D9EAE4DA</Color>
-    <Color x:Key="Color.GlassControl">#F2FFFEFB</Color>
-    <Color x:Key="Color.GlassStrokeStart">#E6FFFFFF</Color>
-    <Color x:Key="Color.GlassStrokeEnd">#4778685C</Color>
-    <Color x:Key="Color.AuraAccent">#36B94E36</Color>
-    <Color x:Key="Color.AuraSecondary">#285C7484</Color>
-    <Color x:Key="Color.Shadow">#5A3B302B</Color>
+    <!-- Warm quartz, paper and terracotta: intentionally authored light mode. -->
+    <Color x:Key="Color.Canvas">#F3EFE8</Color>
+    <Color x:Key="Color.Surface">#B8FFFCF8</Color>
+    <Color x:Key="Color.Raised">#E8FFFCF8</Color>
+    <Color x:Key="Color.Sunken">#E8E7E0D6</Color>
+    <Color x:Key="Color.Inverse">#292620</Color>
+    <Color x:Key="Color.TextPrimary">#292620</Color>
+    <Color x:Key="Color.TextSecondary">#675F55</Color>
+    <Color x:Key="Color.TextTertiary">#72695F</Color>
+    <Color x:Key="Color.BorderSubtle">#A8D9D1C5</Color>
+    <Color x:Key="Color.Border">#C7BFB3</Color>
+    <Color x:Key="Color.BorderStrong">#9D9184</Color>
+
+    <Color x:Key="Color.Accent">#B75A43</Color>
+    <Color x:Key="Color.AccentHover">#A94C36</Color>
+    <Color x:Key="Color.AccentPressed">#913C29</Color>
+    <Color x:Key="Color.AccentSoft">#F2DDD6</Color>
+    <Color x:Key="Color.AccentText">#963E2C</Color>
+    <Color x:Key="Color.OnAccent">#FFFFFF</Color>
+    <Color x:Key="Color.FocusHalo">#4DB75A43</Color>
+
+    <Color x:Key="Color.Success">#356E52</Color>
+    <Color x:Key="Color.SuccessSoft">#DFEDE4</Color>
+    <Color x:Key="Color.Warning">#925E1B</Color>
+    <Color x:Key="Color.WarningSoft">#F5E8CD</Color>
+    <Color x:Key="Color.Error">#A7443F</Color>
+    <Color x:Key="Color.ErrorHover">#913631</Color>
+    <Color x:Key="Color.ErrorSoft">#F4DEDC</Color>
+    <Color x:Key="Color.Info">#526B77</Color>
+    <Color x:Key="Color.InfoSoft">#E0E9EC</Color>
+
+    <Color x:Key="Color.BackdropStart">#F0F7F3EC</Color>
+    <Color x:Key="Color.BackdropMiddle">#F0EEEAE3</Color>
+    <Color x:Key="Color.BackdropEnd">#F0E8E2DB</Color>
+    <Color x:Key="Color.GlassSubtle">#82FFFEFB</Color>
+    <Color x:Key="Color.GlassStandardTop">#ECFFFFFF</Color>
+    <Color x:Key="Color.GlassStandardMiddle">#CEFDF9F3</Color>
+    <Color x:Key="Color.GlassStandardBottom">#ADF3EEE6</Color>
+    <Color x:Key="Color.GlassStrongTop">#FAFFFFFF</Color>
+    <Color x:Key="Color.GlassStrongBottom">#E9FAF6F0</Color>
+    <Color x:Key="Color.GlassInset">#E5E9E2D8</Color>
+    <Color x:Key="Color.GlassControl">#F5FFFEFC</Color>
+    <Color x:Key="Color.ControlHover">#FCFFFFFF</Color>
+    <Color x:Key="Color.ControlPressed">#EEE8DFD4</Color>
+    <Color x:Key="Color.GlassStrokeStart">#FAFFFFFF</Color>
+    <Color x:Key="Color.GlassStrokeEnd">#709D9184</Color>
+    <Color x:Key="Color.Divider">#76C8BFB3</Color>
+    <Color x:Key="Color.Disabled">#A8D3CBC0</Color>
+    <Color x:Key="Color.Tooltip">#F2292521</Color>
+    <Color x:Key="Color.OnTooltip">#FFF9F2</Color>
+    <Color x:Key="Color.AuraAccent">#30B75A43</Color>
+    <Color x:Key="Color.AuraSecondary">#26A89C8E</Color>
+    <Color x:Key="Color.Shadow">#5A3C3028</Color>
 
     <SolidColorBrush x:Key="Brush.Canvas" Color="{DynamicResource Color.Canvas}" />
     <SolidColorBrush x:Key="Brush.Surface" Color="{DynamicResource Color.Surface}" />
@@ -51,28 +64,39 @@
     <SolidColorBrush x:Key="Brush.TextTertiary" Color="{DynamicResource Color.TextTertiary}" />
     <SolidColorBrush x:Key="Brush.BorderSubtle" Color="{DynamicResource Color.BorderSubtle}" />
     <SolidColorBrush x:Key="Brush.Border" Color="{DynamicResource Color.Border}" />
+    <SolidColorBrush x:Key="Brush.BorderStrong" Color="{DynamicResource Color.BorderStrong}" />
     <SolidColorBrush x:Key="Brush.Accent" Color="{DynamicResource Color.Accent}" />
     <SolidColorBrush x:Key="Brush.AccentHover" Color="{DynamicResource Color.AccentHover}" />
     <SolidColorBrush x:Key="Brush.AccentPressed" Color="{DynamicResource Color.AccentPressed}" />
     <SolidColorBrush x:Key="Brush.AccentSoft" Color="{DynamicResource Color.AccentSoft}" />
     <SolidColorBrush x:Key="Brush.AccentText" Color="{DynamicResource Color.AccentText}" />
     <SolidColorBrush x:Key="Brush.OnAccent" Color="{DynamicResource Color.OnAccent}" />
+    <SolidColorBrush x:Key="Brush.FocusHalo" Color="{DynamicResource Color.FocusHalo}" />
     <SolidColorBrush x:Key="Brush.Success" Color="{DynamicResource Color.Success}" />
     <SolidColorBrush x:Key="Brush.SuccessSoft" Color="{DynamicResource Color.SuccessSoft}" />
     <SolidColorBrush x:Key="Brush.Warning" Color="{DynamicResource Color.Warning}" />
     <SolidColorBrush x:Key="Brush.WarningSoft" Color="{DynamicResource Color.WarningSoft}" />
     <SolidColorBrush x:Key="Brush.Error" Color="{DynamicResource Color.Error}" />
+    <SolidColorBrush x:Key="Brush.ErrorHover" Color="{DynamicResource Color.ErrorHover}" />
     <SolidColorBrush x:Key="Brush.ErrorSoft" Color="{DynamicResource Color.ErrorSoft}" />
     <SolidColorBrush x:Key="Brush.Info" Color="{DynamicResource Color.Info}" />
     <SolidColorBrush x:Key="Brush.InfoSoft" Color="{DynamicResource Color.InfoSoft}" />
+    <SolidColorBrush x:Key="Brush.ControlHover" Color="{DynamicResource Color.ControlHover}" />
+    <SolidColorBrush x:Key="Brush.ControlPressed" Color="{DynamicResource Color.ControlPressed}" />
+    <SolidColorBrush x:Key="Brush.Divider" Color="{DynamicResource Color.Divider}" />
+    <SolidColorBrush x:Key="Brush.Disabled" Color="{DynamicResource Color.Disabled}" />
+    <SolidColorBrush x:Key="Brush.Tooltip" Color="{DynamicResource Color.Tooltip}" />
+    <SolidColorBrush x:Key="Brush.OnTooltip" Color="{DynamicResource Color.OnTooltip}" />
+
     <LinearGradientBrush x:Key="Brush.AppBackdrop" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0" Color="{DynamicResource Color.BackdropStart}" />
-        <GradientStop Offset="0.48" Color="{DynamicResource Color.BackdropMiddle}" />
+        <GradientStop Offset="0.52" Color="{DynamicResource Color.BackdropMiddle}" />
         <GradientStop Offset="1" Color="{DynamicResource Color.BackdropEnd}" />
     </LinearGradientBrush>
     <SolidColorBrush x:Key="Brush.GlassSubtle" Color="{DynamicResource Color.GlassSubtle}" />
     <LinearGradientBrush x:Key="Brush.GlassStandard" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0" Color="{DynamicResource Color.GlassStandardTop}" />
+        <GradientStop Offset="0.42" Color="{DynamicResource Color.GlassStandardMiddle}" />
         <GradientStop Offset="1" Color="{DynamicResource Color.GlassStandardBottom}" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="Brush.GlassStrong" StartPoint="0,0" EndPoint="1,1">
@@ -87,10 +111,10 @@
     </LinearGradientBrush>
     <RadialGradientBrush x:Key="Brush.AuraAccent" RadiusX="0.5" RadiusY="0.5">
         <GradientStop Offset="0" Color="{DynamicResource Color.AuraAccent}" />
-        <GradientStop Offset="1" Color="#00B94E36" />
+        <GradientStop Offset="1" Color="#00B75A43" />
     </RadialGradientBrush>
     <RadialGradientBrush x:Key="Brush.AuraSecondary" RadiusX="0.5" RadiusY="0.5">
         <GradientStop Offset="0" Color="{DynamicResource Color.AuraSecondary}" />
-        <GradientStop Offset="1" Color="#005C7484" />
+        <GradientStop Offset="1" Color="#00A89C8E" />
     </RadialGradientBrush>
 </ResourceDictionary>

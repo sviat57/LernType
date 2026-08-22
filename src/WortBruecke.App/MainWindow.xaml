@@ -7,6 +7,27 @@
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True" SnapsToDevicePixels="True"
         AutomationProperties.Name="LernType — путь немецкого языка от Pre-A1 до C2">
+    <Window.Resources>
+        <Style x:Key="ShellNavIconFrame" TargetType="Border">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.GlassStrong}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Brush.GlassStroke}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid x:Name="RootSurface" ClipToBounds="True">
         <Grid.Style>
             <Style TargetType="Grid">
@@ -30,8 +51,8 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <Ellipse Width="720" Height="720" Margin="90,-430,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="{DynamicResource Brush.AuraAccent}" />
-            <Ellipse Width="760" Height="760" Margin="0,0,-310,-450" HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="{DynamicResource Brush.AuraSecondary}" />
+            <Ellipse Width="620" Height="620" Margin="180,-470,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="{DynamicResource Brush.AuraAccent}" />
+            <Ellipse Width="680" Height="680" Margin="0,0,-430,-500" HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="{DynamicResource Brush.AuraSecondary}" />
         </Grid>
 
         <Grid Panel.ZIndex="1">
@@ -40,110 +61,141 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Style="{StaticResource GlassNavigation}" BorderThickness="0,0,1,0">
-            <Grid Margin="18,24,18,20">
+            <Border Grid.Column="0" Margin="12,10,6,12" Style="{StaticResource GlassNavigation}"
+                    CornerRadius="26" BorderThickness="1" Effect="{DynamicResource Elevation.Raised}">
+                <Grid Margin="10,16,10,14">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="6,0,6,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="42" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="42" Height="42" HorizontalAlignment="Left" Background="{DynamicResource Brush.Accent}"
+                                BorderBrush="{DynamicResource Brush.GlassStroke}" BorderThickness="1" CornerRadius="13">
+                            <Path Width="23" Height="23" Data="{StaticResource Icon.Route}" Stroke="{DynamicResource Brush.OnAccent}"
+                                  StrokeThickness="1.9" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="11,1,0,0" VerticalAlignment="Center"
+                                    Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}">
+                            <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="20" FontWeight="SemiBold" Text="LernType" />
+                            <TextBlock Margin="0,1,0,0" Style="{StaticResource MetaText}" Text="DEUTSCH · OFFLINE" />
+                        </StackPanel>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
+                        <ItemsControl ItemsSource="{Binding NavigationItems}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Margin="0,0,0,5" Padding="7,6" Style="{StaticResource NavButton}"
+                                            Command="{Binding Command}" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Title}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="36" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                            <Border Style="{StaticResource ShellNavIconFrame}">
+                                                <Path Width="18" Height="18" Data="{Binding Icon}"
+                                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                                      Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                                      StrokeThickness="0.42" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
+                                            </Border>
+                                            <TextBlock Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center"
+                                                       Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                                       FontSize="13" FontWeight="SemiBold" Text="{Binding Title}"
+                                                       Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}" />
+                                            <Ellipse Grid.Column="2" Width="5" Height="5" Margin="4,0,1,0" Fill="{DynamicResource Brush.Accent}"
+                                                     Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="3" Padding="14,12" Style="{StaticResource GlassInset}" CornerRadius="14"
+                            Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                            <Border Width="32" Height="32" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="10">
+                                <Path Width="15" Height="15" Data="{StaticResource Icon.Check}" Stroke="{DynamicResource Brush.Success}"
+                                      StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="Uniform" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,6,0" VerticalAlignment="Center">
+                                <TextBlock FontSize="12" FontWeight="SemiBold" Text="RU → DE" />
+                                <TextBlock Margin="0,1,0,0" FontSize="11" Foreground="{DynamicResource Brush.TextTertiary}" Text="Локальная база" />
+                            </StackPanel>
+                            <Ellipse Grid.Column="2" Width="7" Height="7" Fill="{DynamicResource Brush.Success}" VerticalAlignment="Center" ToolTip="Локальная база готова" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="66" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="36" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Margin="8,0,0,0">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Width="34" Height="34" Background="{DynamicResource Brush.Accent}" CornerRadius="10">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Brush.OnAccent}" FontFamily="{DynamicResource Font.Display}" FontSize="18" FontWeight="Bold" Text="L" />
-                        </Border>
-                            <TextBlock Margin="10,2,0,0" VerticalAlignment="Center" FontFamily="{DynamicResource Font.Display}" FontSize="21" FontWeight="SemiBold" Text="LernType"
-                                       Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}" />
-                    </StackPanel>
-                    <TextBlock Margin="44,2,0,0" Style="{StaticResource MetaText}" Text="DEUTSCH ÜBEN"
-                               Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}" />
-                </StackPanel>
-
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PanningMode="VerticalOnly">
-                    <ItemsControl ItemsSource="{Binding NavigationItems}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Margin="0,0,0,4" Style="{StaticResource NavButton}" Command="{Binding Command}" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Title}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                        <Path Width="19" Height="19" HorizontalAlignment="Left" VerticalAlignment="Center" Data="{Binding Icon}"
-                                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
-                                              Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
-                                              StrokeThickness="0.45" Stretch="Uniform" />
-                                        <TextBlock Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"
-                                                   Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
-                                                   FontWeight="SemiBold" Text="{Binding Title}"
-                                                   Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}" />
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <Border Grid.Row="3" Padding="13" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}"
-                        Visibility="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=1060}">
-                    <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource MetaText}" Text="ЯЗЫКОВАЯ ПАРА" />
-                            <TextBlock Margin="0,5,0,0" FontSize="14" FontWeight="SemiBold" Text="Русский → Deutsch" />
+                <Border Margin="6,10,12,0" Style="{StaticResource GlassToolbar}" CornerRadius="18" BorderThickness="1">
+                    <Grid Margin="20,0,16,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="4" Height="22" Margin="0,0,12,0" VerticalAlignment="Center" Background="{DynamicResource Brush.Accent}" CornerRadius="2" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource MetaText}" Text="РАЗДЕЛ" />
+                            <TextBlock Margin="0,2,0,0" FontFamily="{DynamicResource Font.Display}" FontSize="15" FontWeight="SemiBold" Text="{Binding CurrentTitle}" />
                         </StackPanel>
-                        <Border Grid.Column="1" Width="8" Height="8" Background="{DynamicResource Brush.Success}" CornerRadius="4" VerticalAlignment="Center" ToolTip="Локальная база готова" />
-                    </Grid>
-                </Border>
-            </Grid>
-        </Border>
-
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="56" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Border Style="{StaticResource GlassToolbar}" BorderThickness="0,0,0,1">
-                <Grid Margin="34,0">
-                    <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="14" Text="{Binding CurrentTitle}" />
-                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Border Padding="9,5" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Pill}">
+                        <Border Grid.Column="2" Padding="11,7" Style="{StaticResource GlassInset}" CornerRadius="999">
                             <StackPanel Orientation="Horizontal">
-                                <Border Width="7" Height="7" Margin="0,0,7,0" VerticalAlignment="Center" Background="{DynamicResource Brush.Success}" CornerRadius="4" />
-                                <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding ReadinessLabel}" />
+                                <Border Width="18" Height="18" Margin="0,0,7,0" VerticalAlignment="Center" Background="{DynamicResource Brush.SuccessSoft}" CornerRadius="9">
+                                    <Path Width="10" Height="10" Data="{StaticResource Icon.Check}" Stroke="{DynamicResource Brush.Success}" StrokeThickness="2" Stretch="Uniform" />
+                                </Border>
+                                <TextBlock FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" VerticalAlignment="Center" Text="{Binding ReadinessLabel}" />
                             </StackPanel>
                         </Border>
-                    </StackPanel>
-                    <ProgressBar Height="2" VerticalAlignment="Bottom" IsIndeterminate="True" BorderThickness="0"
-                                 Foreground="{DynamicResource Brush.Accent}" Background="Transparent"
-                                 Visibility="{Binding IsShellBusy, Converter={StaticResource BoolToVisibility}}"
-                                 AutomationProperties.Name="Загрузка раздела" />
-                </Grid>
-            </Border>
-            <Border Grid.Row="1" Margin="24,14,24,0" Padding="16,13" Style="{StaticResource GlassInset}"
-                    BorderBrush="{DynamicResource Brush.Error}" CornerRadius="{DynamicResource Radius.Card}"
-                    Visibility="{Binding HasShellError, Converter={StaticResource BoolToVisibility}}"
-                    AutomationProperties.LiveSetting="Assertive" AutomationProperties.Name="Ошибка приложения">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock FontWeight="SemiBold" Text="{Binding ShellErrorMessage}" />
-                        <TextBlock Margin="0,3,0,0" Style="{StaticResource MetaText}" Text="{Binding ShellTechnicalCode, StringFormat=Код: {0}}" />
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" Margin="18,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button MinWidth="104" Style="{StaticResource SecondaryButton}" Command="{Binding RetryCommand}" Content="Повторить" />
-                        <Button Margin="8,0,0,0" MinWidth="92" Style="{StaticResource SecondaryButton}" Command="{Binding DismissErrorCommand}" Content="Закрыть" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-            <ContentControl Grid.Row="2" Content="{Binding CurrentViewModel}" />
-        </Grid>
+                        <ProgressBar Grid.ColumnSpan="3" Height="2" VerticalAlignment="Bottom" IsIndeterminate="True" BorderThickness="0"
+                                     Foreground="{DynamicResource Brush.Accent}" Background="Transparent"
+                                     Visibility="{Binding IsShellBusy, Converter={StaticResource BoolToVisibility}}"
+                                     AutomationProperties.Name="Загрузка раздела" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Margin="6,12,12,0" Padding="18,14" Style="{StaticResource GlassInset}"
+                        Background="{DynamicResource Brush.ErrorSoft}" BorderBrush="{DynamicResource Brush.Error}" CornerRadius="16"
+                        Visibility="{Binding HasShellError, Converter={StaticResource BoolToVisibility}}"
+                        AutomationProperties.LiveSetting="Assertive" AutomationProperties.Name="Ошибка приложения">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="36" Height="36" Background="{DynamicResource Brush.GlassStrong}" CornerRadius="11">
+                            <Path Width="16" Height="16" Data="{StaticResource Icon.Close}" Stroke="{DynamicResource Brush.Error}" StrokeThickness="2" Stretch="Uniform" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="12,0,18,0" VerticalAlignment="Center">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding ShellErrorMessage}" />
+                            <TextBlock Margin="0,3,0,0" Style="{StaticResource MetaText}" Text="{Binding ShellTechnicalCode, StringFormat=Код: {0}}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button MinWidth="104" Style="{StaticResource SecondaryButton}" Command="{Binding RetryCommand}" Content="Повторить" />
+                            <Button Margin="8,0,0,0" MinWidth="92" Style="{StaticResource SecondaryButton}" Command="{Binding DismissErrorCommand}" Content="Закрыть" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <ContentControl Grid.Row="2" Content="{Binding CurrentViewModel}" />
+            </Grid>
         </Grid>
     </Grid>
 </Window>

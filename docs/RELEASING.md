@@ -14,7 +14,7 @@ Keep PFX files and passwords outside the repository. `.gitignore` excludes commo
 
 ## 1. Version and source gate
 
-Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.1.0` maps to MSIX `1.1.0.0`.
+Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.2.0` maps to MSIX `1.2.0.0`.
 
 ```powershell
 $dotnet = 'dotnet'
@@ -38,7 +38,7 @@ Audit every direct and transitive NuGet package and generate the production depe
 & $dotnet CycloneDX src/WortBruecke.App/WortBruecke.App.csproj `
   --exclude-dev --disable-package-restore `
   --output artifacts/sbom --filename LernType.cdx.json --output-format Json `
-  --set-name LernType --set-version 1.1.0 --set-type Application
+  --set-name LernType --set-version 1.2.0 --set-type Application
 ```
 
 Review the dependency diff on the pull request and confirm the license/provenance metadata in the CycloneDX file. CI rejects missing component-license metadata, known vulnerabilities at `low` severity or above, and GPL/AGPL/SSPL additions in dependency diffs.
@@ -85,11 +85,11 @@ rollback/path-safety suite must pass before release):
 
 ```powershell
 foreach ($rid in 'win-x64', 'win-arm64') {
-    $zip = "artifacts/LernType-1.1.0-$rid.zip"
+    $zip = "artifacts/LernType-1.2.0-$rid.zip"
     ./tools/New-ReleaseArchive.ps1 `
       -PublishDirectory "artifacts/publish/$rid" `
       -OutputPath $zip `
-      -RootFolder "LernType-1.1.0-$rid" `
+      -RootFolder "LernType-1.2.0-$rid" `
       -Confirm:$false
 }
 ```
@@ -101,7 +101,7 @@ First validate the package layout. The `-unsigned` filename is deliberate and mu
 ```powershell
 ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.1.0.0 -AllowUnsigned
+  -Architecture x64 -Version 1.2.0.0 -AllowUnsigned
 ```
 
 Build a distributable package only with the release certificate:
@@ -110,14 +110,14 @@ Build a distributable package only with the release certificate:
 $password = Read-Host 'PFX password' -AsSecureString
 $x64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.1.0.0 `
+  -Architecture x64 -Version 1.2.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
   -TimestampUri 'https://timestamp.example.org'
 $arm64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-arm64 `
-  -Architecture arm64 -Version 1.1.0.0 `
+  -Architecture arm64 -Version 1.2.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
@@ -130,11 +130,11 @@ Generate App Installer descriptors only after the signed MSIX files are uploaded
 
 ```powershell
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.1.0' `
-  -Architecture x64 -Version 1.1.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.2.0' `
+  -Architecture x64 -Version 1.2.0.0
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.1.0' `
-  -Architecture arm64 -Version 1.1.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.2.0' `
+  -Architecture arm64 -Version 1.2.0.0
 ```
 
 The HTTPS host must serve `.msix` and `.appinstaller` with the correct MIME types and an intact certificate chain.
@@ -174,14 +174,14 @@ volume as the active database.
 ```powershell
 $dataRoot = Join-Path $env:LOCALAPPDATA 'LernType'
 $schemaV2Backup = 'C:\ABSOLUTE\VERIFIED\schema-v2-....db'
-$currentV11Runtime = 'C:\ABSOLUTE\LernType-1.1.0-win-x64'
+$currentV12Runtime = 'C:\ABSOLUTE\LernType-1.2.0-win-x64'
 $recoveryRoot = Join-Path $dataRoot 'Backups\data-rollback'
 New-Item -ItemType Directory -Path $recoveryRoot -Force | Out-Null
 
 ./tools/Invoke-LernTypeDataRollback.ps1 `
   -CurrentDatabase (Join-Path $dataRoot 'lerntype.db') `
   -SchemaV2Backup $schemaV2Backup `
-  -RuntimeDirectory $currentV11Runtime `
+  -RuntimeDirectory $currentV12Runtime `
   -RecoveryRoot $recoveryRoot `
   -ExpectedContentRevision 4 `
   -Confirm:$false

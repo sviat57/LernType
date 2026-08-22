@@ -3,19 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Loaded="OnLoaded"
              AutomationProperties.Name="Настройки LernType">
-    <Grid Margin="48,36,48,48">
+    <Grid Margin="44,32,44,44">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="24" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ПАРАМЕТРЫ" />
-            <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Настройки практики" />
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Border Width="48" Height="48" Style="{StaticResource IconTile}" AutomationProperties.Name="Иконка настроек">
+                <Path Width="22" Height="22" Data="{StaticResource Icon.Settings}" Fill="{DynamicResource Brush.AccentText}" Stretch="Uniform" />
+            </Border>
+            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ПАРАМЕТРЫ" />
+                <TextBlock Margin="0,5,0,0" Style="{StaticResource PageTitle}" Text="Настройки практики" />
+            </StackPanel>
+        </Grid>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Border MaxWidth="880" Padding="38" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
+            <Border MaxWidth="940" Padding="36,34,36,38" HorizontalAlignment="Stretch" Style="{StaticResource Panel}">
                 <StackPanel>
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel>
+                            <Border Width="38" Height="38" HorizontalAlignment="Left" Margin="0,0,0,12" Style="{StaticResource IconTile}">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Language}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" />
+                            </Border>
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Языки и упражнения" />
                             <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Пара v1 фиксирована, остальные параметры применяются ко всем новым сессиям." />
                         </StackPanel>
@@ -29,11 +38,21 @@
 
                             <TextBlock Margin="0,20,0,8" FontWeight="SemiBold" Text="Режим текста по умолчанию" />
                             <ListBox Style="{StaticResource DifficultyList}" ItemsSource="{Binding PassageModes}" SelectedItem="{Binding SelectedPassageMode}" AutomationProperties.Name="Режим текста по умолчанию">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource ChoiceListItem}">
+                                        <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
                                             <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
-                                            <TextBlock HorizontalAlignment="Right" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding Description}" />
+                                            <TextBlock Grid.Column="1" Margin="12,0,0,0" HorizontalAlignment="Right"
+                                                       Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding Description}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -41,11 +60,14 @@
                         </StackPanel>
                     </Grid>
 
-                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+                    <Border Margin="0,30" Style="{StaticResource SectionDivider}" />
 
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel>
+                            <Border Width="38" Height="38" HorizontalAlignment="Left" Margin="0,0,0,12" Style="{StaticResource IconTile}">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Keyboard}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" />
+                            </Border>
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Раскладки Windows" />
                             <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Обе должны быть установлены для автоматических переходов." />
                         </StackPanel>
@@ -59,7 +81,7 @@
                                                 <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
                                                 <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextSecondary}" Text="{Binding CultureCode}" />
                                             </StackPanel>
-                                            <Border Grid.Column="1" Padding="10,5" Background="{DynamicResource Brush.Sunken}" CornerRadius="{DynamicResource Radius.Pill}">
+                                            <Border Grid.Column="1" Style="{StaticResource StatusPill}">
                                                 <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{Binding IsInstalled, Converter={StaticResource StatusBrushConverter}}" Text="{Binding Status}" />
                                             </Border>
                                         </Grid>
@@ -67,28 +89,38 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                             <Grid Margin="0,6,0,0">
-                                <Button Width="170" HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshLayoutsCommand}" Content="Проверить снова" />
-                                <Button Width="220" HorizontalAlignment="Right" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWindowsSettingsCommand}" Content="Настройки языка Windows" />
+                                <Button Width="178" HorizontalAlignment="Left" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshLayoutsCommand}">
+                                    <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Refresh}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Проверить снова" /></StackPanel>
+                                </Button>
+                                <Button Width="226" HorizontalAlignment="Right" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWindowsSettingsCommand}">
+                                    <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Language}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Языки Windows" /></StackPanel>
+                                </Button>
                             </Grid>
                         </StackPanel>
                     </Grid>
 
-                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+                    <Border Margin="0,30" Style="{StaticResource SectionDivider}" />
 
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel>
+                            <Border Width="38" Height="38" HorizontalAlignment="Left" Margin="0,0,0,12" Style="{StaticResource IconTile}">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Theme}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" />
+                            </Border>
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="Внешний вид" />
                             <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Тёмная тема снижает яркость, но сохраняет тёплый нейтральный тон." />
                         </StackPanel>
-                        <CheckBox Grid.Column="1" Padding="0,8" VerticalAlignment="Top" FontSize="15" IsChecked="{Binding UseDarkTheme}" Content="Использовать тёмную тему" AutomationProperties.Name="Использовать тёмную тему" />
+                        <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitch}" VerticalAlignment="Top" FontSize="15" IsChecked="{Binding UseDarkTheme}" Content="Использовать тёмную тему" AutomationProperties.Name="Использовать тёмную тему" />
                     </Grid>
 
-                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+                    <Border Margin="0,30" Style="{StaticResource SectionDivider}" />
 
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel>
+                            <Border Width="38" Height="38" HorizontalAlignment="Left" Margin="0,0,0,12" Style="{StaticResource IconTile}">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Shield}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" />
+                            </Border>
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="TELC и LLM" />
                             <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Ключ хранится локально и шифруется Windows DPAPI для текущего пользователя." />
                         </StackPanel>
@@ -98,11 +130,11 @@
                             <Label Margin="0,18,0,0" Padding="0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="13" Content="API-ключ" Target="{Binding ElementName=ApiKeyBox}" />
                             <PasswordBox x:Name="ApiKeyBox" Margin="0,6,0,0" MaxLength="512" PasswordChanged="OnPasswordChanged" AutomationProperties.Name="API-ключ OpenAI" />
                             <TextBlock Margin="0,7,0,0" FontSize="12" Foreground="{DynamicResource Brush.TextTertiary}" Text="Ключ не записывается в appsettings.json и не попадает в Git." />
-                            <Border Margin="0,18,0,0" Padding="14" Background="{DynamicResource Brush.InfoSoft}" CornerRadius="{DynamicResource Radius.Input}">
+                            <Border Margin="0,18,0,0" Padding="16" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
                                 <StackPanel>
-                                    <CheckBox IsChecked="{Binding AllowOnlineLanguageAnalysis}" FontWeight="SemiBold"
+                                    <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding AllowOnlineLanguageAnalysis}" FontWeight="SemiBold"
                                               Content="Разрешить отправку текста на онлайн-анализ" AutomationProperties.Name="Разрешить онлайн-анализ" />
-                                    <TextBlock Margin="24,7,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" LineHeight="18" TextWrapping="Wrap"
+                                    <TextBlock Margin="0,12,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" LineHeight="18" TextWrapping="Wrap"
                                                Text="Только при запуске TELC/LLM-проверки введённый немецкий текст отправляется в OpenAI. Книги, локальные упражнения и прогресс не отправляются. Запросы создаются с store=false; согласие можно отозвать здесь." />
                                 </StackPanel>
                             </Border>
@@ -112,14 +144,17 @@
                     <Grid Margin="0,32,0,0">
                         <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource Brush.Success}" Text="{Binding SaveStatus}" AutomationProperties.LiveSetting="Polite" />
                         <Button Width="220" HorizontalAlignment="Right" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" AutomationProperties.Name="Сохранить настройки">
-                            <TextBlock Style="{StaticResource ButtonContentText}" Text="Сохранить настройки" />
+                            <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Check}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="2" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Сохранить настройки" /></StackPanel>
                         </Button>
                     </Grid>
 
-                    <Border Height="1" Margin="0,30" Background="{DynamicResource Brush.BorderSubtle}" />
+                    <Border Margin="0,30" Style="{StaticResource SectionDivider}" />
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
                         <StackPanel>
+                            <Border Width="38" Height="38" HorizontalAlignment="Left" Margin="0,0,0,12" Style="{StaticResource IconTile}">
+                                <Path Width="18" Height="18" Data="{StaticResource Icon.Info}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" />
+                            </Border>
                             <TextBlock Style="{StaticResource SectionTitle}" FontSize="19" Text="О приложении" />
                             <TextBlock Margin="0,7,20,0" Style="{StaticResource BodySecondary}" FontSize="13" Text="Версия и локальный жизненный цикл данных." />
                         </StackPanel>

@@ -10,14 +10,17 @@
         </Grid.RowDefinitions>
 
         <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <Border Width="48" Height="48" Style="{StaticResource IconTile}">
+                <Path Width="23" Height="23" Data="{StaticResource Icon.Exam}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.7" Stretch="Uniform" />
+            </Border>
+            <StackPanel Grid.Column="1" Margin="16,0,24,0" MaxWidth="700" HorizontalAlignment="Left">
                 <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="ЭКЗАМЕНАЦИОННЫЙ ЦЕНТР" />
-                <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Формат, секции и готовность" />
-                <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="14"
+                <TextBlock Margin="0,5,0,0" Style="{StaticResource PageTitle}" Text="Формат, секции и готовность" />
+                <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" FontSize="14"
                            Text="Сравните Goethe, telc, TestDaF и DTZ. Для каждого формата показаны только проверенные факты и ваши подтверждённые результаты по навыкам." />
             </StackPanel>
-            <Border Grid.Column="1" Padding="12,7" VerticalAlignment="Top" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Pill}">
+            <Border Grid.Column="2" VerticalAlignment="Top" Style="{StaticResource StatusPill}">
                 <TextBlock Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" Text="{Binding VerificationText}" />
             </Border>
         </Grid>
@@ -32,6 +35,11 @@
             <Border Padding="20" Style="{StaticResource Panel}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Margin="0,0,4,0">
+                    <Grid Margin="0,0,0,18">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Border Width="36" Height="36" Style="{StaticResource IconTile}"><Path Width="17" Height="17" Data="{StaticResource Icon.Search}" Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.8" Stretch="Uniform" /></Border>
+                        <StackPanel Grid.Column="1" Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock FontWeight="SemiBold" Text="Выберите формат" /><TextBlock Margin="0,2,0,0" Style="{StaticResource MetaText}" Text="ФИЛЬТР И ЦЕЛЬ" /></StackPanel>
+                    </Grid>
                     <Label Padding="0" Margin="0,0,0,6" Content="Уровень" Target="{Binding ElementName=ExamLevelBox}" />
                     <ComboBox x:Name="ExamLevelBox" ItemsSource="{Binding Levels}" SelectedItem="{Binding SelectedLevel}" DisplayMemberPath="Label"
                               AutomationProperties.Name="Фильтр экзаменов по уровню" />
@@ -45,11 +53,11 @@
                     <ComboBox x:Name="ExamModuleBox" ItemsSource="{Binding Modules}" SelectedItem="{Binding SelectedModule}" DisplayMemberPath="Label"
                               AutomationProperties.Name="Целевой модуль экзамена" />
 
-                    <Separator Margin="0,22,0,18" />
-                    <TextBlock Style="{StaticResource MetaText}" Text="ВАЖНО" />
-                    <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding DisclaimerText}" />
-                    <Button Margin="0,20,0,0" MinHeight="44" Style="{StaticResource PrimaryButton}" Command="{Binding OpenLearningPathCommand}" Content="Вернуться к пути" />
-                    <Button Margin="0,8,0,0" MinHeight="44" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWritingPracticeCommand}" Content="Проверить письмо" />
+                    <Border Margin="0,22,0,18" Style="{StaticResource SectionDivider}" />
+                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Path Width="17" Height="17" Data="{StaticResource Icon.Info}" Stroke="{DynamicResource Brush.Warning}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource MetaText}" Text="ВАЖНО" /></Grid>
+                    <TextBlock Margin="0,10,0,0" Foreground="{DynamicResource Brush.TextSecondary}" FontSize="12" TextWrapping="Wrap" Text="{Binding DisclaimerText}" />
+                    <Button Margin="0,20,0,0" MinHeight="44" Style="{StaticResource PrimaryButton}" Command="{Binding OpenLearningPathCommand}"><StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,8,0" Data="{StaticResource Icon.Route}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Вернуться к пути" /></StackPanel></Button>
+                    <Button Margin="0,8,0,0" MinHeight="44" Style="{StaticResource SecondaryButton}" Command="{Binding OpenWritingPracticeCommand}"><StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,8,0" Data="{StaticResource Icon.Edit}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.6" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Проверить письмо" /></StackPanel></Button>
                 </StackPanel>
                 </ScrollViewer>
             </Border>
@@ -59,11 +67,13 @@
                     <Border Padding="26" Style="{StaticResource Panel}">
                         <StackPanel>
                             <Grid>
-                                <StackPanel>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <Border Width="46" Height="46" Style="{StaticResource IconTile}"><Path Width="21" Height="21" Data="{StaticResource Icon.Certificate}" Fill="{DynamicResource Brush.AccentText}" Stretch="Uniform" /></Border>
+                                <StackPanel Grid.Column="1" Margin="14,0,0,0">
                                     <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding ProviderText}" />
-                                    <TextBlock Margin="0,7,160,0" FontFamily="{DynamicResource Font.Display}" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding SelectedExam.Name}" />
+                                    <TextBlock Margin="0,6,20,0" FontFamily="{DynamicResource Font.Display}" FontSize="25" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding SelectedExam.Name}" />
                                 </StackPanel>
-                                <Border HorizontalAlignment="Right" VerticalAlignment="Top" Padding="12,7" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="{DynamicResource Radius.Pill}">
+                                <Border Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource StatusPill}">
                                     <TextBlock FontWeight="SemiBold" Foreground="{DynamicResource Brush.AccentText}" Text="{Binding LevelText}" />
                                 </Border>
                             </Grid>
@@ -81,7 +91,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="235" MinHeight="150" Margin="0,0,10,10" Padding="16" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Card}">
+                                <Border Width="235" MinHeight="150" Margin="0,0,10,10" Padding="16" Style="{StaticResource StatCard}" CornerRadius="{DynamicResource Radius.Card}">
                                     <StackPanel>
                                         <Grid>
                                             <TextBlock FontWeight="SemiBold" FontSize="15" Text="{Binding Title}" />
@@ -104,7 +114,7 @@
                     <ItemsControl ItemsSource="{Binding Readiness}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,0,0,8" Padding="14" Background="{DynamicResource Brush.Raised}" BorderBrush="{DynamicResource Brush.BorderSubtle}" BorderThickness="1" CornerRadius="{DynamicResource Radius.Input}">
+                                <Border Margin="0,0,0,8" Padding="14" Style="{StaticResource GlassInset}" CornerRadius="{DynamicResource Radius.Input}">
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="120" /><ColumnDefinition Width="*" /><ColumnDefinition Width="150" /><ColumnDefinition Width="110" /></Grid.ColumnDefinitions>
                                         <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
@@ -121,7 +131,7 @@
                     <ItemsControl ItemsSource="{Binding Sources}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Margin="0,0,0,7" Padding="13" HorizontalContentAlignment="Stretch" Style="{StaticResource SecondaryButton}"
+                                <Button Margin="0,0,0,7" Padding="13" HorizontalContentAlignment="Stretch" Style="{StaticResource SurfaceButton}"
                                         Command="{Binding DataContext.OpenSourceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>

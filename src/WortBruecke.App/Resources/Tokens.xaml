@@ -1,7 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <!-- Primitive spacing tokens: 4/8pt rhythm. -->
+    <!-- Primitive geometry, typography, space and motion. Semantic colors are theme-owned. -->
+
+    <sys:Double x:Key="Space.2XS">2</sys:Double>
     <sys:Double x:Key="Space.XS">4</sys:Double>
     <sys:Double x:Key="Space.SM">8</sys:Double>
     <sys:Double x:Key="Space.MD">16</sys:Double>
@@ -9,10 +11,12 @@
     <sys:Double x:Key="Space.XL">32</sys:Double>
     <sys:Double x:Key="Space.2XL">48</sys:Double>
     <sys:Double x:Key="Space.3XL">64</sys:Double>
+    <sys:Double x:Key="Space.4XL">96</sys:Double>
 
-    <!-- Primitive type scale. Segoe UI is selected for Cyrillic/German coverage and native Windows metrics. -->
     <FontFamily x:Key="Font.Body">Segoe UI Variable Text, Segoe UI</FontFamily>
     <FontFamily x:Key="Font.Display">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="Font.Mono">Cascadia Mono, Consolas</FontFamily>
+    <sys:Double x:Key="Type.2XS">11</sys:Double>
     <sys:Double x:Key="Type.XS">12</sys:Double>
     <sys:Double x:Key="Type.SM">14</sys:Double>
     <sys:Double x:Key="Type.Base">16</sys:Double>
@@ -20,26 +24,38 @@
     <sys:Double x:Key="Type.XL">22</sys:Double>
     <sys:Double x:Key="Type.2XL">30</sys:Double>
     <sys:Double x:Key="Type.3XL">42</sys:Double>
+    <sys:Double x:Key="Type.4XL">52</sys:Double>
 
-    <!-- Radius tokens deliberately vary by component role. -->
+    <CornerRadius x:Key="Radius.Small">6</CornerRadius>
     <CornerRadius x:Key="Radius.Input">10</CornerRadius>
     <CornerRadius x:Key="Radius.Button">12</CornerRadius>
+    <CornerRadius x:Key="Radius.Tile">14</CornerRadius>
     <CornerRadius x:Key="Radius.Card">18</CornerRadius>
     <CornerRadius x:Key="Radius.Panel">24</CornerRadius>
+    <CornerRadius x:Key="Radius.Overlay">28</CornerRadius>
     <CornerRadius x:Key="Radius.Pill">999</CornerRadius>
 
-    <!-- Wide, low-opacity ambient elevation. Color is theme-aware; no blur is applied to live content. -->
-    <DropShadowEffect x:Key="Elevation.Raised" x:Shared="False" BlurRadius="24" ShadowDepth="2" Opacity="0.12" Color="{DynamicResource Color.Shadow}" />
-    <DropShadowEffect x:Key="Elevation.Overlay" x:Shared="False" BlurRadius="36" ShadowDepth="8" Opacity="0.16" Color="{DynamicResource Color.Shadow}" />
+    <sys:Double x:Key="Control.Target">44</sys:Double>
+    <sys:Double x:Key="Control.TargetLarge">52</sys:Double>
+    <sys:Double x:Key="Icon.Small">16</sys:Double>
+    <sys:Double x:Key="Icon.Standard">20</sys:Double>
+    <sys:Double x:Key="Icon.Large">24</sys:Double>
 
-    <!-- Motion tokens. High-frequency typing interactions intentionally use no animation. -->
+    <!-- The gradient stroke is the direct-light layer; these effects provide ambient depth. -->
+    <DropShadowEffect x:Key="Elevation.Control" x:Shared="False" BlurRadius="10" ShadowDepth="1" Opacity="0.10" Color="{DynamicResource Color.Shadow}" />
+    <DropShadowEffect x:Key="Elevation.Raised" x:Shared="False" BlurRadius="26" ShadowDepth="3" Opacity="0.13" Color="{DynamicResource Color.Shadow}" />
+    <DropShadowEffect x:Key="Elevation.Hover" x:Shared="False" BlurRadius="30" ShadowDepth="5" Opacity="0.17" Color="{DynamicResource Color.Shadow}" />
+    <DropShadowEffect x:Key="Elevation.Overlay" x:Shared="False" BlurRadius="42" ShadowDepth="10" Opacity="0.20" Color="{DynamicResource Color.Shadow}" />
+
+    <!-- Motion intensity 3/10: interaction acknowledgement only. -->
     <Duration x:Key="Motion.Instant">0:0:0.08</Duration>
-    <Duration x:Key="Motion.Fast">0:0:0.15</Duration>
-    <Duration x:Key="Motion.Normal">0:0:0.25</Duration>
+    <Duration x:Key="Motion.Fast">0:0:0.12</Duration>
+    <Duration x:Key="Motion.Normal">0:0:0.15</Duration>
 
-    <!-- Semantic elevation layers. -->
     <sys:Int32 x:Key="Z.Base">0</sys:Int32>
     <sys:Int32 x:Key="Z.Raised">1</sys:Int32>
+    <sys:Int32 x:Key="Z.Dropdown">10</sys:Int32>
     <sys:Int32 x:Key="Z.Overlay">40</sys:Int32>
     <sys:Int32 x:Key="Z.Toast">50</sys:Int32>
+    <sys:Int32 x:Key="Z.Tooltip">60</sys:Int32>
 </ResourceDictionary>
