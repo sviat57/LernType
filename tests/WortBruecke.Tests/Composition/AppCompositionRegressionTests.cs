@@ -13,10 +13,18 @@ namespace WortBruecke.Tests.Composition;
 public sealed class AppCompositionRegressionTests
 {
     [Fact]
-    public void ProductionComposition_UsesOneCanonicalAttemptStoreAndPrivacyAwareBookRepository()
+    public void ProductionComposition_UsesCanonicalCourseAttemptAndBackupStores()
     {
         var source = Compact(ReadRepositoryFile("src", "WortBruecke.App", "App.xaml.cs"));
 
+        Assert.Single(Regex.Matches(
+            source,
+            @"AddSingleton<ICourseCatalogRepository>\(services\s*=>\s*new\s+JsonCourseCatalogRepository\(\s*services\.GetRequiredService<AppPaths>\(\)\.ContentRoot\s*\)\s*\)",
+            RegexOptions.CultureInvariant).Cast<Match>());
+        Assert.Single(Regex.Matches(
+            source,
+            @"AddSingleton<ICourseProgressRepository,\s*SqliteCourseProgressRepository>\(\)",
+            RegexOptions.CultureInvariant).Cast<Match>());
         Assert.Single(Regex.Matches(
             source,
             @"AddSingleton<IAttemptRepository,\s*SqliteAttemptRepository>\(\)",
@@ -29,14 +37,35 @@ public sealed class AppCompositionRegressionTests
             "AddSingleton<IManagedBackupService, ManagedBackupService>();",
             source,
             StringComparison.Ordinal);
-        Assert.Matches(
-            @"AddSingleton<IBookRepository>\(services\s*=>\s*new\s+SqliteBookRepository\(\s*services\.GetRequiredService<SqliteDatabase>\(\),\s*services\.GetRequiredService<IManagedBackupService>\(\)\)\)",
-            source);
+
+        string[] removedRegistrations =
+        [
+            "AddSingleton<IProgressRepository",
+            "AddSingleton<ILearningProgressRepository",
+            "AddSingleton<IBookRepository",
+            "AddSingleton<IBookVocabularyExtractor",
+            "AddSingleton<IExamBlueprintRepository",
+            "AddSingleton<HttpClient",
+            "AddHttpClient",
+            "AddSingleton<ILanguageAnalysisService",
+        ];
+        foreach (var registration in removedRegistrations)
+        {
+            Assert.DoesNotContain(registration, source, StringComparison.Ordinal);
+        }
 
         var mainViewModelFactory = Slice(
             source,
             "AddSingleton<MainViewModel>",
             "AddSingleton<MainWindow>");
+        Assert.Single(Regex.Matches(
+            mainViewModelFactory,
+            @"GetRequiredService<ICourseCatalogRepository>\(\)",
+            RegexOptions.CultureInvariant).Cast<Match>());
+        Assert.Single(Regex.Matches(
+            mainViewModelFactory,
+            @"GetRequiredService<ICourseProgressRepository>\(\)",
+            RegexOptions.CultureInvariant).Cast<Match>());
         Assert.Single(Regex.Matches(
             mainViewModelFactory,
             @"GetRequiredService<IAttemptRepository>\(\)",
@@ -48,7 +77,7 @@ public sealed class AppCompositionRegressionTests
     }
 
     [Fact]
-    public void ProductionComposition_ConnectsCanonicalBookAudioAndProgressRoutes()
+    public void ProductionComposition_ConnectsCourseFlowAndKeepsLegacyToolsOffPublicNavigation()
     {
         var appSource = Compact(ReadRepositoryFile("src", "WortBruecke.App", "App.xaml.cs"));
         var shellSource = Compact(ReadRepositoryFile(
@@ -69,25 +98,48 @@ public sealed class AppCompositionRegressionTests
             "GetRequiredService<IAudioPracticeService>()",
             Slice(appSource, "AddSingleton<MainViewModel>", "AddSingleton<MainWindow>"),
             StringComparison.Ordinal);
-
-        // The canonical store is fanned out inside the shell; screens do not construct their own stores.
         Assert.Contains(
-            "new BookViewModel(bookRepository, bookVocabularyExtractor, attemptRepository",
-            shellSource,
+            "AddSingleton<ICourseCatalogRepository>",
+            appSource,
             StringComparison.Ordinal);
+        Assert.Contains(
+            "AddSingleton<ICourseProgressRepository, SqliteCourseProgressRepository>();",
+            appSource,
+            StringComparison.Ordinal);
+
+        // Only the supported course and supplementary drill surfaces are composed by the shell.
+        Assert.DoesNotContain("new BookViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("new ExamCenterViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("new LearningPathViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("new LevelStudyViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("new GrammarViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("new TelcViewModel(", shellSource, StringComparison.Ordinal);
         Assert.Contains(
             "new AudioPracticeViewModel( audioPracticeService, attemptRepository, recordingStore: temporaryAudioRecordingStore)",
             shellSource,
             StringComparison.Ordinal);
         Assert.Matches(
-            @"new ProgressViewModel\(attemptRepository,\s*reviewStateRepository,\s*navigate:\s*Navigate\)",
+            @"new ProgressViewModel\(\s*courseCatalogRepository,\s*courseProgressRepository,\s*attemptRepository,\s*reviewStateRepository,\s*navigate:\s*Navigate\)",
             shellSource);
         Assert.Contains("_screens[\"audio\"] = _audio", shellSource, StringComparison.Ordinal);
         Assert.Contains("_screens[\"progress\"] = _progress", shellSource, StringComparison.Ordinal);
         Assert.Contains("_initializers[\"audio\"]", shellSource, StringComparison.Ordinal);
         Assert.Contains("_initializers[\"progress\"]", shellSource, StringComparison.Ordinal);
-        Assert.Contains("CreateNav(\"audio\"", shellSource, StringComparison.Ordinal);
+        Assert.Contains("new CoursePathViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.Contains("new CourseLessonViewModel(", shellSource, StringComparison.Ordinal);
+        Assert.Contains("CreateNav(\"path\", \"Курсы\"", shellSource, StringComparison.Ordinal);
+        Assert.Contains("CreateNav(\"interactive\", \"Интерактивные упражнения\"", shellSource, StringComparison.Ordinal);
         Assert.Contains("CreateNav(\"progress\"", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateNav(\"audio\"", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateNav(\"books\"", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateNav(\"exams\"", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateNav(\"grammar\"", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreateNav(\"telc\"", shellSource, StringComparison.Ordinal);
+
+        var settingsView = ReadRepositoryFile("src", "WortBruecke.App", "Views", "SettingsView.xaml");
+        Assert.DoesNotContain("OpenAI", settingsView, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("TELC", settingsView, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("API-ключ", settingsView, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -189,7 +241,7 @@ public sealed class AppCompositionRegressionTests
     }
 
     [Fact]
-    public void LevelRoutes_PreserveTypedLevelContextForEveryModuleDestination()
+    public void CourseRoutes_PreserveTypedLessonAndExamContext()
     {
         var shellSource = Compact(ReadRepositoryFile(
             "src",
@@ -197,23 +249,22 @@ public sealed class AppCompositionRegressionTests
             "ViewModels",
             "MainViewModel.cs"));
 
-        var openLevel = Slice(
+        var openLesson = Slice(
             shellSource,
-            "private async Task OpenLevelAsync(LevelStudyRequest request)",
-            "private async Task OpenLevelModuleAsync(LevelModuleLaunch launch)");
-        Assert.Contains("await _levelStudy.PrepareAsync(request, _lifetime.Token);", openLevel, StringComparison.Ordinal);
-        Assert.Contains("CurrentTitle = $\"Уровень {LevelLabel(request.Level)}\";", openLevel, StringComparison.Ordinal);
+            "private async Task OpenCourseLessonAsync(CourseLessonLaunch launch)",
+            "private async Task OpenCourseExamAsync(CourseExamLaunch launch)");
+        Assert.Contains("_lastCourseLessonLaunch = launch;", openLesson, StringComparison.Ordinal);
+        Assert.Contains("await _courseLesson.PrepareAsync(launch, _lifetime.Token);", openLesson, StringComparison.Ordinal);
+        Assert.Contains("SetSelection(\"path\");", openLesson, StringComparison.Ordinal);
 
-        var openModule = Slice(
+        var openExam = Slice(
             shellSource,
-            "private async Task OpenLevelModuleAsync(LevelModuleLaunch launch)",
+            "private async Task OpenCourseExamAsync(CourseExamLaunch launch)",
             "private async Task OpenTextPracticeAsync(string? level)");
-        Assert.Contains("launch.TryGetPracticeRequest(out var practiceRequest)", openModule, StringComparison.Ordinal);
-        Assert.Contains("_trainer.Prepare(practiceRequest);", openModule, StringComparison.Ordinal);
-        Assert.Contains("_texts.ApplyLevelFilter(levelText);", openModule, StringComparison.Ordinal);
-        Assert.Contains("_grammar.ApplyLevelFilter(levelText);", openModule, StringComparison.Ordinal);
-        Assert.Contains("_audio.ApplyLevelFilter(launch.Level);", openModule, StringComparison.Ordinal);
-        Assert.DoesNotContain("StartSuggested", openModule, StringComparison.Ordinal);
+        Assert.Contains("_lastCourseExamLaunch = launch;", openExam, StringComparison.Ordinal);
+        Assert.Contains("await _courseLesson.PrepareExamAsync(launch, _lifetime.Token);", openExam, StringComparison.Ordinal);
+        Assert.DoesNotContain("OpenLevelAsync", shellSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("OpenLevelModuleAsync", shellSource, StringComparison.Ordinal);
     }
 
     private static string ReadRepositoryFile(params string[] pathSegments) =>

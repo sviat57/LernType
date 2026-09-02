@@ -1,5 +1,6 @@
 using WortBruecke.App.ViewModels;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Courses;
 using WortBruecke.Core.Learning;
 using WortBruecke.Core.Models;
 
@@ -8,33 +9,40 @@ namespace WortBruecke.Tests.ViewModels;
 public sealed class MainViewModelNavigationTests
 {
     [Fact]
-    public async Task DelayedLevelModuleInitialization_CannotOverwriteNewerNavigation()
+    public async Task PublicNavigation_ContainsOnlyCourseFirstRoutes()
+    {
+        await using var viewModel = new MainViewModel(
+            new DelayedTrainerContentRepository(),
+            new NoOpKeyboardLayoutService(),
+            new NoOpImageProvider(),
+            new MemorySettingsStore(),
+            new UnusedCourseCatalogRepository(),
+            new MemoryCourseProgressRepository(),
+            new MemoryAttemptRepository(),
+            new EmptyReviewStateRepository());
+
+        Assert.Equal(
+            ["home", "path", "interactive", "progress", "settings"],
+            viewModel.NavigationItems.Select(item => item.Key));
+        Assert.DoesNotContain(viewModel.NavigationItems, item => item.Key is "books" or "exams" or "audio" or "grammar" or "telc");
+    }
+
+    [Fact]
+    public async Task DelayedInteractiveInitialization_CannotOverwriteNewerNavigation()
     {
         var content = new DelayedTrainerContentRepository();
         await using var viewModel = new MainViewModel(
             content,
-            new NoOpProgressRepository(),
             new NoOpKeyboardLayoutService(),
             new NoOpImageProvider(),
-            new NoOpLanguageAnalysisService(),
             new MemorySettingsStore(),
-            new EmptyBookRepository(),
-            new EmptyBookExtractor(),
-            new EmptyDictionary(),
-            new EmptyLearningProgressRepository(),
-            new EmptyExamBlueprintRepository(),
+            new UnusedCourseCatalogRepository(),
+            new MemoryCourseProgressRepository(),
             new MemoryAttemptRepository());
         viewModel.MarkStorageReady();
-        await viewModel.NavigateAsync("path");
-        var learningPath = Assert.IsType<LearningPathViewModel>(viewModel.CurrentViewModel);
-        var a1 = learningPath.Levels.Single(level => level.LevelKey == GermanLevel.A1);
-
-        a1.OpenPracticeCommand.Execute(null);
-        var levelStudy = await WaitForAsync(() => viewModel.CurrentViewModel as LevelStudyViewModel);
-        await WaitForAsync(() => levelStudy.Modules.Count == 7 ? levelStudy : null);
-        levelStudy.Modules
-            .Single(module => module.Kind == LevelModuleKind.WordGermanToRussian)
-            .LaunchCommand.Execute(null);
+        await viewModel.NavigateAsync("interactive");
+        var hub = Assert.IsType<InteractiveExercisesViewModel>(viewModel.CurrentViewModel);
+        hub.Exercises.Single(item => item.Title == "Слова и предложения").OpenCommand.Execute(null);
         await content.TrainerInitializationStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
 
         await viewModel.NavigateAsync("home");
@@ -136,6 +144,39 @@ public sealed class MainViewModelNavigationTests
             AttemptQuery? query = null,
             CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<AttemptEvent>>([]);
+    }
+
+    private sealed class EmptyReviewStateRepository : IReviewStateRepository
+    {
+        public Task<ReviewState?> GetAsync(string contentKey, CancellationToken cancellationToken = default) =>
+            Task.FromResult<ReviewState?>(null);
+
+        public Task<IReadOnlyList<ReviewState>> GetDueAsync(
+            DateTimeOffset asOfUtc,
+            int limit = 100,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<ReviewState>>([]);
+
+        public Task UpsertAsync(ReviewState state, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+
+    private sealed class UnusedCourseCatalogRepository : ICourseCatalogRepository
+    {
+        public Task<CourseCatalog> LoadAsync(CancellationToken cancellationToken = default) =>
+            Task.FromException<CourseCatalog>(new NotSupportedException());
+    }
+
+    private sealed class MemoryCourseProgressRepository : ICourseProgressRepository
+    {
+        public Task<IReadOnlyList<CourseNodeProgress>> GetCourseAsync(string courseId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<CourseNodeProgress>>([]);
+
+        public Task UpsertAsync(CourseNodeProgress progress, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task<CourseResumeState?> GetResumeAsync(string courseId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<CourseResumeState?>(null);
+
+        public Task SaveResumeAsync(CourseResumeState state, CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 
     private sealed class NoOpProgressRepository : IProgressRepository

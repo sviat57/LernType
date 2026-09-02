@@ -2,6 +2,28 @@
 
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
 
+## [1.3.0] — 2026-09-02
+
+### Added
+
+- A complete offline A0/Pre-A1–A2 route with 24 original lessons and 144 ordered instructional steps.
+- Course-local final exams with 12, 16 and 20 questions and mandatory self-reviewed speaking evidence.
+- Versioned SQLite course progress and exact lesson/step resume state.
+- A dedicated course map and lesson runner for short theory, writing, reading, listening/speaking, a second rule and checkpoint.
+- Machine-readable course provenance and an explicit no-certification declaration.
+
+### Changed
+
+- Replaced the public level/practice-first navigation with Today, Courses, Interactive exercises, Progress and Settings.
+- Moved words, sentences, texts, vocabulary tests and audio drills into a separate supplementary hub.
+- Kept exams inside their course and locked each exam until all eight course lessons are completed.
+- Excluded self-rated speaking from deterministic lesson and exam percentages while preserving it as required evidence.
+- Marked B1–C2 as planned rather than substituting material from another level.
+
+### Removed
+
+- Removed the unfinished personal library, standalone exam centre and standalone audio/grammar entries from public navigation. Existing local book rows remain intact for migration and rollback.
+
 ## [1.2.0] — 2026-08-22
 
 ### Added

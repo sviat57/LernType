@@ -14,7 +14,7 @@ Keep PFX files and passwords outside the repository. `.gitignore` excludes commo
 
 ## 1. Version and source gate
 
-Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.2.0` maps to MSIX `1.2.0.0`.
+Update the application version in `src/WortBruecke.App/WortBruecke.App.csproj`, the release heading in `CHANGELOG.md`, the top-level `APP_VERSION`/`MSIX_VERSION` values in `.github/workflows/ci.yml` and the explicit `-Version` arguments below. CI rejects drift between these values. MSIX uses four numeric components; SemVer `1.3.0` maps to MSIX `1.3.0.0`.
 
 ```powershell
 $dotnet = 'dotnet'
@@ -38,7 +38,7 @@ Audit every direct and transitive NuGet package and generate the production depe
 & $dotnet CycloneDX src/WortBruecke.App/WortBruecke.App.csproj `
   --exclude-dev --disable-package-restore `
   --output artifacts/sbom --filename LernType.cdx.json --output-format Json `
-  --set-name LernType --set-version 1.2.0 --set-type Application
+  --set-name LernType --set-version 1.3.0 --set-type Application
 ```
 
 Review the dependency diff on the pull request and confirm the license/provenance metadata in the CycloneDX file. CI rejects missing component-license metadata, known vulnerabilities at `low` severity or above, and GPL/AGPL/SSPL additions in dependency diffs.
@@ -55,7 +55,7 @@ foreach ($rid in 'win-x64', 'win-arm64') {
 }
 ```
 
-Run the x64 smoke matrix on x64 Windows. The script writes a schema-v2 JSON record and screenshot for every case. It accepts a route only when the expected UI Automation landmark is visible, `Загрузка раздела` is gone, neither `Ошибка приложения` nor a visible `Код: ...` is present, and the wide/compact navigation contract matches the actual window width. When `-InvokeAutomationName` is used, `-ExpectedAutomationName` is required.
+Run the x64 smoke matrix on x64 Windows. The script writes a versioned JSON record and screenshot for every case. It accepts a route only when the expected UI Automation landmark is visible, `Загрузка раздела` is gone, neither `Ошибка приложения` nor a visible `Код: ...` is present, and the wide/compact navigation contract matches the actual window width. When `-InvokeAutomationName` is used, `-ExpectedAutomationName` is required.
 
 ```powershell
 $publish = 'artifacts/publish/win-x64'
@@ -69,11 +69,11 @@ $publish = 'artifacts/publish/win-x64'
   -OutputDirectory artifacts/verification/home-minimum `
   -WindowWidth 720 -WindowHeight 520
 
-# Example route contract; use the exact names exposed by the reviewed UI.
+# Course-first route contract; use the exact names exposed by the reviewed UI.
 ./tools/Invoke-ReleaseSmoke.ps1 -PublishDirectory $publish `
-  -OutputDirectory artifacts/verification/progress-wide `
-  -InvokeAutomationName 'Открыть прогресс по языковым навыкам' `
-  -ExpectedAutomationName 'Прогресс LernType'
+  -OutputDirectory artifacts/verification/courses-wide `
+  -InvokeAutomationName 'Курсы' `
+  -ExpectedAutomationName 'Курсы немецкого LernType'
 ```
 
 Inspect every `smoke-result.json`, not only the process exit: require `expectedLandmarkVisible`, `layoutVerificationPassed`, `uiVerificationPassed` and `gracefulExit` to be `true`, `shellErrorVisible` and `technicalCodeVisible` to be `false`, and `exitCode` to be `0`. Keep one negative contract self-test in release evidence: a missing fixture landmark must make the script exit non-zero with `uiVerificationPassed: false` while still writing its JSON record and screenshot.
@@ -85,11 +85,11 @@ rollback/path-safety suite must pass before release):
 
 ```powershell
 foreach ($rid in 'win-x64', 'win-arm64') {
-    $zip = "artifacts/LernType-1.2.0-$rid.zip"
+    $zip = "artifacts/LernType-1.3.0-$rid.zip"
     ./tools/New-ReleaseArchive.ps1 `
       -PublishDirectory "artifacts/publish/$rid" `
       -OutputPath $zip `
-      -RootFolder "LernType-1.2.0-$rid" `
+      -RootFolder "LernType-1.3.0-$rid" `
       -Confirm:$false
 }
 ```
@@ -101,7 +101,7 @@ First validate the package layout. The `-unsigned` filename is deliberate and mu
 ```powershell
 ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.2.0.0 -AllowUnsigned
+  -Architecture x64 -Version 1.3.0.0 -AllowUnsigned
 ```
 
 Build a distributable package only with the release certificate:
@@ -110,14 +110,14 @@ Build a distributable package only with the release certificate:
 $password = Read-Host 'PFX password' -AsSecureString
 $x64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-x64 `
-  -Architecture x64 -Version 1.2.0.0 `
+  -Architecture x64 -Version 1.3.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
   -TimestampUri 'https://timestamp.example.org'
 $arm64 = ./tools/Build-Msix.ps1 `
   -PublishDirectory artifacts/publish/win-arm64 `
-  -Architecture arm64 -Version 1.2.0.0 `
+  -Architecture arm64 -Version 1.3.0.0 `
   -Publisher 'CN=Sviatoslav Kyselov' `
   -CertificatePath C:\secure\LernType-signing.pfx `
   -CertificatePassword $password `
@@ -130,11 +130,11 @@ Generate App Installer descriptors only after the signed MSIX files are uploaded
 
 ```powershell
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.2.0' `
-  -Architecture x64 -Version 1.2.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.3.0' `
+  -Architecture x64 -Version 1.3.0.0
 ./tools/New-AppInstaller.ps1 `
-  -BaseUri 'https://downloads.example.org/lerntype/1.2.0' `
-  -Architecture arm64 -Version 1.2.0.0
+  -BaseUri 'https://downloads.example.org/lerntype/1.3.0' `
+  -Architecture arm64 -Version 1.3.0.0
 ```
 
 The HTTPS host must serve `.msix` and `.appinstaller` with the correct MIME types and an intact certificate chain.
@@ -165,25 +165,27 @@ Run the copy-only rollback self-test against the SQLite runtime shipped in the r
   -KeepArtifacts
 ```
 
-Before launching a previous v1.0 binary, restore its schema-v2 profile with the explicit verified
-pre-upgrade backup. The tool stops when LernType is running, preserves the complete current v3
-file set and a consistent v3 SQLite snapshot, verifies the expected schema/catalog/FK/table
-inventory, promotes atomically, and writes a hashed JSON record. `RecoveryRoot` must be on the same
-volume as the active database.
+Before launching the previous v1.2 binary, restore its schema-v3 profile with the explicit verified
+pre-upgrade backup created under `Backups\schema`. The tool stops when LernType is running, preserves
+the complete current schema-v4 file set and a consistent SQLite snapshot, verifies the expected
+schema/catalog/FK/table inventory, promotes atomically, and writes a hashed JSON record.
+`RecoveryRoot` must be on the same volume as the active database.
 
 ```powershell
 $dataRoot = Join-Path $env:LOCALAPPDATA 'LernType'
-$schemaV2Backup = 'C:\ABSOLUTE\VERIFIED\schema-v2-....db'
-$currentV12Runtime = 'C:\ABSOLUTE\LernType-1.2.0-win-x64'
+$schemaV3Backup = 'C:\ABSOLUTE\VERIFIED\schema-v3-....db'
+$currentV13Runtime = 'C:\ABSOLUTE\LernType-1.3.0-win-x64'
 $recoveryRoot = Join-Path $dataRoot 'Backups\data-rollback'
 New-Item -ItemType Directory -Path $recoveryRoot -Force | Out-Null
 
 ./tools/Invoke-LernTypeDataRollback.ps1 `
   -CurrentDatabase (Join-Path $dataRoot 'lerntype.db') `
-  -SchemaV2Backup $schemaV2Backup `
-  -RuntimeDirectory $currentV12Runtime `
+  -TargetSchemaBackup $schemaV3Backup `
+  -RuntimeDirectory $currentV13Runtime `
   -RecoveryRoot $recoveryRoot `
-  -ExpectedContentRevision 4 `
+  -ExpectedTargetUserVersion 3 `
+  -ExpectedCurrentUserVersion 4 `
+  -ExpectedContentRevision 5 `
   -Confirm:$false
 ```
 

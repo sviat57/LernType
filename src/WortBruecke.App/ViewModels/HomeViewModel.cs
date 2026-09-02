@@ -3,8 +3,16 @@ using WortBruecke.App.Infrastructure;
 
 namespace WortBruecke.App.ViewModels;
 
-public sealed class HomeViewModel(Action<string> navigate)
+public sealed class HomeViewModel
 {
+    public HomeViewModel(Action<string> navigate)
+    {
+        ArgumentNullException.ThrowIfNull(navigate);
+        OpenCoursesCommand = new RelayCommand(() => navigate("path"));
+        OpenInteractiveExercisesCommand = new RelayCommand(() => navigate("interactive"));
+        OpenProgressCommand = new RelayCommand(() => navigate("progress"));
+    }
+
     public string Greeting => DateTime.Now.Hour switch
     {
         < 12 => "Guten Morgen",
@@ -12,13 +20,7 @@ public sealed class HomeViewModel(Action<string> navigate)
         _ => "Guten Abend"
     };
 
-    public ICommand OpenTrainerCommand { get; } = new RelayCommand(() => navigate("trainer"));
-    public ICommand OpenLearningPathCommand { get; } = new RelayCommand(() => navigate("path"));
-    public ICommand OpenAudioCommand { get; } = new RelayCommand(() => navigate("audio"));
-    public ICommand OpenProgressCommand { get; } = new RelayCommand(() => navigate("progress"));
-    public ICommand OpenTextsCommand { get; } = new RelayCommand(() => navigate("texts"));
-    public ICommand OpenBooksCommand { get; } = new RelayCommand(() => navigate("books"));
-    public ICommand OpenVocabularyTestCommand { get; } = new RelayCommand(() => navigate("test"));
-    public ICommand OpenGrammarCommand { get; } = new RelayCommand(() => navigate("grammar"));
-    public ICommand OpenTelcCommand { get; } = new RelayCommand(() => navigate("telc"));
+    public ICommand OpenCoursesCommand { get; }
+    public ICommand OpenInteractiveExercisesCommand { get; }
+    public ICommand OpenProgressCommand { get; }
 }

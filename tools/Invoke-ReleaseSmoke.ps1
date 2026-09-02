@@ -5,7 +5,8 @@ param(
     [ValidateRange(5, 120)] [int] $TimeoutSeconds = 25,
     [ValidateRange(720, 3840)] [int] $WindowWidth = 1180,
     [ValidateRange(520, 2160)] [int] $WindowHeight = 760,
-    [string] $InvokeAutomationName,
+    [string] $WideNavigationLabel = 'Курсы',
+    [string[]] $InvokeAutomationName,
     [string] $ExpectedAutomationName
 )
 
@@ -15,7 +16,8 @@ $executable = Join-Path $publish 'LernType.exe'
 if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
     throw 'PublishDirectory does not contain LernType.exe.'
 }
-if (-not [string]::IsNullOrWhiteSpace($InvokeAutomationName) -and
+$invokeAutomationNames = @($InvokeAutomationName | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+if ($invokeAutomationNames.Count -gt 0 -and
     [string]::IsNullOrWhiteSpace($ExpectedAutomationName)) {
     throw 'ExpectedAutomationName is required when InvokeAutomationName is supplied.'
 }
@@ -226,7 +228,7 @@ try {
     if (-not $rootElement) { throw 'UI Automation could not attach to the LernType window.' }
     $pendingUiFailure = $null
 
-    if (-not [string]::IsNullOrWhiteSpace($InvokeAutomationName)) {
+    if ($invokeAutomationNames.Count -gt 0) {
         $initialState = Wait-SmokeUiState -Root $rootElement -LandmarkName 'Главный экран LernType' -Deadline ([DateTime]::UtcNow.AddSeconds($TimeoutSeconds))
         if ($initialState.ShellErrorVisible -or $initialState.TechnicalCodeVisible) {
             $pendingUiFailure = 'The initial shell exposed a visible application error or technical code.'
@@ -236,13 +238,24 @@ try {
         }
 
         if (-not $pendingUiFailure) {
-            $action = Find-AutomationElementByName -Root $rootElement -Name $InvokeAutomationName
-            if (-not (Test-AutomationElementVisible $action)) {
-                throw "Visible automation action was not found: $InvokeAutomationName"
+            foreach ($actionName in $invokeAutomationNames) {
+                $action = $null
+                $actionDeadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+                do {
+                    $action = Find-AutomationElementByName -Root $rootElement -Name $actionName
+                    if (Test-AutomationElementVisible $action) { break }
+                    if (Test-VisibleAutomationName -Root $rootElement -Name 'Ошибка приложения') {
+                        throw "The route exposed an application error before action: $actionName"
+                    }
+                    Start-Sleep -Milliseconds 100
+                } while ([DateTime]::UtcNow -lt $actionDeadline)
+                if (-not (Test-AutomationElementVisible $action)) {
+                    throw "Visible automation action was not found: $actionName"
+                }
+                $pattern = $action.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
+                ([Windows.Automation.InvokePattern]$pattern).Invoke()
             }
-            $pattern = $action.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
-            ([Windows.Automation.InvokePattern]$pattern).Invoke()
-            $result.invokedAutomationName = $InvokeAutomationName
+            $result.invokedAutomationName = $invokeAutomationNames -join ' -> '
         }
     }
 
@@ -272,7 +285,7 @@ try {
         $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
         $result.windowSize = "$width`x$height"
         $result.layoutMode = if ($width -ge 1060) { 'Wide' } else { 'Compact' }
-        $result.navigationLabelVisible = Test-VisibleAutomationTextName -Root $rootElement -Name 'Путь Pre-A1–C2'
+        $result.navigationLabelVisible = Test-VisibleAutomationTextName -Root $rootElement -Name $WideNavigationLabel
         $result.layoutVerificationPassed = if ($result.layoutMode -eq 'Wide') {
             [bool]$result.navigationLabelVisible
         } else {

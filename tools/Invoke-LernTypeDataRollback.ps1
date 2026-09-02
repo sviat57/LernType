@@ -8,7 +8,8 @@ param(
 
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
-    [string] $SchemaV2Backup,
+    [Alias('SchemaV2Backup')]
+    [string] $TargetSchemaBackup,
 
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
@@ -18,8 +19,14 @@ param(
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
     [string] $RecoveryRoot,
 
+    [ValidateRange(1, [int]::MaxValue)]
+    [int] $ExpectedTargetUserVersion = 3,
+
+    [ValidateRange(1, [int]::MaxValue)]
+    [int] $ExpectedCurrentUserVersion = 4,
+
     [ValidateRange(0, [int]::MaxValue)]
-    [int] $ExpectedContentRevision = 4,
+    [int] $ExpectedContentRevision = 5,
 
     [ValidateNotNullOrEmpty()]
     [string[]] $ApplicationProcessName = @('LernType', 'WortBruecke')
@@ -455,14 +462,14 @@ function Write-RecordAndHash([object] $Record, [string] $Path) {
 }
 
 $currentPath = Get-NormalizedPath $CurrentDatabase
-$backupPath = Get-NormalizedPath $SchemaV2Backup
+$backupPath = Get-NormalizedPath $TargetSchemaBackup
 $runtimePath = Get-NormalizedPath $RuntimeDirectory
 $recoveryPath = Get-NormalizedPath $RecoveryRoot
 foreach ($path in @($currentPath, $backupPath, $runtimePath, $recoveryPath)) {
     Assert-NoReparsePointInExistingPath $path
 }
 if ($currentPath.Equals($backupPath, [StringComparison]::OrdinalIgnoreCase)) {
-    throw 'CurrentDatabase and SchemaV2Backup must identify different files.'
+    throw 'CurrentDatabase and TargetSchemaBackup must identify different files.'
 }
 if (-not [IO.Path]::GetPathRoot($currentPath).Equals(
         [IO.Path]::GetPathRoot($recoveryPath),
@@ -471,16 +478,16 @@ if (-not [IO.Path]::GetPathRoot($currentPath).Equals(
 }
 if (-not [IO.Path]::GetExtension($currentPath).Equals('.db', [StringComparison]::OrdinalIgnoreCase) -or
     -not [IO.Path]::GetExtension($backupPath).Equals('.db', [StringComparison]::OrdinalIgnoreCase)) {
-    throw 'CurrentDatabase and SchemaV2Backup must use the .db extension.'
+    throw 'CurrentDatabase and TargetSchemaBackup must use the .db extension.'
 }
 Assert-ApplicationStopped $ApplicationProcessName
 Import-SqliteRuntime $runtimePath
 
-if (-not $PSCmdlet.ShouldProcess($currentPath, "Atomically restore verified schema-v2 backup '$backupPath'")) {
+if (-not $PSCmdlet.ShouldProcess($currentPath, "Atomically restore verified schema-v$ExpectedTargetUserVersion backup '$backupPath'")) {
     [pscustomobject][ordered]@{
         status = 'planned'
         currentDatabase = $currentPath
-        schemaV2Backup = $backupPath
+        targetSchemaBackup = $backupPath
         recoveryRoot = $recoveryPath
         applied = $false
     }
@@ -497,31 +504,31 @@ $stagePath = Join-Path (Split-Path -Parent $currentPath) ".$(Split-Path -Leaf $c
 $recoveryStagePath = Join-Path (Split-Path -Parent $currentPath) ".$(Split-Path -Leaf $currentPath).$operationId.restore.db"
 $displacedAdjacentPath = Join-Path (Split-Path -Parent $currentPath) ".$(Split-Path -Leaf $currentPath).$operationId.displaced.db"
 $failedAdjacentPath = Join-Path (Split-Path -Parent $currentPath) ".$(Split-Path -Leaf $currentPath).$operationId.failed.db"
-$currentConsistentPath = Join-Path $operationDirectory 'current-v3-consistent.db'
-$schemaWorkingDirectory = Join-Path $operationDirectory 'schema-v2-source'
-$currentRawDirectory = Join-Path $operationDirectory 'current-v3-raw'
+$currentConsistentPath = Join-Path $operationDirectory "current-schema-v$ExpectedCurrentUserVersion-consistent.db"
+$schemaWorkingDirectory = Join-Path $operationDirectory "schema-v$ExpectedTargetUserVersion-source"
+$currentRawDirectory = Join-Path $operationDirectory "current-schema-v$ExpectedCurrentUserVersion-raw"
 $currentTouched = $false
 $promoted = $false
 $currentExpected = $null
 $backupExpected = $null
 $record = [ordered]@{
     format = 'lerntype-data-rollback-record'
-    recordVersion = 1
+    recordVersion = 2
     operationId = $operationId
     status = 'started'
     phase = 'initializing'
     startedUtc = $startedUtc.ToString('O')
     completedUtc = $null
     currentDatabase = $currentPath
-    schemaV2Backup = $backupPath
+    targetSchemaBackup = $backupPath
     runtimeDirectory = $runtimePath
     recoveryDirectory = [IO.Path]::GetFullPath($operationDirectory)
     applicationProcessNames = @($ApplicationProcessName)
-    expectedCurrentUserVersion = 3
-    expectedBackupUserVersion = 2
+    expectedCurrentUserVersion = $ExpectedCurrentUserVersion
+    expectedTargetUserVersion = $ExpectedTargetUserVersion
     expectedContentRevision = $ExpectedContentRevision
     sourceBackup = $null
-    preservedCurrentV3 = $null
+    preservedCurrent = $null
     promotedDatabase = $null
     recovery = $null
     error = $null
@@ -535,42 +542,42 @@ try {
     $schemaWorkingPath = Join-Path $schemaWorkingDirectory ([IO.Path]::GetFileName($backupPath))
     $currentRawPath = Join-Path $currentRawDirectory ([IO.Path]::GetFileName($currentPath))
 
-    $record.phase = 'validating-schema-v2-backup'
+    $record.phase = 'validating-target-schema-backup'
     Write-AtomicJson $record $statePath
     $backupExpected = Get-SqliteInspection $schemaWorkingPath
-    if (-not $backupExpected.quickCheckPassed) { throw 'Schema-v2 backup failed PRAGMA quick_check.' }
-    if ($backupExpected.userVersion -ne 2) {
-        throw "SchemaV2Backup has user_version=$($backupExpected.userVersion); expected 2."
+    if (-not $backupExpected.quickCheckPassed) { throw "Schema-v$ExpectedTargetUserVersion backup failed PRAGMA quick_check." }
+    if ($backupExpected.userVersion -ne $ExpectedTargetUserVersion) {
+        throw "TargetSchemaBackup has user_version=$($backupExpected.userVersion); expected $ExpectedTargetUserVersion."
     }
     if ($backupExpected.contentRevision -ne $ExpectedContentRevision) {
-        throw "SchemaV2Backup has content_revision=$($backupExpected.contentRevision); expected $ExpectedContentRevision."
+        throw "TargetSchemaBackup has content_revision=$($backupExpected.contentRevision); expected $ExpectedContentRevision."
     }
     $record.sourceBackup = [ordered]@{
         originalFileSet = $sourceBackupRaw
         verifiedWorkingDatabase = $backupExpected
     }
 
-    $record.phase = 'preserving-current-v3'
+    $record.phase = 'preserving-current-schema'
     Write-AtomicJson $record $statePath
     Copy-SqliteDatabase $currentRawPath $currentConsistentPath
     Normalize-SqliteDatabase $currentConsistentPath
     $currentExpected = Get-SqliteInspection $currentConsistentPath
-    if (-not $currentExpected.quickCheckPassed) { throw 'Current v3 preservation failed PRAGMA quick_check.' }
-    if ($currentExpected.userVersion -ne 3) {
-        throw "CurrentDatabase has user_version=$($currentExpected.userVersion); expected 3."
+    if (-not $currentExpected.quickCheckPassed) { throw "Current schema v$ExpectedCurrentUserVersion preservation failed PRAGMA quick_check." }
+    if ($currentExpected.userVersion -ne $ExpectedCurrentUserVersion) {
+        throw "CurrentDatabase has user_version=$($currentExpected.userVersion); expected $ExpectedCurrentUserVersion."
     }
-    $record.preservedCurrentV3 = [ordered]@{
+    $record.preservedCurrent = [ordered]@{
         rawFileSet = $currentRaw
         consistentDatabase = $currentExpected
         displacedMain = $null
     }
 
-    $record.phase = 'staging-schema-v2'
+    $record.phase = 'staging-target-schema'
     Write-AtomicJson $record $statePath
     Copy-SqliteDatabase $schemaWorkingPath $stagePath
     Normalize-SqliteDatabase $stagePath
     $stageInspection = Get-SqliteInspection $stagePath
-    Assert-EquivalentInspection $backupExpected $stageInspection 'Staged schema-v2 database'
+    Assert-EquivalentInspection $backupExpected $stageInspection "Staged schema-v$ExpectedTargetUserVersion database"
 
     Assert-ApplicationStopped $ApplicationProcessName
     foreach ($rawFile in @($currentRaw.files)) {
@@ -586,12 +593,12 @@ try {
         }
     }
 
-    $record.phase = 'normalizing-current-v3'
+    $record.phase = 'normalizing-current-schema'
     Write-AtomicJson $record $statePath
     $currentTouched = $true
     Normalize-SqliteDatabase $currentPath
     $normalizedCurrent = Get-SqliteInspection $currentPath
-    Assert-EquivalentInspection $currentExpected $normalizedCurrent 'Normalized current v3 database'
+    Assert-EquivalentInspection $currentExpected $normalizedCurrent "Normalized current schema-v$ExpectedCurrentUserVersion database"
 
     $record.phase = 'atomic-promotion'
     Write-AtomicJson $record $statePath
@@ -602,15 +609,17 @@ try {
         throw 'Injected test failure after atomic promotion.'
     }
 
-    $record.phase = 'verifying-promoted-schema-v2'
+    $record.phase = 'verifying-promoted-target-schema'
     Write-AtomicJson $record $statePath
     $resultInspection = Get-SqliteInspection $currentPath
-    Assert-EquivalentInspection $backupExpected $resultInspection 'Promoted schema-v2 database'
-    if ($resultInspection.userVersion -ne 2) { throw 'Promoted database is not schema v2.' }
+    Assert-EquivalentInspection $backupExpected $resultInspection "Promoted schema-v$ExpectedTargetUserVersion database"
+    if ($resultInspection.userVersion -ne $ExpectedTargetUserVersion) {
+        throw "Promoted database is not schema v$ExpectedTargetUserVersion."
+    }
 
-    $displacedFinalPath = Join-Path $operationDirectory 'displaced-current-v3.db'
+    $displacedFinalPath = Join-Path $operationDirectory "displaced-current-schema-v$ExpectedCurrentUserVersion.db"
     [IO.File]::Move($displacedAdjacentPath, $displacedFinalPath)
-    $record.preservedCurrentV3.displacedMain = [ordered]@{
+    $record.preservedCurrent.displacedMain = [ordered]@{
         path = [IO.Path]::GetFullPath($displacedFinalPath)
         sizeBytes = (Get-Item -LiteralPath $displacedFinalPath).Length
         sha256 = Get-Sha256 $displacedFinalPath
@@ -646,7 +655,7 @@ catch {
             Copy-SqliteDatabase $currentConsistentPath $recoveryStagePath
             Normalize-SqliteDatabase $recoveryStagePath
             $recoveryStageInspection = Get-SqliteInspection $recoveryStagePath
-            Assert-EquivalentInspection $currentExpected $recoveryStageInspection 'Current-v3 recovery stage'
+            Assert-EquivalentInspection $currentExpected $recoveryStageInspection "Current schema-v$ExpectedCurrentUserVersion recovery stage"
             if (Test-Path -LiteralPath $currentPath) {
                 [IO.File]::Replace($recoveryStagePath, $currentPath, $failedAdjacentPath, $true)
             }
@@ -655,21 +664,21 @@ catch {
             }
             Remove-SqliteSidecars $currentPath $true
             $restoredInspection = Get-SqliteInspection $currentPath
-            Assert-EquivalentInspection $currentExpected $restoredInspection 'Restored current v3 database'
+            Assert-EquivalentInspection $currentExpected $restoredInspection "Restored current schema-v$ExpectedCurrentUserVersion database"
             if (Test-Path -LiteralPath $failedAdjacentPath) {
                 [IO.File]::Move($failedAdjacentPath, (Join-Path $operationDirectory 'failed-current.db'))
             }
             if (Test-Path -LiteralPath $displacedAdjacentPath) {
-                $recoveredDisplacedPath = Join-Path $operationDirectory 'promotion-displaced-current-v3.db'
+                $recoveredDisplacedPath = Join-Path $operationDirectory "promotion-displaced-current-schema-v$ExpectedCurrentUserVersion.db"
                 [IO.File]::Move($displacedAdjacentPath, $recoveredDisplacedPath)
-                $record.preservedCurrentV3.displacedMain = [ordered]@{
+                $record.preservedCurrent.displacedMain = [ordered]@{
                     path = [IO.Path]::GetFullPath($recoveredDisplacedPath)
                     sizeBytes = (Get-Item -LiteralPath $recoveredDisplacedPath).Length
                     sha256 = Get-Sha256 $recoveredDisplacedPath
                 }
             }
             $record.recovery = [ordered]@{
-                status = 'restored-current-v3'
+                status = 'restored-current-schema'
                 restoredDatabase = $restoredInspection
             }
             $record.status = 'failed-restored'
@@ -705,7 +714,7 @@ catch {
         if ($null -eq $recoveryError) { $recoveryError = $_ }
     }
     if ($recoverySucceeded) {
-        throw "Data rollback failed and the preserved current v3 database was restored. Record: $recordPath. Cause: $($failure.Exception.Message)"
+        throw "Data rollback failed and the preserved current schema-v$ExpectedCurrentUserVersion database was restored. Record: $recordPath. Cause: $($failure.Exception.Message)"
     }
     if ($null -ne $recoveryError) {
         throw [AggregateException]::new(

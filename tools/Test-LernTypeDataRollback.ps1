@@ -88,13 +88,13 @@ function Get-FileSha256([string] $Path) {
     return (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash
 }
 
-function New-SchemaV2Fixture([string] $Path) {
+function New-SchemaV3TargetFixture([string] $Path) {
     Invoke-FixtureSql $Path @'
         PRAGMA foreign_keys=OFF;
         CREATE TABLE metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
-        INSERT INTO metadata VALUES('content_revision', '4');
+        INSERT INTO metadata VALUES('content_revision', '5');
         CREATE TABLE sample_data(id INTEGER PRIMARY KEY, payload TEXT NOT NULL);
-        INSERT INTO sample_data VALUES(1, 'schema-v2-value');
+        INSERT INTO sample_data VALUES(1, 'schema-v3-value');
         CREATE TABLE user_books(
             id INTEGER PRIMARY KEY,
             title TEXT NOT NULL,
@@ -124,11 +124,11 @@ function New-SchemaV2Fixture([string] $Path) {
             PRIMARY KEY(content_type, content_id));
         INSERT INTO user_progress VALUES('BookWord', 11, 3, 2, '2026-08-22T00:00:00Z', NULL, NULL, 'active');
         INSERT INTO user_progress VALUES('BookWord', 22, 4, 3, '2026-08-22T00:00:00Z', NULL, NULL, 'active');
-        PRAGMA user_version=2;
+        PRAGMA user_version=3;
 '@
 }
 
-function New-SchemaV3Fixture([string] $Path, [string] $Payload) {
+function New-SchemaV4Fixture([string] $Path, [string] $Payload) {
     Invoke-FixtureSql $Path @"
         PRAGMA foreign_keys=ON;
         CREATE TABLE metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -149,9 +149,18 @@ function New-SchemaV3Fixture([string] $Path, [string] $Payload) {
             frequency INTEGER NOT NULL,
             context_text TEXT NOT NULL,
             part_of_speech TEXT NOT NULL);
-        INSERT INTO user_books VALUES(3, 'Current', 'de-DE', 'Current v3 source', '2026-08-22T00:00:00Z');
+        INSERT INTO user_books VALUES(3, 'Current', 'de-DE', 'Current v4 source', '2026-08-31T00:00:00Z');
         INSERT INTO user_book_words VALUES(33, 3, 'current', '["текущий"]', 1, 'Current context', 'adjective');
-        PRAGMA user_version=3;
+        CREATE TABLE course_progress(
+            course_id TEXT NOT NULL,
+            node_id TEXT NOT NULL,
+            status TEXT NOT NULL,
+            best_score REAL NOT NULL,
+            attempt_count INTEGER NOT NULL,
+            updated_at_utc TEXT NOT NULL,
+            PRIMARY KEY(course_id, node_id));
+        INSERT INTO course_progress VALUES('german-a0', 'lesson:a0-01', 'Completed', 1.0, 1, '2026-08-31T00:00:00Z');
+        PRAGMA user_version=4;
 "@
 }
 
@@ -179,7 +188,7 @@ $builder.Pooling = $false
 $connection = [Microsoft.Data.Sqlite.SqliteConnection]::new($builder.ToString())
 $connection.Open()
 $command = $connection.CreateCommand()
-$command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0; UPDATE sample_data SET payload='current-v3-success-wal' WHERE id=1;"
+$command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0; UPDATE sample_data SET payload='current-v4-success-wal' WHERE id=1;"
 [void]$command.ExecuteNonQuery()
 [IO.File]::WriteAllText($Marker, 'ready')
 Start-Sleep -Seconds 300
@@ -234,40 +243,40 @@ try {
     $successRecovery = Join-Path $successRoot 'recovery'
     [void][IO.Directory]::CreateDirectory($successRecovery)
     $successCurrent = Join-Path $successRoot 'current.db'
-    $successBackup = Join-Path $successRoot 'schema-v2.db'
-    New-SchemaV3Fixture $successCurrent 'current-v3-success'
-    New-SchemaV2Fixture $successBackup
+    $successBackup = Join-Path $successRoot 'schema-v3.db'
+    New-SchemaV4Fixture $successCurrent 'current-v4-success'
+    New-SchemaV3TargetFixture $successBackup
     Add-StrandedWalCommit $successCurrent $runtimePath $successRoot
     $successCurrentHash = Get-FileSha256 $successCurrent
     $successBackupHash = Get-FileSha256 $successBackup
     $success = & $rollbackScript `
         -CurrentDatabase $successCurrent `
-        -SchemaV2Backup $successBackup `
+        -TargetSchemaBackup $successBackup `
         -RuntimeDirectory $runtimePath `
         -RecoveryRoot $successRecovery `
-        -ExpectedContentRevision 4 `
+        -ExpectedContentRevision 5 `
         -Confirm:$false
     Assert-True ($success.status -eq 'completed' -and $success.applied) 'successful rollback reports completed'
-    Assert-True ([int](Get-FixtureScalar $successCurrent 'PRAGMA user_version;') -eq 2) 'promoted database is schema v2'
-    Assert-True ([int](Get-FixtureScalar $successCurrent "SELECT value FROM metadata WHERE key='content_revision';") -eq 4) 'promoted catalog revision is 4'
+    Assert-True ([int](Get-FixtureScalar $successCurrent 'PRAGMA user_version;') -eq 3) 'promoted database is schema v3'
+    Assert-True ([int](Get-FixtureScalar $successCurrent "SELECT value FROM metadata WHERE key='content_revision';") -eq 5) 'promoted catalog revision is 5'
     Assert-True ([string](Get-FixtureScalar $successCurrent 'PRAGMA quick_check;') -eq 'ok') 'promoted quick_check is ok'
-    Assert-True ([int](Get-FixtureScalar $successCurrent 'SELECT COUNT(*) FROM pragma_foreign_key_check;') -eq 1) 'known v2 FK inventory is preserved exactly'
-    Assert-True ([string](Get-FixtureScalar $successCurrent 'SELECT payload FROM sample_data WHERE id=1;') -eq 'schema-v2-value') 'v2 payload is promoted'
-    Assert-True ((Get-FileSha256 $successBackup) -eq $successBackupHash) 'schema-v2 source backup is not changed'
+    Assert-True ([int](Get-FixtureScalar $successCurrent 'SELECT COUNT(*) FROM pragma_foreign_key_check;') -eq 1) 'known v3 FK inventory is preserved exactly'
+    Assert-True ([string](Get-FixtureScalar $successCurrent 'SELECT payload FROM sample_data WHERE id=1;') -eq 'schema-v3-value') 'v3 payload is promoted'
+    Assert-True ((Get-FileSha256 $successBackup) -eq $successBackupHash) 'schema-v3 source backup is not changed'
     Assert-True (Test-Path -LiteralPath $success.recordPath -PathType Leaf) 'success record exists'
     Assert-True (Test-Path -LiteralPath ($success.recordPath + '.sha256') -PathType Leaf) 'success record hash exists'
     $successRecord = Get-Content -LiteralPath $success.recordPath -Raw | ConvertFrom-Json
     Assert-True ($successRecord.status -eq 'completed') 'success record status is exact'
     Assert-True ($successRecord.sourceBackup.verifiedWorkingDatabase.foreignKeyViolationCount -eq 1) 'record captures expected FK inventory'
     Assert-True ($successRecord.promotedDatabase.inventorySha256 -eq $successRecord.sourceBackup.verifiedWorkingDatabase.inventorySha256) 'record captures exact promoted inventory'
-    $rawMain = @($successRecord.preservedCurrentV3.rawFileSet.files | Where-Object { $_.suffix -eq '' -and $_.existed })
-    Assert-True ($rawMain.Count -eq 1 -and $rawMain[0].sha256 -eq $successCurrentHash) 'original current v3 main is preserved byte-for-byte'
-    $rawWal = @($successRecord.preservedCurrentV3.rawFileSet.files | Where-Object { $_.suffix -eq '-wal' -and $_.existed })
-    $rawShm = @($successRecord.preservedCurrentV3.rawFileSet.files | Where-Object { $_.suffix -eq '-shm' -and $_.existed })
+    $rawMain = @($successRecord.preservedCurrent.rawFileSet.files | Where-Object { $_.suffix -eq '' -and $_.existed })
+    Assert-True ($rawMain.Count -eq 1 -and $rawMain[0].sha256 -eq $successCurrentHash) 'original current v4 main is preserved byte-for-byte'
+    $rawWal = @($successRecord.preservedCurrent.rawFileSet.files | Where-Object { $_.suffix -eq '-wal' -and $_.existed })
+    $rawShm = @($successRecord.preservedCurrent.rawFileSet.files | Where-Object { $_.suffix -eq '-shm' -and $_.existed })
     Assert-True ($rawWal.Count -eq 1 -and $rawWal[0].sizeBytes -gt 0) 'original non-empty WAL is preserved byte-for-byte'
     Assert-True ($rawShm.Count -eq 1 -and $rawShm[0].sizeBytes -gt 0) 'original SHM is preserved byte-for-byte'
-    Assert-True (Test-Path -LiteralPath $successRecord.preservedCurrentV3.consistentDatabase.path -PathType Leaf) 'consistent current v3 rollback backup exists'
-    Assert-True ([string](Get-FixtureScalar $successRecord.preservedCurrentV3.consistentDatabase.path 'SELECT payload FROM sample_data WHERE id=1;') -eq 'current-v3-success-wal') 'consistent v3 backup includes committed WAL content'
+    Assert-True (Test-Path -LiteralPath $successRecord.preservedCurrent.consistentDatabase.path -PathType Leaf) 'consistent current v4 rollback backup exists'
+    Assert-True ([string](Get-FixtureScalar $successRecord.preservedCurrent.consistentDatabase.path 'SELECT payload FROM sample_data WHERE id=1;') -eq 'current-v4-success-wal') 'consistent v4 backup includes committed WAL content'
     $results.Add([pscustomobject][ordered]@{
             name = 'successful-promotion'
             passed = $true
@@ -275,24 +284,24 @@ try {
             recordSha256 = $success.recordSha256
         })
 
-    # Injected post-promotion failure must restore the exact logical v3 profile.
+    # Injected post-promotion failure must restore the exact logical v4 profile.
     $failureRoot = Join-Path $root 'failure-recovery'
     $failureRecovery = Join-Path $failureRoot 'recovery'
     [void][IO.Directory]::CreateDirectory($failureRecovery)
     $failureCurrent = Join-Path $failureRoot 'current.db'
-    $failureBackup = Join-Path $failureRoot 'schema-v2.db'
-    New-SchemaV3Fixture $failureCurrent 'current-v3-must-return'
-    New-SchemaV2Fixture $failureBackup
+    $failureBackup = Join-Path $failureRoot 'schema-v3.db'
+    New-SchemaV4Fixture $failureCurrent 'current-v4-must-return'
+    New-SchemaV3TargetFixture $failureBackup
     $env:LERNTYPE_DATA_ROLLBACK_TEST_MODE = '1'
     $env:LERNTYPE_DATA_ROLLBACK_TEST_FAIL_PHASE = 'after-promotion'
     $failureThrown = $false
     try {
         & $rollbackScript `
             -CurrentDatabase $failureCurrent `
-            -SchemaV2Backup $failureBackup `
+            -TargetSchemaBackup $failureBackup `
             -RuntimeDirectory $runtimePath `
             -RecoveryRoot $failureRecovery `
-            -ExpectedContentRevision 4 `
+            -ExpectedContentRevision 5 `
             -Confirm:$false
     }
     catch { $failureThrown = $true }
@@ -301,15 +310,15 @@ try {
         Remove-Item Env:LERNTYPE_DATA_ROLLBACK_TEST_FAIL_PHASE -ErrorAction SilentlyContinue
     }
     Assert-True $failureThrown 'post-promotion injected failure is surfaced'
-    Assert-True ([int](Get-FixtureScalar $failureCurrent 'PRAGMA user_version;') -eq 3) 'failure restores schema v3'
+    Assert-True ([int](Get-FixtureScalar $failureCurrent 'PRAGMA user_version;') -eq 4) 'failure restores schema v4'
     Assert-True ([int](Get-FixtureScalar $failureCurrent "SELECT value FROM metadata WHERE key='content_revision';") -eq 5) 'failure restores catalog revision 5'
-    Assert-True ([string](Get-FixtureScalar $failureCurrent 'SELECT payload FROM sample_data WHERE id=1;') -eq 'current-v3-must-return') 'failure restores current v3 payload'
-    Assert-True ([string](Get-FixtureScalar $failureCurrent 'PRAGMA quick_check;') -eq 'ok') 'restored v3 quick_check is ok'
-    Assert-True ([int](Get-FixtureScalar $failureCurrent 'SELECT COUNT(*) FROM pragma_foreign_key_check;') -eq 0) 'restored v3 FK check is clean'
+    Assert-True ([string](Get-FixtureScalar $failureCurrent 'SELECT payload FROM sample_data WHERE id=1;') -eq 'current-v4-must-return') 'failure restores current v4 payload'
+    Assert-True ([string](Get-FixtureScalar $failureCurrent 'PRAGMA quick_check;') -eq 'ok') 'restored v4 quick_check is ok'
+    Assert-True ([int](Get-FixtureScalar $failureCurrent 'SELECT COUNT(*) FROM pragma_foreign_key_check;') -eq 0) 'restored v4 FK check is clean'
     $failureRecordPath = (Get-ChildItem -LiteralPath $failureRecovery -Recurse -Filter 'rollback-record.json' -File | Select-Object -First 1).FullName
     $failureRecord = Get-Content -LiteralPath $failureRecordPath -Raw | ConvertFrom-Json
     Assert-True ($failureRecord.status -eq 'failed-restored') 'failure record confirms automatic recovery'
-    Assert-True ($failureRecord.recovery.status -eq 'restored-current-v3') 'failure recovery status is exact'
+    Assert-True ($failureRecord.recovery.status -eq 'restored-current-schema') 'failure recovery status is exact'
     $results.Add([pscustomobject][ordered]@{
             name = 'post-promotion-failure-recovery'
             passed = $true
@@ -321,16 +330,16 @@ try {
     $guardRecovery = Join-Path $guardRoot 'recovery'
     [void][IO.Directory]::CreateDirectory($guardRecovery)
     $guardCurrent = Join-Path $guardRoot 'current.db'
-    $guardBackup = Join-Path $guardRoot 'schema-v2.db'
-    New-SchemaV3Fixture $guardCurrent 'current-v3-guard'
-    New-SchemaV2Fixture $guardBackup
+    $guardBackup = Join-Path $guardRoot 'schema-v3.db'
+    New-SchemaV4Fixture $guardCurrent 'current-v4-guard'
+    New-SchemaV3TargetFixture $guardBackup
     $guardHash = Get-FileSha256 $guardCurrent
     $currentProcessName = (Get-Process -Id $PID).ProcessName
     $guardThrown = $false
     try {
         & $rollbackScript `
             -CurrentDatabase $guardCurrent `
-            -SchemaV2Backup $guardBackup `
+            -TargetSchemaBackup $guardBackup `
             -RuntimeDirectory $runtimePath `
             -RecoveryRoot $guardRecovery `
             -ApplicationProcessName @($currentProcessName) `
@@ -345,26 +354,26 @@ try {
             passed = $true
         })
 
-    # A schema-v3 input posing as the backup must fail before current modification.
+    # A schema-v4 input posing as the target backup must fail before current modification.
     $invalidRoot = Join-Path $root 'invalid-backup'
     $invalidRecovery = Join-Path $invalidRoot 'recovery'
     [void][IO.Directory]::CreateDirectory($invalidRecovery)
     $invalidCurrent = Join-Path $invalidRoot 'current.db'
-    $invalidBackup = Join-Path $invalidRoot 'not-schema-v2.db'
-    New-SchemaV3Fixture $invalidCurrent 'current-v3-invalid-backup'
-    New-SchemaV3Fixture $invalidBackup 'wrong-backup'
+    $invalidBackup = Join-Path $invalidRoot 'not-schema-v3.db'
+    New-SchemaV4Fixture $invalidCurrent 'current-v4-invalid-backup'
+    New-SchemaV4Fixture $invalidBackup 'wrong-backup'
     $invalidHash = Get-FileSha256 $invalidCurrent
     $invalidThrown = $false
     try {
         & $rollbackScript `
             -CurrentDatabase $invalidCurrent `
-            -SchemaV2Backup $invalidBackup `
+            -TargetSchemaBackup $invalidBackup `
             -RuntimeDirectory $runtimePath `
             -RecoveryRoot $invalidRecovery `
             -Confirm:$false
     }
     catch { $invalidThrown = $true }
-    Assert-True $invalidThrown 'schema-v3 backup is rejected'
+    Assert-True $invalidThrown 'schema-v4 backup is rejected as a schema-v3 target'
     Assert-True ((Get-FileSha256 $invalidCurrent) -eq $invalidHash) 'invalid backup leaves current DB bytes unchanged'
     $invalidRecordPath = (Get-ChildItem -LiteralPath $invalidRecovery -Recurse -Filter 'rollback-record.json' -File | Select-Object -First 1).FullName
     $invalidRecord = Get-Content -LiteralPath $invalidRecordPath -Raw | ConvertFrom-Json
