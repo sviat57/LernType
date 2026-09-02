@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using WortBruecke.App.Infrastructure;
 using WortBruecke.Core.Abstractions;
+using WortBruecke.Core.Courses;
 using WortBruecke.Core.Learning;
 
 namespace WortBruecke.App.ViewModels;
@@ -13,7 +14,7 @@ public sealed record SkillProgressCard(
     double AverageScore,
     DateTimeOffset? LastAttemptUtc)
 {
-    public string ScoreText => AttemptCount == 0 ? "Нет evidence" : $"{AverageScore:P0}";
+    public string ScoreText => AttemptCount == 0 ? "Нет данных" : $"{AverageScore:P0}";
     public string DetailText => AttemptCount == 0
         ? "Начните с доступного задания"
         : $"{AttemptCount} попыток · {DistinctItemCount} разных заданий";
@@ -21,13 +22,17 @@ public sealed record SkillProgressCard(
 
 public sealed class ProgressViewModel : ObservableObject
 {
+    private readonly ICourseCatalogRepository _catalog;
+    private readonly ICourseProgressRepository _courseProgress;
     private readonly IAttemptRepository _attempts;
     private readonly IReviewStateRepository _reviews;
-    private readonly IMasteryProjectionService _mastery;
     private readonly IClock _clock;
-    private string _currentLevel = "Pre-A1";
+    private string _currentLevel = "A0 · Pre-A1";
     private string _weakestSkill = "Недостаточно данных";
     private string _errorMessage = string.Empty;
+    private int _completedCourseLessons;
+    private int _totalCourseLessons;
+    private int _courseEvidenceCount;
     private int _totalAttempts;
     private int _weekAttempts;
     private int _dueCount;
@@ -35,15 +40,17 @@ public sealed class ProgressViewModel : ObservableObject
     private bool _isBusy;
 
     public ProgressViewModel(
+        ICourseCatalogRepository catalog,
+        ICourseProgressRepository courseProgress,
         IAttemptRepository attempts,
         IReviewStateRepository reviews,
-        IMasteryProjectionService? mastery = null,
         IClock? clock = null,
         Action<string>? navigate = null)
     {
-        _attempts = attempts;
-        _reviews = reviews;
-        _mastery = mastery ?? new MasteryProjectionService();
+        _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+        _courseProgress = courseProgress ?? throw new ArgumentNullException(nameof(courseProgress));
+        _attempts = attempts ?? throw new ArgumentNullException(nameof(attempts));
+        _reviews = reviews ?? throw new ArgumentNullException(nameof(reviews));
         _clock = clock ?? SystemClock.Instance;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => !IsBusy, error =>
         {
@@ -51,19 +58,24 @@ public sealed class ProgressViewModel : ObservableObject
             OnPropertyChanged(nameof(HasError));
         });
         StartReviewCommand = new RelayCommand(() => navigate?.Invoke("trainer"), () => navigate is not null);
+        OpenCoursesCommand = new RelayCommand(() => navigate?.Invoke("path"), () => navigate is not null);
     }
 
     public ObservableCollection<SkillProgressCard> Skills { get; } = [];
     public AsyncRelayCommand RefreshCommand { get; }
     public RelayCommand StartReviewCommand { get; }
+    public RelayCommand OpenCoursesCommand { get; }
     public string CurrentLevel { get => _currentLevel; private set => SetProperty(ref _currentLevel, value); }
     public string WeakestSkill { get => _weakestSkill; private set => SetProperty(ref _weakestSkill, value); }
     public string ErrorMessage { get => _errorMessage; private set => SetProperty(ref _errorMessage, value); }
+    public int CompletedCourseLessons { get => _completedCourseLessons; private set => SetProperty(ref _completedCourseLessons, value); }
+    public int TotalCourseLessons { get => _totalCourseLessons; private set => SetProperty(ref _totalCourseLessons, value); }
+    public string CourseProgressText => $"{CompletedCourseLessons} из {TotalCourseLessons} уроков A0–A2";
     public int TotalAttempts { get => _totalAttempts; private set => SetProperty(ref _totalAttempts, value); }
     public int WeekAttempts { get => _weekAttempts; private set => SetProperty(ref _weekAttempts, value); }
     public int DueCount { get => _dueCount; private set => SetProperty(ref _dueCount, value); }
     public double OverallCompletion { get => _overallCompletion; private set => SetProperty(ref _overallCompletion, value); }
-    public bool HasData => TotalAttempts > 0;
+    public bool HasData => _courseEvidenceCount > 0 || TotalAttempts > 0;
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
     public bool IsBusy
     {
@@ -86,17 +98,55 @@ public sealed class ProgressViewModel : ObservableObject
         OnPropertyChanged(nameof(HasError));
         try
         {
+            var catalog = await _catalog.LoadAsync(cancellationToken);
+            var courses = catalog.Track.Courses
+                .Where(course =>
+                    course.Availability == CourseAvailability.Published &&
+                    course.Level is >= GermanLevel.A0 and <= GermanLevel.A2)
+                .OrderBy(course => course.Order)
+                .ToArray();
+            var courseSummaries = new List<CourseProgressSummary>(courses.Length);
+            foreach (var course in courses)
+            {
+                var progress = await _courseProgress.GetCourseAsync(course.Id, cancellationToken);
+                var lessonIds = course.Units
+                    .OrderBy(unit => unit.Order)
+                    .SelectMany(unit => unit.Lessons.OrderBy(lesson => lesson.Order))
+                    .Select(lesson => CoursePathViewModel.LessonNodeId(lesson.Id))
+                    .ToHashSet(StringComparer.Ordinal);
+                var lessonProgress = progress
+                    .Where(item => lessonIds.Contains(item.NodeId))
+                    .ToArray();
+                var evidence = progress
+                    .Where(item => item.Status != CourseNodeStatus.NotStarted)
+                    .ToArray();
+                courseSummaries.Add(new(
+                    course,
+                    lessonIds.Count,
+                    lessonProgress.Count(item => item.Status >= CourseNodeStatus.Completed),
+                    evidence.Length,
+                    evidence.Length == 0 ? null : evidence.Max(item => item.UpdatedAtUtc)));
+            }
+
             var all = await _attempts.GetAsync(cancellationToken: cancellationToken);
             var due = await _reviews.GetDueAsync(_clock.UtcNow, 500, cancellationToken);
-            var path = _mastery.Rebuild(GermanCurriculum.CreateDefault(), all);
+            TotalCourseLessons = courseSummaries.Sum(item => item.TotalLessons);
+            CompletedCourseLessons = courseSummaries.Sum(item => item.CompletedLessons);
+            _courseEvidenceCount = courseSummaries.Sum(item => item.EvidenceCount);
+            var currentCourse = courseSummaries
+                .Where(item => item.LatestEvidenceUtc is not null)
+                .OrderByDescending(item => item.LatestEvidenceUtc)
+                .ThenByDescending(item => item.Course.Order)
+                .FirstOrDefault()
+                ?? courseSummaries.FirstOrDefault(item => item.CompletedLessons < item.TotalLessons)
+                ?? courseSummaries.LastOrDefault();
+            CurrentLevel = currentCourse is null ? "—" : LevelLabel(currentCourse.Course.Level);
+            OverallCompletion = TotalCourseLessons == 0 ? 0 : (double)CompletedCourseLessons / TotalCourseLessons;
             TotalAttempts = all.Count;
             WeekAttempts = all.Count(item => item.CompletedAtUtc >= _clock.UtcNow.AddDays(-7));
             DueCount = due.Count(item =>
                 item.ContentKey.StartsWith("core.word.", StringComparison.Ordinal) ||
                 item.ContentKey.StartsWith("core.sentence.", StringComparison.Ordinal));
-            CurrentLevel = path.CurrentLevel == GermanLevel.A0 ? "Pre-A1" : path.CurrentLevel.ToString();
-            OverallCompletion = path.OverallCompletion;
-
             var cards = Enum.GetValues<LanguageSkill>()
                 .Select(skill =>
                 {
@@ -123,6 +173,7 @@ public sealed class ProgressViewModel : ObservableObject
                                .ThenBy(item => item.Title, StringComparer.Ordinal)
                                .FirstOrDefault()?.Title
                            ?? "Недостаточно данных";
+            OnPropertyChanged(nameof(CourseProgressText));
             OnPropertyChanged(nameof(HasData));
         }
         finally
@@ -142,4 +193,13 @@ public sealed class ProgressViewModel : ObservableObject
         LanguageSkill.Mediation => "Медиация",
         _ => skill.ToString()
     };
+
+    private static string LevelLabel(GermanLevel level) => level == GermanLevel.A0 ? "A0 · Pre-A1" : level.ToString();
+
+    private sealed record CourseProgressSummary(
+        CourseDefinition Course,
+        int TotalLessons,
+        int CompletedLessons,
+        int EvidenceCount,
+        DateTimeOffset? LatestEvidenceUtc);
 }

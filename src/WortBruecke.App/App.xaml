@@ -21,23 +21,20 @@
             <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                 <views:HomeView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:LearningPathViewModel}">
-                <views:LearningPathView />
+            <DataTemplate DataType="{x:Type vm:CoursePathViewModel}">
+                <views:CoursePathView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:LevelStudyViewModel}">
-                <views:LevelStudyView />
+            <DataTemplate DataType="{x:Type vm:CourseLessonViewModel}">
+                <views:CourseLessonView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:ExamCenterViewModel}">
-                <views:ExamCenterView />
+            <DataTemplate DataType="{x:Type vm:InteractiveExercisesViewModel}">
+                <views:InteractiveExercisesView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TrainerViewModel}">
                 <views:TrainerView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TextPracticeViewModel}">
                 <views:TextPracticeView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:BookViewModel}">
-                <views:BookView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:VocabularyTestViewModel}">
                 <views:VocabularyTestView />
@@ -48,17 +45,8 @@
             <DataTemplate DataType="{x:Type vm:ProgressViewModel}">
                 <views:ProgressView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:GrammarViewModel}">
-                <views:GrammarView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:TelcViewModel}">
-                <views:TelcView />
-            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
                 <views:SettingsView />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
-                <views:PlaceholderView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

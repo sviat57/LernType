@@ -4,7 +4,7 @@ namespace WortBruecke.Infrastructure.Persistence;
 
 internal sealed class DatabaseMigrationRunner(string backupRoot)
 {
-    public const int LatestVersion = 3;
+    public const int LatestVersion = 4;
 
     public async Task MigrateAsync(SqliteConnection connection, CancellationToken cancellationToken)
     {
@@ -69,6 +69,10 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
                             preMigrationBackupPath,
                             cancellationToken);
                         await RecordMigrationAsync(connection, transaction, version, "localized-word-accepted-answers", cancellationToken);
+                        break;
+                    case 4:
+                        await ApplyCourseProgressSchemaAsync(connection, transaction, cancellationToken);
+                        await RecordMigrationAsync(connection, transaction, version, "offline-course-progress", cancellationToken);
                         break;
                 }
 
@@ -277,6 +281,36 @@ internal sealed class DatabaseMigrationRunner(string backupRoot)
             ("$reason", "Missing parent user_books row before schema-v3 migration."),
             ("$quarantined_at_utc", DateTimeOffset.UtcNow.ToString("O")));
     }
+
+    private static Task ApplyCourseProgressSchemaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken) =>
+        ExecuteAsync(connection, transaction, """
+            CREATE TABLE IF NOT EXISTS course_progress (
+                course_id TEXT NOT NULL,
+                node_id TEXT NOT NULL,
+                status TEXT NOT NULL CHECK(status IN ('NotStarted', 'InProgress', 'Completed', 'Passed')),
+                best_score REAL NOT NULL CHECK(best_score >= 0 AND best_score <= 1),
+                attempt_count INTEGER NOT NULL CHECK(attempt_count >= 0),
+                updated_at_utc TEXT NOT NULL,
+                PRIMARY KEY(course_id, node_id)
+            );
+            CREATE INDEX IF NOT EXISTS ix_course_progress_course_status
+                ON course_progress(course_id, status, node_id);
+
+            CREATE TABLE IF NOT EXISTS course_resume_state (
+                course_id TEXT PRIMARY KEY,
+                unit_id TEXT NOT NULL,
+                lesson_id TEXT NOT NULL,
+                step_id TEXT NOT NULL,
+                task_scores_json TEXT NOT NULL DEFAULT '{}'
+                    CHECK(json_valid(task_scores_json) AND json_type(task_scores_json) = 'object'),
+                self_reported_task_keys_json TEXT NOT NULL DEFAULT '[]'
+                    CHECK(json_valid(self_reported_task_keys_json) AND json_type(self_reported_task_keys_json) = 'array'),
+                updated_at_utc TEXT NOT NULL
+            );
+            """, cancellationToken);
 
     private static async Task<long> CountOrphanBookWordsAsync(
         SqliteConnection connection,

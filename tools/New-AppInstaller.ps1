@@ -9,7 +9,7 @@ param(
     [ValidateSet('x64', 'arm64')]
     [string]$Architecture,
 
-    [string]$Version = '1.2.0.0',
+    [string]$Version = '1.3.0.0',
 
     [ValidatePattern('^[A-Za-z0-9](?:[A-Za-z0-9.-]{1,48}[A-Za-z0-9])$')]
     [string]$Identity = 'sviat57.LernType',

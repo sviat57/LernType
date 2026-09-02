@@ -100,7 +100,7 @@ public sealed class SettingsViewModel : ObservableObject
         private set => SetProperty(ref _saveStatus, value);
     }
 
-    public string VersionText => $"LernType {Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.2.0"}";
+    public string VersionText => $"LernType {Assembly.GetEntryAssembly()?.GetName().Version?.ToString(3) ?? "1.3.0"}";
 
     public async Task InitializeAsync()
     {

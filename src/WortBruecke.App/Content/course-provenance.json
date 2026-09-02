@@ -1,0 +1,113 @@
+{
+  "revision": 1,
+  "verifiedOn": "2026-08-31",
+  "catalogId": "german-from-zero",
+  "contentPolicy": "original-lerntype-materials",
+  "certificationClaim": "none",
+  "catalogLicense": "MIT",
+  "declaration": "All learner-facing explanations, examples, reading passages, prompts, answers and exams in courses-a0-a2.json were written specifically for LernType. Sources were used to validate progression, grammatical facts, skill balance and assessment shape, not as a text bank.",
+  "sources": [
+    {
+      "id": "coe-cefr-companion-2020",
+      "title": "Common European Framework of Reference for Languages: Companion Volume (2020)",
+      "publisher": "Council of Europe",
+      "url": "https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume-and-its-language-versions",
+      "access": "openly accessible official publication",
+      "license": "© Council of Europe 2020; all rights reserved; no open reuse license asserted",
+      "usageMode": "framework-reference-only",
+      "use": "Used to check the balance of reception, production, interaction and mediation and the broad A1/A2 proficiency progression. No descriptor text was reproduced."
+    },
+    {
+      "id": "coerll-deutsch-im-blick-2e",
+      "title": "Deutsch im Blick, Second Edition",
+      "publisher": "COERLL, The University of Texas at Austin",
+      "url": "https://www.coerll.utexas.edu/dib/pdfs/DeutschImBlick-textbook.pdf",
+      "access": "open textbook PDF",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "usageMode": "sequence-and-pedagogy-reference",
+      "use": "Used to validate a spiral from immediate personal topics toward travel, health and work and a four-skill activity mix. LernType content remains independently authored."
+    },
+    {
+      "id": "una-german-101",
+      "title": "German 101",
+      "publisher": "University of North Alabama Digital Press",
+      "url": "https://una.pressbooks.pub/gr101/",
+      "access": "open online textbook and downloads",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), except where otherwise noted",
+      "usageMode": "grammar-sequence-reference",
+      "use": "Used to cross-check the beginner sequence for greetings, articles, pronouns, sein, haben, numbers, alphabet and modal verbs. No source exercise or explanation was adapted."
+    },
+    {
+      "id": "wisconsin-willkommen",
+      "title": "Willkommen: Deutsch für alle",
+      "publisher": "University of Wisconsin Pressbooks",
+      "url": "https://wisconsin.pressbooks.pub/german/",
+      "access": "open online textbook",
+      "license": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0), except where otherwise noted",
+      "usageMode": "unit-design-reference-only",
+      "use": "Used to verify thematic unit organization and the value of alternating explanation with active tasks. No content was incorporated, avoiding NC/SA dependency in the MIT catalog."
+    },
+    {
+      "id": "goethe-a1-a2-exams",
+      "title": "German examinations A1–C2 and free practice materials",
+      "publisher": "Goethe-Institut",
+      "url": "https://www.goethe.de/en/spr/prf.html",
+      "access": "free-to-access official examination information and practice",
+      "license": "© Goethe-Institut; free access does not constitute an open reuse license",
+      "usageMode": "assessment-structure-reference-only",
+      "use": "Used only to confirm that A1/A2 assessment should cover listening, reading, writing and speaking. All LernType exam questions are original and are not official Goethe materials."
+    },
+    {
+      "id": "dw-nicos-weg",
+      "title": "Nicos Weg",
+      "publisher": "Deutsche Welle",
+      "url": "https://learngerman.dw.com/en/nicos-weg/c-36519789",
+      "access": "free-to-access official online course",
+      "license": "© Deutsche Welle; no open content license asserted for course materials",
+      "usageMode": "course-flow-reference-only",
+      "use": "Used to cross-check everyday topic progression and short input-to-practice loops. No dialogue, script, media or exercise was reproduced."
+    },
+    {
+      "id": "ids-grammis",
+      "title": "grammis — Grammatisches Informationssystem",
+      "publisher": "Leibniz-Institut für Deutsche Sprache",
+      "url": "https://grammis.ids-mannheim.de/",
+      "access": "public official linguistic reference",
+      "license": "© Leibniz-Institut für Deutsche Sprache; no blanket open reuse license asserted",
+      "usageMode": "fact-check-reference-only",
+      "use": "Used to verify standard grammatical terminology, valency patterns and current orthographic facts. The catalog states rules in new wording with original examples."
+    }
+  ],
+  "localReferences": [
+    {
+      "fileName": "Kamjanowa.pdf",
+      "sha256": "ae1106112e4815f217c26b57d668964a47b3894e7b9e37375fb627a65a8cf2e6",
+      "availability": "user-supplied-local-file",
+      "rightsStatus": "not-established",
+      "usageMode": "structural-reference",
+      "use": "Consulted only for high-level organization, sequencing patterns and topic coverage; no wording, examples, exercises, tables or artwork were copied."
+    },
+    {
+      "fileName": "Servus 1 A1.1-A2.1.PDF",
+      "sha256": "70aaad69a07ba6f18a5b7a679893c2c58e65208a034ac23e1850d79c7866ee51",
+      "availability": "user-supplied-local-file",
+      "rightsStatus": "not-established",
+      "usageMode": "structural-reference",
+      "use": "Consulted only for high-level organization, sequencing patterns and topic coverage; no wording, examples, exercises, tables or artwork were copied."
+    },
+    {
+      "fileName": "Deutsche_Verben_unregelmäßige_starke_Verben_Liste_nach_Sprachniveau.pdf",
+      "sha256": "58c27e6b2796d9e616f0b38d2a963947adec6b4bf4d33024974bdb7073e8b06d",
+      "availability": "user-supplied-local-file",
+      "rightsStatus": "not-established",
+      "usageMode": "structural-reference",
+      "use": "Consulted only for high-level organization, sequencing patterns and topic coverage; no wording, examples, exercises, tables or artwork were copied."
+    }
+  ],
+  "qualityNotes": {
+    "cefrAlignment": "Pedagogically aligned by topic and skill progression; not externally audited or certified.",
+    "languageReview": "Authored and internally checked for standard contemporary German; no claim of official CEFR or examination certification.",
+    "networkDependency": "none",
+    "copiedSourceExercises": false
+  }
+}

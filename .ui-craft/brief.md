@@ -2,7 +2,7 @@
 
 ## Product promise
 
-LernType is a Windows-first, offline-first German learning workspace for Russian speakers. It turns short daily practice, personal texts, local audio, and transparent evidence into a credible path from **Pre-A1** through **C2** without pretending that sparse or self-rated activity equals certification.
+LernType is a Windows-first, offline-first German course for Russian speakers. Its primary route teaches **A0/Pre-A1 through A2** with a repeatable rhythm of short theory, writing, reading, listening/speaking, a second rule, a checkpoint and a course-local final exam. B1–C2 remain visible as planned stages. Supplementary drills stay separate from the course, and self-rated activity never masquerades as certified evidence.
 
 ## Principles (conflict-resolution order)
 
@@ -28,18 +28,18 @@ LernType is a Windows-first, offline-first German learning workspace for Russian
 
 | Surface | Primary task | Required states |
 | --- | --- | --- |
-| Today | choose the next practice | storage loading, offline ready, feature error |
-| Learning path | understand current stage and next objective | unpublished skill, no evidence, refreshed evidence |
-| Practice | answer word/sentence/text prompts | empty CEFR pool, input-layout hint, feedback |
-| Audio | listen, dictate, record, self-review | missing voice, missing microphone, recording, cleanup |
-| Exams | inspect format-specific readiness | no attempts, no universal pass, source/caveat |
-| Library | extract and practise personal vocabulary | ephemeral draft, saved, oversized, unresolved, delete/export |
+| Today | resume the current course or choose a course | storage loading, offline ready, feature error |
+| Courses | choose A0, A1 or A2 and see the next unlocked lesson | first run, in progress, passed, planned B1–C2, catalog error |
+| Course lesson | complete the six-step teaching rhythm | explanation, strict task feedback, missing voice/microphone, recording, result |
+| Course exam | complete the internal end-of-course check | locked, in progress, deterministic score, self-rated speaking evidence, pass/retry |
+| Interactive exercises | open optional word, sentence, text, vocabulary-test or audio drills | unavailable module, empty pool, input-layout hint, feedback |
 | Progress | inspect evidence and reviews due | first-run empty, partial skills, stale/error |
 | Settings | control theme/layout/online consent | denied storage, missing layout, consent off |
 
-## Non-goals for 1.0
+## Non-goals for 1.3
 
 - Claiming that LernType awards or guarantees Goethe, telc, TestDaF, or DTZ results.
 - Sending book text, recordings, or answers online by default.
-- Replacing expert-authored full exam simulations with generated approximations.
+- Presenting the internal course exam as a Goethe/telc/TestDaF certificate or official simulation.
+- Exposing the unfinished personal-library workflow in public navigation; legacy rows remain preserved for migration and rollback.
 - Decorative gamification, streak pressure, neon glass, or animation-heavy navigation.

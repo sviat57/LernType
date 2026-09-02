@@ -1,0 +1,101 @@
+<UserControl x:Class="WortBruecke.App.Views.InteractiveExercisesView"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="Интерактивные упражнения LernType"
+             KeyboardNavigation.TabNavigation="Continue">
+    <UserControl.Resources>
+        <Style x:Key="ExerciseCardButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Setter Property="MinHeight" Value="154" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{DynamicResource Brush.GlassInset}" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="36,32,36,48" MaxWidth="1080" HorizontalAlignment="Center">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}"
+                               Text="ДОПОЛНЕНИЕ К КУРСУ" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource PageTitle}" Text="Интерактивные упражнения" />
+                    <TextBlock Margin="0,10,0,0" Style="{StaticResource BodySecondary}" FontSize="14" LineHeight="22"
+                               Text="Разминайтесь, повторяйте и печатайте в удобном режиме. Эти сессии сохраняют результат, но не заменяют последовательные уроки курса." />
+                </StackPanel>
+                <Border Grid.Column="1" Margin="28,0,0,0" Padding="15,11" VerticalAlignment="Top"
+                        Style="{StaticResource GlassInset}" CornerRadius="14"
+                        Visibility="{Binding ActualWidth, ElementName=Root, Converter={StaticResource WindowWidthVisibility}, ConverterParameter=900}">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="7" Height="7" Margin="0,0,9,0" Fill="{DynamicResource Brush.Success}" />
+                        <TextBlock FontSize="12" FontWeight="SemiBold" Text="Все режимы работают офлайн" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <ItemsControl Margin="0,30,0,0" ItemsSource="{Binding Exercises}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel ItemWidth="492" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Width="474" Margin="0,0,16,16" Style="{StaticResource ExerciseCardButton}"
+                                Command="{Binding OpenCommand}" AutomationProperties.Name="{Binding Title}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" Background="{DynamicResource Brush.AccentSoft}" CornerRadius="13">
+                                        <Path x:Name="CardIcon" Width="20" Height="20" Data="{StaticResource Icon.Cards}"
+                                              Stroke="{DynamicResource Brush.AccentText}" StrokeThickness="1.7" Stretch="Uniform" />
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Margin="14,1,12,0" VerticalAlignment="Center"
+                                               FontFamily="{DynamicResource Font.Display}" FontSize="18" FontWeight="SemiBold" Text="{Binding Title}" />
+                                    <Path Grid.Column="2" Width="16" Height="16" Data="{StaticResource Icon.ArrowRight}"
+                                          Stroke="{DynamicResource Brush.TextTertiary}" StrokeThickness="1.7" Stretch="Uniform" />
+                                </Grid>
+                                <TextBlock Grid.Row="1" Margin="0,15,0,15" Foreground="{DynamicResource Brush.TextSecondary}"
+                                           FontSize="13" LineHeight="20" TextWrapping="Wrap" Text="{Binding Description}" />
+                                <TextBlock Grid.Row="2" Style="{StaticResource MetaText}" Text="{Binding Meta}" />
+                            </Grid>
+                        </Button>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IconKey}" Value="Icon.Document">
+                                <Setter TargetName="CardIcon" Property="Data" Value="{StaticResource Icon.Document}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IconKey}" Value="Icon.Audio">
+                                <Setter TargetName="CardIcon" Property="Data" Value="{StaticResource Icon.Audio}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IconKey}" Value="Icon.Progress">
+                                <Setter TargetName="CardIcon" Property="Data" Value="{StaticResource Icon.Progress}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Margin="0,8,0,0" Padding="18,15" Style="{StaticResource GlassInset}" CornerRadius="15">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <Border Width="36" Height="36" Background="{DynamicResource Brush.WarningSoft}" CornerRadius="11">
+                        <Path Width="16" Height="16" Data="{StaticResource Icon.Info}" Stroke="{DynamicResource Brush.Warning}" StrokeThickness="1.7" Stretch="Uniform" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}"
+                               FontSize="12" LineHeight="18" TextWrapping="Wrap"
+                               Text="Для основной программы вернитесь в «Курсы»: там теория, чтение, письмо, говорение и итоговая проверка собраны в правильной последовательности." />
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -17,9 +17,9 @@
                     <Path Width="22" Height="22" Data="{StaticResource Icon.Progress}" Fill="{DynamicResource Brush.AccentText}" Stretch="Uniform" />
                 </Border>
                 <StackPanel Grid.Column="1" Margin="16,0,24,0">
-                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="EVIDENCE · MASTERY · ПОВТОРЕНИЕ" />
-                    <TextBlock Margin="0,6,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Ваш прогресс без условных баллов" />
-                    <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" Text="Засчитываются реальные разные задания, выполненные в разные дни." />
+                    <TextBlock Style="{StaticResource MetaText}" Foreground="{DynamicResource Brush.AccentText}" Text="КУРС A0–A2 · НАВЫКИ · ПОВТОРЕНИЕ" />
+                    <TextBlock Margin="0,6,0,0" Style="{StaticResource HeroTitle}" FontSize="34" Text="Прогресс основного курса" />
+                    <TextBlock Margin="0,7,0,0" Style="{StaticResource BodySecondary}" Text="Основная шкала растёт только после завершённых уроков; упражнения и повторения показаны отдельно." />
                 </StackPanel>
                 <Button Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshCommand}">
                     <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,8,0" Data="{StaticResource Icon.Refresh}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1.8" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Обновить" /></StackPanel>
@@ -44,7 +44,7 @@
                         <StackPanel Grid.Row="1" Margin="0,12,0,20" VerticalAlignment="Center">
                             <TextBlock FontFamily="{DynamicResource Font.Display}" FontSize="46" FontWeight="SemiBold" Text="{Binding DueCount}" />
                             <TextBlock Margin="0,5,0,0" MaxWidth="520" Style="{StaticResource BodySecondary}" FontSize="13"
-                                       Text="Просроченные карточки попадут в начало следующей сессии; новые задания заполнят оставшиеся места." />
+                                       Text="Карточки из интерактивных упражнений готовы к повторению и не меняют прогресс основного курса." />
                         </StackPanel>
                         <Button Grid.Row="2" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}" Command="{Binding StartReviewCommand}"
                                 AutomationProperties.Name="Начать сессию с приоритетом повторений">
@@ -55,7 +55,7 @@
 
                 <StackPanel Grid.Column="2">
                     <Border Margin="0,0,0,9" Padding="17" Style="{StaticResource StatCard}">
-                        <Grid><TextBlock Style="{StaticResource MetaText}" Text="ТЕКУЩИЙ ЭТАП" /><TextBlock HorizontalAlignment="Right" FontSize="23" FontWeight="SemiBold" Text="{Binding CurrentLevel}" /></Grid>
+                        <Grid><TextBlock Style="{StaticResource MetaText}" Text="ТЕКУЩИЙ КУРС" /><TextBlock HorizontalAlignment="Right" FontSize="23" FontWeight="SemiBold" Text="{Binding CurrentLevel}" /></Grid>
                     </Border>
                     <Border Margin="0,0,0,9" Padding="17" Style="{StaticResource StatCard}">
                         <Grid><TextBlock Style="{StaticResource MetaText}" Text="ПОПЫТОК ЗА 7 ДНЕЙ" /><TextBlock HorizontalAlignment="Right" FontSize="23" FontWeight="SemiBold" Text="{Binding WeekAttempts}" /></Grid>
@@ -70,8 +70,8 @@
                     Visibility="{Binding HasData, Converter={StaticResource BoolToVisibility}}">
                 <StackPanel>
                     <Grid>
-                        <TextBlock Style="{StaticResource SectionTitle}" Text="Навыки" />
-                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource BodySecondary}" Text="{Binding TotalAttempts, StringFormat={}{0} подтверждённых попыток}" />
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="Дополнительная статистика навыков" />
+                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource BodySecondary}" Text="{Binding TotalAttempts, StringFormat={}{0} сохранённых заданий}" />
                     </Grid>
                     <ItemsControl Margin="0,18,0,0" ItemsSource="{Binding Skills}">
                         <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
@@ -87,7 +87,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <ProgressBar Margin="0,10,0,0" Height="7" Minimum="0" Maximum="1" Value="{Binding OverallCompletion, Mode=OneWay}" AutomationProperties.Name="Общий прогресс учебного пути" />
-                    <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="12" Text="{Binding OverallCompletion, StringFormat=Освоено опубликованных целей: {0:P0}}" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource BodySecondary}" FontSize="12" Text="{Binding CourseProgressText}" />
                 </StackPanel>
             </Border>
 
@@ -98,11 +98,11 @@
                     <Border Width="60" Height="60" Margin="0,0,0,18" HorizontalAlignment="Center" Style="{StaticResource IconTile}">
                         <Path Width="27" Height="27" Data="{StaticResource Icon.Progress}" Fill="{DynamicResource Brush.AccentText}" Stretch="Uniform" />
                     </Border>
-                    <TextBlock Style="{StaticResource SectionTitle}" Text="Здесь появятся только реальные попытки" />
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="Начните первый урок A0" />
                     <TextBlock Margin="0,10,0,18" Style="{StaticResource BodySecondary}"
-                               Text="Выполните первое упражнение. LernType не заполняет графики условными баллами и не считает просмотр материала освоением." />
-                    <Button HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" Command="{Binding StartReviewCommand}">
-                        <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Play}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Начать первую практику" /></StackPanel>
+                               Text="После завершения урока здесь появится прогресс курса. Свободные упражнения останутся отдельной статистикой для разминки и повторения." />
+                    <Button HorizontalAlignment="Center" Style="{StaticResource PrimaryButton}" Command="{Binding OpenCoursesCommand}">
+                        <StackPanel Orientation="Horizontal"><Path Width="16" Height="16" Margin="0,0,9,0" Data="{StaticResource Icon.Play}" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Stretch="Uniform" /><TextBlock Style="{StaticResource ButtonContentText}" Text="Открыть курс A0" /></StackPanel>
                     </Button>
                 </StackPanel>
             </Border>

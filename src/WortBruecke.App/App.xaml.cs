@@ -1,4 +1,3 @@
-using System.Net.Http;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -9,8 +8,6 @@ using WortBruecke.App.Infrastructure;
 using WortBruecke.App.ViewModels;
 using WortBruecke.Core.Abstractions;
 using WortBruecke.Core.Models;
-using WortBruecke.Core.Training;
-using WortBruecke.Infrastructure.Analysis;
 using WortBruecke.Infrastructure.Audio;
 using WortBruecke.Infrastructure.Content;
 using WortBruecke.Infrastructure.Dictionary;
@@ -95,14 +92,12 @@ public partial class App : Application
         builder.Services.AddSingleton<ISettingsStore, JsonSettingsStore>();
         builder.Services.AddSingleton<IKeyboardLayoutService, WindowsKeyboardLayoutService>();
         builder.Services.AddSingleton<IContentRepository, SqliteContentRepository>();
-        builder.Services.AddSingleton<IProgressRepository, SqliteProgressRepository>();
-        builder.Services.AddSingleton<ILearningProgressRepository, SqliteLearningProgressRepository>();
+        builder.Services.AddSingleton<ICourseCatalogRepository>(services =>
+            new JsonCourseCatalogRepository(services.GetRequiredService<AppPaths>().ContentRoot));
+        builder.Services.AddSingleton<ICourseProgressRepository, SqliteCourseProgressRepository>();
         builder.Services.AddSingleton<IAttemptRepository, SqliteAttemptRepository>();
         builder.Services.AddSingleton<IReviewStateRepository, SqliteReviewStateRepository>();
         builder.Services.AddSingleton<IManagedBackupService, ManagedBackupService>();
-        builder.Services.AddSingleton<IBookRepository>(services => new SqliteBookRepository(
-            services.GetRequiredService<SqliteDatabase>(),
-            services.GetRequiredService<IManagedBackupService>()));
         builder.Services.AddSingleton<IOfflineDictionaryService>(_ =>
         {
             var dictionaryPath = Path.Combine(
@@ -113,26 +108,16 @@ public partial class App : Application
                 "freedict-ru-de-2025.11.23.sqlite");
             return new FreeDictOfflineDictionaryService(dictionaryPath);
         });
-        builder.Services.AddSingleton<IBookVocabularyExtractor, BookVocabularyExtractor>();
         builder.Services.AddSingleton<IImageProvider>(_ => new LocalImageProvider(AppContext.BaseDirectory));
-        builder.Services.AddSingleton<IExamBlueprintRepository>(services =>
-            new JsonExamBlueprintRepository(services.GetRequiredService<AppPaths>().ContentRoot));
-        builder.Services.AddSingleton(new HttpClient { Timeout = Timeout.InfiniteTimeSpan });
-        builder.Services.AddSingleton<ILanguageAnalysisService, OpenAiLanguageAnalysisService>();
         builder.Services.AddSingleton<IAudioPracticeService, WindowsAudioPracticeService>();
         builder.Services.AddSingleton<TemporaryAudioRecordingStore>();
         builder.Services.AddSingleton<MainViewModel>(services => new MainViewModel(
             services.GetRequiredService<IContentRepository>(),
-            services.GetRequiredService<IProgressRepository>(),
             services.GetRequiredService<IKeyboardLayoutService>(),
             services.GetRequiredService<IImageProvider>(),
-            services.GetRequiredService<ILanguageAnalysisService>(),
             services.GetRequiredService<ISettingsStore>(),
-            services.GetRequiredService<IBookRepository>(),
-            services.GetRequiredService<IBookVocabularyExtractor>(),
-            services.GetRequiredService<IOfflineDictionaryService>(),
-            services.GetRequiredService<ILearningProgressRepository>(),
-            services.GetRequiredService<IExamBlueprintRepository>(),
+            services.GetRequiredService<ICourseCatalogRepository>(),
+            services.GetRequiredService<ICourseProgressRepository>(),
             services.GetRequiredService<IAttemptRepository>(),
             services.GetRequiredService<IReviewStateRepository>(),
             services.GetRequiredService<IAudioPracticeService>(),

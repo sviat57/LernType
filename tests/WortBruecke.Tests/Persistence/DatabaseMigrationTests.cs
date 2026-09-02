@@ -16,8 +16,8 @@ public sealed class DatabaseMigrationTests : IDisposable
 
         await using var connection = new SqliteConnection(database.ConnectionString);
         await connection.OpenAsync();
-        Assert.Equal(3L, await ScalarAsync(connection, "PRAGMA user_version;"));
-        Assert.Equal(3L, await ScalarAsync(connection, "SELECT COUNT(*) FROM schema_migrations;"));
+        Assert.Equal(4L, await ScalarAsync(connection, "PRAGMA user_version;"));
+        Assert.Equal(4L, await ScalarAsync(connection, "SELECT COUNT(*) FROM schema_migrations;"));
         Assert.Equal(20L, await ScalarAsync(connection, "SELECT COUNT(*) FROM pragma_table_info('attempt_events');"));
         Assert.Equal(4L, await ScalarAsync(connection, """
             SELECT COUNT(*) FROM sqlite_master
@@ -36,7 +36,63 @@ public sealed class DatabaseMigrationTests : IDisposable
             "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='orphan_book_word_quarantine';"));
         Assert.Equal(1L, await ScalarAsync(connection,
             "SELECT COUNT(*) FROM schema_migrations WHERE version=3 AND name='localized-word-accepted-answers';"));
+        Assert.Equal(1L, await ScalarAsync(connection,
+            "SELECT COUNT(*) FROM schema_migrations WHERE version=4 AND name='offline-course-progress';"));
+        Assert.Equal(1L, await ScalarAsync(connection,
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='course_progress';"));
+        Assert.Equal(1L, await ScalarAsync(connection,
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='course_resume_state';"));
+        Assert.Equal(7L, await ScalarAsync(connection, "SELECT COUNT(*) FROM pragma_table_info('course_resume_state');"));
+        Assert.Equal(2L, await ScalarAsync(connection, """
+            SELECT COUNT(*) FROM pragma_table_info('course_resume_state')
+            WHERE (name='task_scores_json' AND dflt_value='''{}''')
+               OR (name='self_reported_task_keys_json' AND dflt_value='''[]''');
+            """));
         Assert.Equal(0L, await ScalarAsync(connection, "SELECT COUNT(*) FROM pragma_foreign_key_check;"));
+    }
+
+    [Fact]
+    public async Task InitializeAsync_UpgradesVersionThreeWithValidatedResumeSnapshotColumns()
+    {
+        var database = await CreateDatabaseAsync();
+        await using (var connection = new SqliteConnection(database.ConnectionString))
+        {
+            await connection.OpenAsync();
+            await using var command = connection.CreateCommand();
+            command.CommandText = """
+                DROP TABLE course_progress;
+                DROP TABLE course_resume_state;
+                DELETE FROM schema_migrations WHERE version=4;
+                PRAGMA user_version=3;
+                """;
+            await command.ExecuteNonQueryAsync();
+        }
+
+        await database.InitializeAsync();
+
+        await using var verification = new SqliteConnection(database.ConnectionString);
+        await verification.OpenAsync();
+        Assert.Equal(4L, await ScalarAsync(verification, "PRAGMA user_version;"));
+        Assert.Equal(7L, await ScalarAsync(verification, "SELECT COUNT(*) FROM pragma_table_info('course_resume_state');"));
+        await using (var insert = verification.CreateCommand())
+        {
+            insert.CommandText = """
+                INSERT INTO course_resume_state(course_id, unit_id, lesson_id, step_id, updated_at_utc)
+                VALUES('a1', 'a1-u1', 'a1-01', 'briefing', '2026-08-31T00:00:00.0000000+00:00');
+                """;
+            await insert.ExecuteNonQueryAsync();
+        }
+        Assert.Equal("{}", await TextScalarAsync(verification,
+            "SELECT task_scores_json FROM course_resume_state WHERE course_id='a1';"));
+        Assert.Equal("[]", await TextScalarAsync(verification,
+            "SELECT self_reported_task_keys_json FROM course_resume_state WHERE course_id='a1';"));
+        await using var invalidJson = verification.CreateCommand();
+        invalidJson.CommandText = """
+            UPDATE course_resume_state
+            SET task_scores_json='[]'
+            WHERE course_id='a1';
+            """;
+        await Assert.ThrowsAsync<SqliteException>(() => invalidJson.ExecuteNonQueryAsync());
     }
 
     [Fact]
@@ -48,7 +104,7 @@ public sealed class DatabaseMigrationTests : IDisposable
 
         await using var connection = new SqliteConnection(database.ConnectionString);
         await connection.OpenAsync();
-        Assert.Equal(3L, await ScalarAsync(connection, "SELECT COUNT(*) FROM schema_migrations;"));
+        Assert.Equal(4L, await ScalarAsync(connection, "SELECT COUNT(*) FROM schema_migrations;"));
         Assert.Equal("ok", await TextScalarAsync(connection, "PRAGMA quick_check;"));
     }
 
@@ -85,7 +141,7 @@ public sealed class DatabaseMigrationTests : IDisposable
         Assert.Equal(1L, await ScalarAsync(backupConnection, "SELECT COUNT(*) FROM user_progress;"));
         await using var current = new SqliteConnection(database.ConnectionString);
         await current.OpenAsync();
-        Assert.Equal(3L, await ScalarAsync(current, "PRAGMA user_version;"));
+        Assert.Equal(4L, await ScalarAsync(current, "PRAGMA user_version;"));
         Assert.Equal(1L, await ScalarAsync(current, "SELECT COUNT(*) FROM user_progress WHERE content_type='BookWord';"));
     }
 
@@ -104,7 +160,9 @@ public sealed class DatabaseMigrationTests : IDisposable
                                           semantic_key, catalog_revision, migration_status)
                 VALUES('BookWord', 42, 7, 5, '2026-08-20T00:00:00Z', NULL, NULL, 'active');
                 DROP TABLE word_accepted_answers;
-                DELETE FROM schema_migrations WHERE version=3;
+                DROP TABLE course_progress;
+                DROP TABLE course_resume_state;
+                DELETE FROM schema_migrations WHERE version>=3;
                 PRAGMA user_version=2;
                 """;
             await command.ExecuteNonQueryAsync();
@@ -114,7 +172,7 @@ public sealed class DatabaseMigrationTests : IDisposable
 
         await using var verification = new SqliteConnection(database.ConnectionString);
         await verification.OpenAsync();
-        Assert.Equal(3L, await ScalarAsync(verification, "PRAGMA user_version;"));
+        Assert.Equal(4L, await ScalarAsync(verification, "PRAGMA user_version;"));
         Assert.Equal(1L, await ScalarAsync(verification, "SELECT COUNT(*) FROM user_books WHERE title='Книга';"));
         Assert.Equal(7L, await ScalarAsync(verification,
             "SELECT attempt_count FROM user_progress WHERE content_type='BookWord' AND content_id=42;"));
@@ -174,7 +232,9 @@ public sealed class DatabaseMigrationTests : IDisposable
 
                 DROP TABLE word_accepted_answers;
                 DROP TABLE orphan_book_word_quarantine;
-                DELETE FROM schema_migrations WHERE version=3;
+                DROP TABLE course_progress;
+                DROP TABLE course_resume_state;
+                DELETE FROM schema_migrations WHERE version>=3;
                 PRAGMA user_version=2;
                 """;
             await command.ExecuteNonQueryAsync();
@@ -197,7 +257,7 @@ public sealed class DatabaseMigrationTests : IDisposable
 
         await using var verification = new SqliteConnection(database.ConnectionString);
         await verification.OpenAsync();
-        Assert.Equal(3L, await ScalarAsync(verification, "PRAGMA user_version;"));
+        Assert.Equal(4L, await ScalarAsync(verification, "PRAGMA user_version;"));
         Assert.Equal(0L, await ScalarAsync(verification, "SELECT COUNT(*) FROM pragma_foreign_key_check;"));
         Assert.Equal(1L, await ScalarAsync(verification, "SELECT COUNT(*) FROM user_books WHERE id=1;"));
         Assert.Equal(1L, await ScalarAsync(verification, "SELECT COUNT(*) FROM user_book_words WHERE id=11;"));
